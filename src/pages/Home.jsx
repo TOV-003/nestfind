@@ -1,8 +1,19 @@
-import Layout from "../layout"
-import { useState } from "react";
-
+import Layout from "../Layout"
+import { useEffect, useState } from "react";
+import { dataService } from '../api/dataService';
 
 function Home() {
+
+    const heroIMGs = ["/IMG1.jpg", "/IMG2.jpg", "/IMG3.jpg"];
+    const [index, setIndex] = useState(0);
+    const [listings, setListings] = useState([]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % 3)
+        }, 10000);
+        return () => clearInterval(timer)
+    }, [])
 
     const [formData, setFormData] = useState({
         location: '',
@@ -35,10 +46,22 @@ function Home() {
         console.log('Submitted Property Criteria:', payload);
     };
 
+    useEffect(() => {
+        dataService.getListings()
+            .then((data) => {
+                setListings(data);
+            })
+            .catch((err) => {
+                console.error("Error loading properties:", err);
+            });
+    }, []);
+
+
+
     return (
         <Layout>
-            <main className="my-12">
-                <div className="flex md:flex-row flex-col items-center gap-4 md:mx-16 mx-4">
+            <main className="my-12 md:w-3/4 flex flex-col items-center mx-auto gap-8">
+                <div className="flex md:flex-row flex-col items-center md:justify-center gap-4 mx-4 md:mx-0">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
                         <h1 className="text-xl font-semibold">Find Your Next Home With Next Find</h1>
                         <h3 className="text-sm">Search verified listings, compare neighbourhoods, and save favourites</h3>
@@ -141,8 +164,71 @@ function Home() {
                         </button>
 
                     </form>
-                    <img src={`IMG1`} />
+                    <img key={index} src={heroIMGs[index]} className="w-96 md:w-120 rounded-lg animate-fade-in" alt="Interior Image" />
                 </div>
+                <div className="flex flex-col items-center gap-2">
+                    <h2 className="font-semibold">Featured Listings</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center">
+                        {listings.map((el) => {
+                            let parsedImages = [];
+
+                            if (typeof el.images === 'string') {
+
+                                parsedImages = el.images
+                                    .replace(/[{}]/g, '')
+                                    .split(',')
+                                    .map(url => url.trim());
+                            } else if (Array.isArray(el.images)) {
+                                parsedImages = el.images;
+                            }
+
+                            const imageSrc = parsedImages.length > 0 ? parsedImages[0] : "";
+
+                            return (
+                                <div key={el.id} className="border border-gray-300 rounded-lg p-2 w-4/5  md:w-full h-100 flex flex-col items-center gap-2">
+                                    {imageSrc ? (
+                                        <img
+                                            src={imageSrc}
+                                            className="w-full aspect-square object-cover rounded-lg"
+                                            alt={el.title}
+                                            onError={(e) => {
+                                                e.target.src = "/listing.jpg";
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center text-sm text-gray-500">
+                                            No Image Available
+                                        </div>
+                                    )}
+                                    <div className="flex flex-col gap-1 self-start">
+                                        <h3 className="text-lg font-semibold">{el.title}</h3>
+                                        <p className="text-sm text-gray-500">Host ID: {el.host_id}</p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+                <div className="flex flex-col items-center gap-2">
+                    <h2 className="font-semibold">How it Works</h2>
+                    <div>
+                        <h3>1. Create Your Profile</h3>
+                        <p>Sign up and choose your role. Register as a Tenant to search, save, and safely inquire about verified properties, or list as a Host to manage your properties and track client inquiries from a centralized dashboard.</p>
+                    </div>
+                    <div>
+                        <h3>2. Set Your Parameters</h3>
+                        <p>Use the responsive search framework to filter listings by critical metrics. Filter properties by city location (e.g., Lagos, Ibadan), layout type (e.g., apartment, duplex, studio), price caps, and required amenities.</p>
+                    </div>
+                    <div>
+                        <h3>3. Save and Monitor Assets</h3>
+                        <p>Toggle the star icon located in the top-right corner of any property listing card to save it to your profile. Track price updates, active availability status, and location pins directly from your personal dashboard.</p>
+                    </div>
+                    <div>
+                        <h3>4. Direct Inspection Booking</h3>
+                        <p>Submit formal inquiry requests directly through the property detail page interface. Your inquiries, including preferred inspection dates and direct contact details, route immediately to the verified host's dashboard for review.</p>
+                    </div>
+                </div>
+
             </main>
         </Layout>
     )
