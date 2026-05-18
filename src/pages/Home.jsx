@@ -1,12 +1,180 @@
+
 import Layout from "../Layout"
 import { useEffect, useState } from "react";
 import { dataService } from '../api/dataService';
+import { FaBath } from "react-icons/fa";
+import { FaBed } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+
 
 function Home() {
 
     const heroIMGs = ["/IMG1.jpg", "/IMG2.jpg", "/IMG3.jpg"];
     const [index, setIndex] = useState(0);
     const [listings, setListings] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const localStates = [
+        "Abia",
+        "Adamawa",
+        "Akwa Ibom",
+        "Anambra",
+        "Bauchi",
+        "Bayelsa",
+        "Benue",
+        "Borno",
+        "Cross River",
+        "Delta",
+        "Ebonyi",
+        "Edo",
+        "Ekiti",
+        "Enugu",
+        "Gombe",
+        "Imo",
+        "Jigawa",
+        "Kaduna",
+        "Kano",
+        "Katsina",
+        "Kebbi",
+        "Kogi",
+        "Kwara",
+        "Lagos",
+        "Nasarawa",
+        "Niger",
+        "Ogun",
+        "Ondo",
+        "Osun",
+        "Oyo",
+        "Plateau",
+        "Rivers",
+        "Sokoto",
+        "Taraba",
+        "Yobe",
+        "Zamfara"
+    ];
+    const localCities = [
+        "Aba",
+        "Abakaliki",
+        "Abeokuta",
+        "Aboh",
+        "Abuja",
+        "Ado Ekiti",
+        "Afikpo",
+        "Agbor",
+        "Aguata",
+        "Agulu",
+        "Ahoada",
+        "Akure",
+        "Ankpa",
+        "Asaba",
+        "Awka",
+        "Badagry",
+        "Bauchi",
+        "Beli",
+        "Benin City",
+        "Bida",
+        "Birnin Kebbi",
+        "Biu",
+        "Calabar",
+        "Damaturu",
+        "Daura",
+        "Dere",
+        "Dutse",
+        "Ede",
+        "Effurun",
+        "Eket",
+        "Enugu",
+        "Epe",
+        "Funtua",
+        "Gashua",
+        "Gboko",
+        "Gombe",
+        "Gusau",
+        "Hadejia",
+        "Ibadan",
+        "Idah",
+        "Ife",
+        "Ifon",
+        "Ijebu-Ode",
+        "Ikeja",
+        "Ikenne",
+        "Ikorodu",
+        "Ikot Ekpene",
+        "Ila Orangun",
+        "Ilesa",
+        "Ilorin",
+        "Inisa",
+        "Iseyin",
+        "Iwo",
+        "Jalingo",
+        "Jimeta",
+        "Jos",
+        "Kaduna",
+        "Kafanchan",
+        "Kano",
+        "Katsina",
+        "Keffi",
+        "Koko",
+        "Kontagora",
+        "Lafia",
+        "Lagos",
+        "Lokoja",
+        "Madalla",
+        "Maiduguri",
+        "Makurdi",
+        "Minna",
+        "Mubi",
+        "Nasarawa",
+        "New Bussa",
+        "Nnewi",
+        "Nningi",
+        "Nsukka",
+        "Obudu",
+        "Offa",
+        "Ogale",
+        "Ogbomosho",
+        "Ogoja",
+        "Okene",
+        "Okigwe",
+        "Okitipupa",
+        "Okrika",
+        "Ondo",
+        "Onitsha",
+        "Oron",
+        "Orlu",
+        "Oshogbo",
+        "Otite",
+        "Otukpo",
+        "Owerri",
+        "Owo",
+        "Oyo",
+        "Port Harcourt",
+        "Potiskum",
+        "Sagamu",
+        "Saki",
+        "Sapele",
+        "Sokoto",
+        "Suleja",
+        "Ugep",
+        "Umuahia",
+        "Uromi",
+        "Uyo",
+        "Warri",
+        "Wukari",
+        "Yenagoa",
+        "Yola",
+        "Zaria"
+    ];
+
+    const allCities = listings.map(el => el.location?.city).filter(Boolean);
+    const cityCounts = allCities.reduce((acc, city) => {
+        acc[city] = (acc[city] || 0) + 1;
+        return acc;
+    }, {});
+    const top6Cities = Object.entries(cityCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(entry => entry[0]);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -46,13 +214,18 @@ function Home() {
         console.log('Submitted Property Criteria:', payload);
     };
 
+
+
     useEffect(() => {
         dataService.getListings()
             .then((data) => {
-                setListings(data);
+                setListings(data || []);
             })
             .catch((err) => {
                 console.error("Error loading properties:", err);
+            })
+            .finally(() => {
+                setLoading(false);
             });
     }, []);
 
@@ -66,19 +239,45 @@ function Home() {
                         <h1 className="text-xl font-semibold">Find Your Next Home With Next Find</h1>
                         <h3 className="text-sm">Search verified listings, compare neighbourhoods, and save favourites</h3>
                         <div className="flex flex-col gap-1">
-                            <label htmlFor="location" className="text-sm font-medium text-gray-700">
-                                Location
+                            <label htmlFor="city" className="text-sm font-medium text-gray-700">
+                                City/Town
                             </label>
                             <input
-                                id="location"
-                                type="text"
-                                name="location"
-                                value={formData.location}
+                                list="cities"
+                                id="city"
+                                name="city"
+                                value={formData.city}
                                 onChange={handleChange}
                                 placeholder="e.g. Lagos, Ibadan"
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                             />
+                            <datalist id="cities">
+                                {localCities.map((city) => (
+                                    <option key={city} value={city} />
+                                ))}
+                            </datalist>
                         </div>
+                        <div className="flex flex-col gap-1">
+                            <label htmlFor="state" className="text-sm font-medium text-gray-700">
+                                State
+                            </label>
+                            <input
+                                list="states"
+                                id="state"
+                                type="text"
+                                name="state"
+                                value={formData.state}
+                                onChange={handleChange}
+                                placeholder="e.g. Lagos, Rivers"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                            />
+                            <datalist id="states">
+                                {localStates.map((state) => (
+                                    <option key={state} value={state} />
+                                ))}
+                            </datalist>
+                        </div>
+
 
                         <div className="flex flex-col gap-1">
                             <label htmlFor="type" className="text-sm font-medium text-gray-700">
@@ -159,6 +358,7 @@ function Home() {
                         <button
                             type="submit"
                             className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm transition-colors"
+
                         >
                             Search Properties
                         </button>
@@ -170,6 +370,15 @@ function Home() {
                     <h2 className="font-semibold">Featured Listings</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center">
                         {listings.map((el) => {
+
+                            if (loading) {
+                                return (
+                                    <Layout>
+                                        <div className="p-8 text-center text-gray-500">Loading listings...</div>
+                                    </Layout>
+                                );
+                            }
+
                             let parsedImages = [];
 
                             if (typeof el.images === 'string') {
@@ -185,15 +394,12 @@ function Home() {
                             const imageSrc = parsedImages.length > 0 ? parsedImages[0] : "";
 
                             return (
-                                <div key={el.id} className="border border-gray-300 rounded-lg p-2 w-4/5  md:w-full h-100 flex flex-col items-center gap-2">
+                                <div key={el.id} className=" relative border border-gray-300 rounded-lg p-2 w-4/5  md:w-full h-full flex flex-col items-center gap-4">
                                     {imageSrc ? (
                                         <img
                                             src={imageSrc}
                                             className="w-full aspect-square object-cover rounded-lg"
-                                            alt={el.title}
-                                            onError={(e) => {
-                                                e.target.src = "/listing.jpg";
-                                            }}
+                                            alt={el.title || "Property Image"}
                                         />
                                     ) : (
                                         <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center text-sm text-gray-500">
@@ -201,36 +407,86 @@ function Home() {
                                         </div>
                                     )}
                                     <div className="flex flex-col gap-1 self-start">
-                                        <h3 className="text-lg font-semibold">{el.title}</h3>
-                                        <p className="text-sm text-gray-500">Host ID: {el.host_id}</p>
+                                        <div className="flex flex-row gap-2">
+                                            <p className="text-lg font-bold">{el.title}</p>
+                                            <h3 className="text-primary w-fit text-xl">₦{el.price?.toLocaleString('en-US')}</h3>
+                                        </div>
+                                        <p className="text-gray-400">{el.location?.city}, {el.location?.state} state. Listed {(() => {
+                                            const standardizedStr = el.date_listed
+                                                .replace(' ', 'T')
+                                                .replace(/([+-]\d{2})$/, '$1:00');
+
+                                            const inputDate = new Date(standardizedStr);
+                                            const currentDate = new Date();
+
+                                            if (isNaN(inputDate.getTime())) return 'Invalid Date';
+
+                                            const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
+
+                                            if (diffInDays < 0) return 'In the future';
+                                            if (diffInDays === 0) return 'Today';
+                                            if (diffInDays === 1) return '1 day ago';
+
+                                            return `${diffInDays} days ago`;
+                                        })()}</p>
+
+                                        <div className="flex flex-row gap-2">
+                                            <div className="flex flex-row items-center gap-1">
+                                                <FaHome size={12} className="text-primary" />
+                                                <p >{el.type.charAt(0).toUpperCase() + el.type.slice(1)} for {el.listing_type}</p>
+                                            </div>
+                                            <div className="flex flex-row items-center gap-1">
+                                                <FaBed size={12} className="text-primary" />
+                                                <p>{el.beds} bd</p>
+                                            </div>
+                                            <div className="flex flex-row items-center gap-1">
+                                                <FaBath size={12} className="text-primary" />
+                                                <p >{el.baths} ba</p>
+                                            </div>
+
+                                        </div>
+                                        <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {el.host_id}</p>
+
                                     </div>
+                                    <button className="border border-gray-500 p-2 rounded-md bottom-2 right-2 absolute"><FaHeart size={16} className="text-primary" /></button>
                                 </div>
                             );
                         })}
                     </div>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                    <h2 className="font-semibold">How it Works</h2>
-                    <div>
+                <div className="flex flex-col items-center gap-6">
+                    <h2 className="font-semibold">How It Works</h2>
+                    <div className="flex flex-col items-center px-2 md:px-0 gap-4 text-center">
                         <h3>1. Create Your Profile</h3>
                         <p>Sign up and choose your role. Register as a Tenant to search, save, and safely inquire about verified properties, or list as a Host to manage your properties and track client inquiries from a centralized dashboard.</p>
                     </div>
-                    <div>
+                    <div className="flex flex-col items-center px-2 md:px-0 gap-4 text-center">
                         <h3>2. Set Your Parameters</h3>
                         <p>Use the responsive search framework to filter listings by critical metrics. Filter properties by city location (e.g., Lagos, Ibadan), layout type (e.g., apartment, duplex, studio), price caps, and required amenities.</p>
                     </div>
-                    <div>
+                    <div className="flex flex-col items-center px-2 md:px-0 gap-4 text-center">
                         <h3>3. Save and Monitor Assets</h3>
                         <p>Toggle the star icon located in the top-right corner of any property listing card to save it to your profile. Track price updates, active availability status, and location pins directly from your personal dashboard.</p>
                     </div>
-                    <div>
+                    <div className="flex flex-col items-center px-2 md:px-0 gap-4 text-center">
                         <h3>4. Direct Inspection Booking</h3>
                         <p>Submit formal inquiry requests directly through the property detail page interface. Your inquiries, including preferred inspection dates and direct contact details, route immediately to the verified host's dashboard for review.</p>
                     </div>
                 </div>
+                <div className="flex flex-col items-center gap-2">
+                    <h2>Popular Cities</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center">
+                        {top6Cities.map((el, index) => (
+                            <div key={index} className="flex flex-col items-baseline bg-linear-to-br from-white to-primary text-white font-semibold pt-8 pb-1 px-12 rounded-lg">
+                                <h2>{el}</h2>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
 
             </main>
-        </Layout>
+        </Layout >
     )
 }
 

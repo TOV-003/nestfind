@@ -8,15 +8,15 @@
   }
 
   h1 {
-    @apply text-3xl;
+    @apply text-3xl font-semibold;
   }
 
   h2 {
-    @apply text-2xl;
+    @apply text-2xl font-semibold;
   }
 
   h3 {
-    @apply text-xl;
+    @apply text-xl font-semibold;
   }
 }
 
@@ -26,6 +26,8 @@
   --color-success: #16A34A;
   --color-error: #DC2626;
   --color-warning: #D97706;
+  --color-gradient-start: #0D9488;
+  --color-gradient-end: #14B8A6;
 
   --animate-fade-in: fadeIn 1s ease-in-out forwards;
 
