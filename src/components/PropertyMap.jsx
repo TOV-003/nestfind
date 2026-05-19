@@ -2,115 +2,156 @@ import { useState, useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
-function PropertyMap({ address }) {
+function PropertyMap({ addresses = [] }) {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
-    const markerRef = useRef(null);
+    const markersRef = useRef([]);
 
-    const [position, setPosition] = useState(null);
+    const [positions, setPositions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
+    const prevAddressesRef = useRef('');
+
     useEffect(() => {
-        const geocode = async () => {
+        const serializedAddresses = JSON.stringify(addresses);
+        if (prevAddressesRef.current === serializedAddresses) {
+            return;
+        }
+        prevAddressesRef.current = serializedAddresses;
+
+        const geocodeAll = async () => {
+            if (!addresses || addresses.length === 0) {
+                setPositions([]);
+                setLoading(false);
+                setError(true);
+                return;
+            }
+
             try {
                 setLoading(true);
                 setError(false);
 
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`
-                );
+                const validPositions = [];
+                const uniqueAddresses = [...new Set(addresses)];
 
-                const data = await response.json();
+                for (const address of uniqueAddresses) {
+                    try {
+                        const response = await fetch(
+                            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&email=victortoba03@gmail.com`
+                        );
 
-                if (data && data.length > 0) {
-                    setPosition({
-                        latitude: parseFloat(data[0].lat),
-                        longitude: parseFloat(data[0].lon),
-                    });
+                        if (response.status === 429) {
+                            await new Promise((resolve) => setTimeout(resolve, 3000));
+                            continue;
+                        }
+
+                        if (!response.ok) {
+                            continue;
+                        }
+
+                        const data = await response.json();
+                        if (data && data.length > 0) {
+                            validPositions.push({
+                                address,
+                                latitude: parseFloat(data[0].lat),
+                                longitude: parseFloat(data[0].lon),
+                            });
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+
+                    await new Promise((resolve) => setTimeout(resolve, 1500));
+                }
+
+                if (validPositions.length > 0) {
+                    setPositions(validPositions);
                 } else {
                     setError(true);
                 }
             } catch (err) {
-                console.error('Geocoding error:', err);
+                console.error(err);
                 setError(true);
             } finally {
                 setLoading(false);
             }
         };
 
-        if (address) {
-            geocode();
-        } else {
-            function noop() {
-                setLoading(false);
-                setError(true);
-            }
+        geocodeAll();
+    }, [addresses]);
 
-            noop()
-        }
-    }, [address]);
     useEffect(() => {
-        if (!position || !mapContainerRef.current) return;
+        if (positions.length === 0 || !mapContainerRef.current) return;
 
         if (!mapRef.current) {
             mapRef.current = new maplibregl.Map({
                 container: mapContainerRef.current,
                 style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-                center: [position.longitude, position.latitude],
-                zoom: 15,
+                center: [positions[0].longitude, positions[0].latitude],
+                zoom: 12,
             });
 
             mapRef.current.addControl(new maplibregl.NavigationControl(), 'top-right');
-        } else {
-            mapRef.current.flyTo({
-                center: [position.longitude, position.latitude],
-                zoom: 15
-            });
         }
 
-        if (markerRef.current) {
-            markerRef.current.setLngLat([position.longitude, position.latitude]);
-        } else {
+        markersRef.current.forEach((marker) => marker.remove());
+        markersRef.current = [];
+
+        const bounds = new maplibregl.LngLatBounds();
+
+        positions.forEach((pos) => {
             const el = document.createElement('div');
             el.className = 'text-3xl';
             el.innerHTML = '📍';
             el.style.cursor = 'pointer';
+
             const popup = new maplibregl.Popup({
                 offset: 25,
-                focusAfterOpen: false
-            })
-                .setHTML(`<p style="margin:0;font-family:sans-serif;font-size:14px;">${address}</p>`);
-            markerRef.current = new maplibregl.Marker({ element: el })
-                .setLngLat([position.longitude, position.latitude])
+                focusAfterOpen: false,
+            }).setHTML(`<p style="margin:0;font-family:sans-serif;font-size:14px;color:#333;">${pos.address}</p>`);
+
+            const marker = new maplibregl.Marker({ element: el })
+                .setLngLat([pos.longitude, pos.latitude])
                 .setPopup(popup)
                 .addTo(mapRef.current);
-            markerRef.current.togglePopup();
+
+            markersRef.current.push(marker);
+            bounds.extend([pos.longitude, pos.latitude]);
+        });
+
+        if (positions.length === 1) {
+            mapRef.current.flyTo({
+                center: [positions[0].longitude, positions[0].latitude],
+                zoom: 15,
+            });
+        } else {
+            mapRef.current.fitBounds(bounds, {
+                padding: 50,
+                maxZoom: 15,
+            });
         }
+
         return () => {
-            if (!address) {
-                if (markerRef.current) {
-                    markerRef.current.remove();
-                    markerRef.current = null;
-                }
+            if (!addresses || addresses.length === 0) {
+                markersRef.current.forEach((marker) => marker.remove());
+                markersRef.current = [];
                 if (mapRef.current) {
                     mapRef.current.remove();
                     mapRef.current = null;
                 }
             }
         };
-    }, [position, address]);
+    }, [positions, addresses]);
 
     if (loading) {
-        return (
-            <div className="w-full h-full min-h-100 animate-pulse rounded bg-gray-200"></div>
-        );
+        return <div className="w-full h-full min-h-100 animate-pulse rounded bg-gray-200"></div>;
     }
 
-    if (error || !position) {
+    if (error || positions.length === 0) {
         return (
             <div className="flex h-full w-full min-h-100 items-center justify-center rounded bg-gray-100 text-gray-500 border border-gray-200">
-                Address not found
+                No addresses found
             </div>
         );
     }

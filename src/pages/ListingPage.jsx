@@ -185,7 +185,8 @@ function ListingPage() {
                         <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {listing.host_id}</p>
                     </div>
                     <div className="w-full min-h-100 border border-gray-200 rounded-lg overflow-hidden">
-                        <PropertyMap address={listing.location.Address} />
+                        {console.log(listing.location.Address)}
+                        <PropertyMap addresses={[listing.location.Address]} />
                     </div>
                 </div>
                 <div className="flex flex-col items-center gap-2 border border-gray-300 w-[85vw] xl:w-[70vw] p-4 rounded-lg">
