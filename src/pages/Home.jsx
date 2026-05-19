@@ -7,7 +7,7 @@ import { FaBath } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 function Home() {
@@ -401,33 +401,16 @@ function Home() {
                                 );
                             }
 
-                            let parsedImages = [];
-
-                            if (typeof el.images === 'string') {
-
-                                parsedImages = el.images
-                                    .replace(/[{}]/g, '')
-                                    .split(',')
-                                    .map(url => url.trim());
-                            } else if (Array.isArray(el.images)) {
-                                parsedImages = el.images;
-                            }
-
-                            const imageSrc = parsedImages.length > 0 ? parsedImages[0] : "";
-
                             return (
                                 <div key={el.id} className=" relative border border-gray-300 rounded-lg p-2 w-4/5  md:w-full h-full flex flex-col items-center gap-4">
-                                    {imageSrc ? (
+
+                                    <Link to={`/listings/${el.id}`}>
                                         <img
-                                            src={imageSrc}
-                                            className="w-full aspect-square object-cover rounded-lg"
+                                            src={el.images.slice(1, -1).split(',')[0]}
+                                            className="w-full aspect-square object-cover rounded-xl"
                                             alt={el.title || "Property Image"}
                                         />
-                                    ) : (
-                                        <div className="w-full h-48 bg-gray-200 rounded-t-lg flex items-center justify-center text-sm text-gray-500">
-                                            No Image Available
-                                        </div>
-                                    )}
+                                    </Link>
                                     <div className="flex flex-col gap-1 self-start">
                                         <div className="flex flex-row gap-2">
                                             <p className="text-lg font-bold">{el.title}</p>

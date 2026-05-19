@@ -6,6 +6,7 @@ import App from './App.jsx'
 import ErrorPage from './components/ErrorPage.jsx'
 import Home from './pages/Home.jsx'
 import Listings from './pages/Listings.jsx'
+import ListingPage from './pages/ListingPage.jsx'
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
         element: <Listings />,
         path: "/Listings"
       },
+      {
+        element: <ListingPage />,
+        path: "/Listings/:id"
+      }
 
     ],
   },

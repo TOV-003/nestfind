@@ -45,8 +45,9 @@ export const dataService = {
     // GET: Fetch a single user profile from the database matching an ID
     getUserById: async (userId) => {
         const baseUrl = USERS_API_URL.split('?')[0];
-        const response = await supabaseApi.get(`${baseUrl}?id=eq.${userId}&select=*`);
-        return response.data[0]; // Returns the single object match out of the array response
+        const queryUrl = `${baseUrl}?id=eq.${userId}&select=*`;
+        const response = await supabaseApi.get(queryUrl);
+        return response?.data[0];
     },
 
     // POST: Insert a new user registration profile record
