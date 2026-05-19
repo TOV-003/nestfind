@@ -22,7 +22,7 @@ function Login() {
 
     return (
         <Layout>
-            <main className="my-36 md:w-3/4 flex flex-col items-center mx-auto gap-8 ">
+            <main className="my-36 md:w-3/4 flex flex-col items-center mx-auto gap-8 px-2">
                 <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0 w-full">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
                         <h1 className="text-xl font-semibold">Login</h1>

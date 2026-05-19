@@ -658,8 +658,8 @@ function Listings() {
                                         name="beds"
                                         value={formData.beds}
                                         onChange={handleChange}
-                                        min="0"
-                                        placeholder="0"
+                                        min="1"
+                                        placeholder="1"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                                     />
                                 </div>
@@ -673,9 +673,8 @@ function Listings() {
                                         name="baths"
                                         value={formData.baths}
                                         onChange={handleChange}
-                                        min="0"
-                                        step="0.5"
-                                        placeholder="0"
+                                        min="1"
+                                        placeholder="1"
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                                     />
                                 </div>

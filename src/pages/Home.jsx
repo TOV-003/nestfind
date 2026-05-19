@@ -224,6 +224,8 @@ function Home() {
             })
         );
 
+
+
         console.log('Submitted Property Criteria:', filteredPayload);
         navigate('/listings', { state: { criteria: filteredPayload } });
     }
