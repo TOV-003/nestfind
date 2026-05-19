@@ -7,6 +7,8 @@ import ErrorPage from './components/ErrorPage.jsx'
 import Home from './pages/Home.jsx'
 import Listings from './pages/Listings.jsx'
 import ListingPage from './pages/ListingPage.jsx'
+import Register from './pages/Register.jsx'
+import Login from './pages/Login.jsx'
 
 const router = createBrowserRouter([
   {
@@ -25,6 +27,14 @@ const router = createBrowserRouter([
       {
         element: <ListingPage />,
         path: "/Listings/:id"
+      },
+      {
+        element: <Register />,
+        path: "/Register"
+      },
+      {
+        element: <Login />,
+        path: "/Login"
       }
 
     ],

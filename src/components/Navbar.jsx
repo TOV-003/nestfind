@@ -1,8 +1,8 @@
-import { NavLink } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 function Navbar() {
     const links = [
         { title: "Home", path: "/" },
-        { title: "Listings", path: "/Listings" }
+        { title: "Listings", path: "/Listings" },
     ]
     return (
         <header>
@@ -17,8 +17,13 @@ function Navbar() {
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
-                    <button className="bg-primary px-2 py-1 md:px-4 md:py-2 text-white rounded-lg cursor-pointer text-sm md:text-base">Log In</button>
-                    <button className="border  border-primary px-2 py-1 md:px-4 md:py-2 text-primary rounded-lg cursor-pointer text-sm md:text-base">Sign Up</button>
+                    <Link to="/Login">
+                        <button className="bg-primary px-2 py-1 md:px-4 md:py-2 text-white rounded-lg cursor-pointer text-sm md:text-base">Log In</button>
+                    </Link>
+                    <Link to="/Register">
+                        <button className="border  border-primary px-2 py-1 md:px-4 md:py-2 text-primary rounded-lg cursor-pointer text-sm md:text-base">Sign Up</button>
+                    </Link>
+
                 </div>
             </nav>
         </header>
