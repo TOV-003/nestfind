@@ -391,7 +391,7 @@ function Home() {
                 <div className="flex flex-col items-center gap-2">
                     <h2 className="font-semibold">Featured Listings</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center">
-                        {listings.map((el) => {
+                        {listings.slice(0, 9).map((el) => {
 
                             if (loading) {
                                 return (

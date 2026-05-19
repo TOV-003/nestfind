@@ -16,6 +16,7 @@ function Listings() {
     const location = useLocation();
     const navigate = useNavigate();
     const [activeFilters, setActiveFilters] = useState(null);
+    const [page, setPage] = useState(1);
 
     const localStates = [
         "Abia",
@@ -347,6 +348,10 @@ function Listings() {
         navigate('/listings', { state: null }, { replace: true });
     }
 
+    function handleLoadMore() {
+        setPage((prev) => prev + 1);
+    }
+
     useEffect(() => {
         dataService.getListings()
             .then((data) => {
@@ -627,101 +632,112 @@ function Listings() {
 
                         </form>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center">
-                        {listings.map((el) => {
+                    <div className="flex-col flex items-center gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center">
+                            {listings.slice(0, page * 9).map((el) => {
 
-                            if (loading) {
+                                if (loading) {
+                                    return (
+                                        <Layout>
+                                            <div className="p-8 text-center text-gray-500">Loading listings...</div>
+                                        </Layout>
+                                    );
+                                }
+
+                                let parsedImages = [];
+
+                                if (typeof el.images === 'string') {
+
+                                    parsedImages = el.images
+                                        .replace(/[{}]/g, '')
+                                        .split(',')
+                                        .map(url => url.trim());
+                                } else if (Array.isArray(el.images)) {
+                                    parsedImages = el.images;
+                                }
+
+                                const imageSrc = parsedImages.length > 0 ? parsedImages[0] : "";
+
                                 return (
-                                    <Layout>
-                                        <div className="p-8 text-center text-gray-500">Loading listings...</div>
-                                    </Layout>
-                                );
-                            }
-
-                            let parsedImages = [];
-
-                            if (typeof el.images === 'string') {
-
-                                parsedImages = el.images
-                                    .replace(/[{}]/g, '')
-                                    .split(',')
-                                    .map(url => url.trim());
-                            } else if (Array.isArray(el.images)) {
-                                parsedImages = el.images;
-                            }
-
-                            const imageSrc = parsedImages.length > 0 ? parsedImages[0] : "";
-
-                            return (
-                                <div key={el.id} className=" relative border border-gray-300 rounded-xl p-2 w-4/5  md:w-full h-full flex flex-col items-center gap-4">
-                                    {imageSrc ? (
-                                        <img
-                                            src={imageSrc}
-                                            className="w-full aspect-square object-cover rounded-xl"
-                                            alt={el.title || "Property Image"}
-                                        />
-                                    ) : (
-                                        <div className="w-full h-48 bg-gray-200 rounded-t-xl flex items-center justify-center text-sm text-gray-500">
-                                            No Image Available
-                                        </div>
-                                    )}
-                                    <div className="flex flex-col gap-1 self-start">
-                                        <div className="flex flex-row gap-2">
-                                            <p className="text-xl font-bold">{el.title}</p>
-                                            <h3 className="text-primary w-fit text-xl">₦{el.price?.toLocaleString('en-US')}{el.listing_type === 'rent' ? ' per year' : el.listing_type === 'shortlet' ? ' per day' : ''}</h3>
-                                        </div>
-                                        <p className="text-gray-400">{el.location?.city}, {el.location?.state} state. Listed {(() => {
-                                            const standardizedStr = el.date_listed
-                                                .replace(' ', 'T')
-                                                .replace(/([+-]\d{2})$/, '$1:00');
-
-                                            const inputDate = new Date(standardizedStr);
-                                            const currentDate = new Date();
-
-                                            if (isNaN(inputDate.getTime())) return 'Invalid Date';
-
-                                            const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
-
-                                            if (diffInDays < 0) return 'In the future';
-                                            if (diffInDays === 0) return 'Today';
-                                            if (diffInDays === 1) return '1 day ago';
-
-                                            return `${diffInDays} days ago`;
-                                        })()}</p>
-
-                                        <div className="flex flex-row gap-2">
-                                            <div className="flex flex-row items-center gap-1">
-                                                <FaHome size={12} className="text-primary" />
-                                                <p>{el.type.charAt(0).toUpperCase() + el.type.slice(1)} for {el.listing_type}</p>
+                                    <div key={el.id} className=" relative border border-gray-300 rounded-xl p-2 w-4/5  md:w-full h-full flex flex-col items-center gap-4">
+                                        {imageSrc ? (
+                                            <img
+                                                src={imageSrc}
+                                                className="w-full aspect-square object-cover rounded-xl"
+                                                alt={el.title || "Property Image"}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-48 bg-gray-200 rounded-t-xl flex items-center justify-center text-sm text-gray-500">
+                                                No Image Available
                                             </div>
-                                            <div className="flex flex-row items-center gap-1">
-                                                <FaBed size={12} className="text-primary" />
-                                                <p>{el.beds} bd</p>
+                                        )}
+                                        <div className="flex flex-col gap-1 self-start">
+                                            <div className="flex flex-row gap-2">
+                                                <p className="text-xl font-bold">{el.title}</p>
+                                                <h3 className="text-primary w-fit text-xl">₦{el.price?.toLocaleString('en-US')}{el.listing_type === 'rent' ? ' per year' : el.listing_type === 'shortlet' ? ' per day' : ''}</h3>
                                             </div>
-                                            <div className="flex flex-row items-center gap-1">
-                                                <FaBath size={12} className="text-primary" />
-                                                <p >{el.baths} ba</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-1">
-                                            {Object.entries(el.amenities)
-                                                .filter(([, value]) => value === true)
-                                                .map(([key], index, array) => (
-                                                    <Fragment key={key}>
-                                                        <p className="text-sm text-gray-500">{key}</p>
-                                                        {index < array.length - 1 && <span className="text-gray-400">|</span>}
-                                                    </Fragment>
-                                                ))
-                                            }
-                                        </div>
-                                        <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {el.host_id}</p>
+                                            <p className="text-gray-400">{el.location?.city}, {el.location?.state} state. Listed {(() => {
+                                                const standardizedStr = el.date_listed
+                                                    .replace(' ', 'T')
+                                                    .replace(/([+-]\d{2})$/, '$1:00');
 
+                                                const inputDate = new Date(standardizedStr);
+                                                const currentDate = new Date();
+
+                                                if (isNaN(inputDate.getTime())) return 'Invalid Date';
+
+                                                const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
+
+                                                if (diffInDays < 0) return 'In the future';
+                                                if (diffInDays === 0) return 'Today';
+                                                if (diffInDays === 1) return '1 day ago';
+
+                                                return `${diffInDays} days ago`;
+                                            })()}</p>
+
+                                            <div className="flex flex-row gap-2">
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaHome size={12} className="text-primary" />
+                                                    <p>{el.type.charAt(0).toUpperCase() + el.type.slice(1)} for {el.listing_type}</p>
+                                                </div>
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaBed size={12} className="text-primary" />
+                                                    <p>{el.beds} bd</p>
+                                                </div>
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaBath size={12} className="text-primary" />
+                                                    <p >{el.baths} ba</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-wrap items-center gap-1">
+                                                {Object.entries(el.amenities)
+                                                    .filter(([, value]) => value === true)
+                                                    .map(([key], index, array) => (
+                                                        <Fragment key={key}>
+                                                            <p className="text-sm text-gray-500">{key}</p>
+                                                            {index < array.length - 1 && <span className="text-gray-400">|</span>}
+                                                        </Fragment>
+                                                    ))
+                                                }
+                                            </div>
+                                            <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {el.host_id}</p>
+
+                                        </div>
+                                        <button className="border border-gray-500 p-2 rounded-md bottom-2 right-2 absolute"><FaHeart size={16} className="text-primary" /></button>
                                     </div>
-                                    <button className="border border-gray-500 p-2 rounded-md bottom-2 right-2 absolute"><FaHeart size={16} className="text-primary" /></button>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
+                        {listings.length > page * 9 && (
+                            <button
+                                className="bg-primary text-white px-4 py-2 w-fit rounded-lg cursor-pointer"
+                                onClick={handleLoadMore}
+                            >
+                                Load More
+                            </button>
+                        )}
                     </div>
+
                 </div>
 
             </main>
