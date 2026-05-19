@@ -2,10 +2,12 @@
 import Layout from "../Layout"
 import { useEffect, useState } from "react";
 import { dataService } from '../api/dataService';
+import { Fragment } from "react";
 import { FaBath } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 
 function Home() {
@@ -29,6 +31,7 @@ function Home() {
         "Edo",
         "Ekiti",
         "Enugu",
+        "FCT",
         "Gombe",
         "Imo",
         "Jigawa",
@@ -176,6 +179,8 @@ function Home() {
         .slice(0, 6)
         .map(entry => entry[0]);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const timer = setInterval(() => {
             setIndex((prev) => (prev + 1) % 3)
@@ -185,7 +190,8 @@ function Home() {
 
     const [formData, setFormData] = useState({
         location: '',
-        type: 'house',
+        type: '',
+        listing_type: '',
         minPrice: '',
         maxPrice: '',
         beds: '',
@@ -200,20 +206,24 @@ function Home() {
         }));
     };
 
-    const handleSubmit = (event) => {
+    async function handleSubmit(event) {
         event.preventDefault();
 
         const payload = {
             ...formData,
-            minPrice: formData.minPrice ? Number(formData.minPrice) : null,
             maxPrice: formData.maxPrice ? Number(formData.maxPrice) : null,
             beds: formData.beds ? Number(formData.beds) : null,
             baths: formData.baths ? Number(formData.baths) : null,
+            listing_type: formData.listing_type,
+            type: formData.type,
+            state: formData.state,
+            city: formData.city,
+
         };
 
         console.log('Submitted Property Criteria:', payload);
-    };
-
+        navigate('/listings', { state: { criteria: payload } });
+    }
 
 
     useEffect(() => {
@@ -231,10 +241,11 @@ function Home() {
 
 
 
+
     return (
         <Layout>
             <main className="my-12 md:w-3/4 flex flex-col items-center mx-auto gap-8">
-                <div className="flex md:flex-row flex-col items-center md:justify-center gap-4 mx-4 md:mx-0">
+                <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
                         <h1 className="text-xl font-semibold">Find Your Next Home With Next Find</h1>
                         <h3 className="text-sm">Search verified listings, compare neighbourhoods, and save favourites</h3>
@@ -298,18 +309,9 @@ function Home() {
                             </select>
                         </div>
 
-                        <div className="flex flex-col gap-1">
-                            <span className="text-sm font-medium text-gray-700">Price Range</span>
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    name="minPrice"
-                                    value={formData.minPrice}
-                                    onChange={handleChange}
-                                    placeholder="Min Price"
-                                    min="0"
-                                    className="w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                />
+                        <div className="flex gap-1">
+                            <div className="flex gap-2 flex-col w-1/2">
+                                <span className="text-sm font-medium text-gray-700">Max Price</span>
                                 <input
                                     type="number"
                                     name="maxPrice"
@@ -317,8 +319,25 @@ function Home() {
                                     onChange={handleChange}
                                     placeholder="Max Price"
                                     min="0"
-                                    className="w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                                 />
+                            </div>
+
+                            <div className="flex gap-2 flex-col w-1/2">
+                                <label htmlFor="type" className="text-sm font-medium text-gray-700">
+                                    Listing Type
+                                </label>
+                                <select
+                                    id="listing_type"
+                                    name="listing_type"
+                                    value={formData.listing_type}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                >
+                                    <option value="rent">Rent</option>
+                                    <option value="sale">Sale</option>
+                                    <option value="shortlet">Short Let</option>
+                                </select>
                             </div>
                         </div>
                         <div className="flex gap-2">
@@ -364,11 +383,11 @@ function Home() {
                         </button>
 
                     </form>
-                    <img key={index} src={heroIMGs[index]} className="w-96 md:w-120 rounded-lg animate-fade-in" alt="Interior Image" />
+                    <img key={index} src={heroIMGs[index]} className="w-96  lg:w-120 rounded-lg animate-fade-in" alt="Interior Image" />
                 </div>
                 <div className="flex flex-col items-center gap-2">
                     <h2 className="font-semibold">Featured Listings</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center">
                         {listings.map((el) => {
 
                             if (loading) {
@@ -409,7 +428,7 @@ function Home() {
                                     <div className="flex flex-col gap-1 self-start">
                                         <div className="flex flex-row gap-2">
                                             <p className="text-lg font-bold">{el.title}</p>
-                                            <h3 className="text-primary w-fit text-xl">₦{el.price?.toLocaleString('en-US')}</h3>
+                                            <h3 className="text-primary w-fit text-xl">₦{el.price?.toLocaleString('en-US')}{el.listing_type === 'rent' ? ' per year' : el.listing_type === 'shortlet' ? ' per day' : ''}</h3>
                                         </div>
                                         <p className="text-gray-400">{el.location?.city}, {el.location?.state} state. Listed {(() => {
                                             const standardizedStr = el.date_listed
@@ -443,7 +462,17 @@ function Home() {
                                                 <FaBath size={12} className="text-primary" />
                                                 <p >{el.baths} ba</p>
                                             </div>
-
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-1">
+                                            {Object.entries(el.amenities)
+                                                .filter(([, value]) => value === true)
+                                                .map(([key], index, array) => (
+                                                    <Fragment key={key}>
+                                                        <p className="text-sm text-gray-500">{key}</p>
+                                                        {index < array.length - 1 && <span className="text-gray-400">|</span>}
+                                                    </Fragment>
+                                                ))
+                                            }
                                         </div>
                                         <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {el.host_id}</p>
 
