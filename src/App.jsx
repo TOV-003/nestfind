@@ -1,5 +1,6 @@
 import { Toaster } from "react-hot-toast"
 import { Outlet } from "react-router-dom"
+import ScrollToTop from "./components/ScrollToTop"
 
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <Toaster position="top-right" reverseOrder={false} />
       <Outlet />
     </>
