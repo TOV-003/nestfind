@@ -4,6 +4,7 @@ import { useEffect, useState, Fragment } from "react";
 import Layout from "../Layout";
 import { FaHome, FaBed, FaBath, FaHeart, FaWifi, FaCar, FaRing, FaGasPump, FaShieldAlt, FaDumbbell, FaChair, FaPencilRuler } from "react-icons/fa";
 import ImageCarousel from "../components/ImageCarousel";
+import toast from "react-hot-toast";
 
 function ListingPage() {
     const { id } = useParams();
@@ -22,6 +23,7 @@ function ListingPage() {
             .then((data) => {
                 const allListings = data || [];
                 const specificListing = allListings.find((item) => item.id === id);
+                toast.success("Loaded Listing!");
                 setListing(specificListing || null);
                 setSimilar(allListings.filter((item) => specificListing?.location.city !== item.location.city && item.id !== id));
             })
@@ -51,7 +53,91 @@ function ListingPage() {
     if (loading) {
         return (
             <Layout>
-                <div className="p-8 text-center text-gray-500">Loading listing...</div>
+                <main className="flex flex-col items-center p-4 my-12 mx-auto gap-4">
+                    <div className="w-full aspect-video bg-gray-200 rounded-2xl animate-pulse"></div>
+
+                    <div className="flex flex-col items-center xl:flex-row justify-center w-full lg:w-[70vw] gap-4">
+                        <div className="flex flex-col items-start flex-1 p-4 gap-4 w-full">
+                            <div className="h-6 bg-gray-200 rounded animate-pulse w-32"></div>
+                            <div className="h-6 bg-gray-200 rounded animate-pulse w-full"></div>
+                            <div className="h-6 bg-gray-200 rounded animate-pulse w-40"></div>
+                            <div className="h-8 bg-gray-200 rounded animate-pulse w-48"></div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/3"></div>
+                            <div className="flex flex-row gap-4">
+                                <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+                                <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+                                <div className="h-4 bg-gray-200 rounded animate-pulse w-24"></div>
+                            </div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/3"></div>
+                        </div>
+                        <div className="w-full flex-1 h-64 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-2 border border-gray-300 w-[85vw] xl:w-[70vw] p-4 rounded-lg">
+                        <div className="h-6 bg-gray-200 rounded animate-pulse w-32 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3"></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 place-items-center w-[70vw] gap-4">
+                        <div className="flex flex-col items-center justify-center gap-2 border border-gray-300 w-full h-full p-4 rounded-lg">
+                            <div className="h-6 bg-gray-200 rounded animate-pulse w-20 mb-3"></div>
+                            <div className="flex flex-wrap px-4 justify-center items-center gap-4">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-4 items-center border border-gray-300 px-4 py-4 rounded-lg flex-1 w-full">
+                            <div className="h-6 bg-gray-200 rounded animate-pulse w-16 mb-2"></div>
+                            <div className="w-full aspect-square bg-gray-200 rounded-lg animate-pulse mb-2"></div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-32 mb-2"></div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-40 mb-2"></div>
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-24 mb-4"></div>
+                            <div className="h-10 bg-gray-200 rounded animate-pulse w-32"></div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-4 w-full">
+                        <div className="h-6 bg-gray-200 rounded animate-pulse w-32"></div>
+                        <div className="w-[80vw] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-4">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="relative border border-gray-300 rounded-xl p-2 w-4/5 md:w-full flex flex-col gap-4">
+                                    <div className="w-full aspect-square bg-gray-200 rounded-xl animate-pulse"></div>
+
+                                    <div className="flex flex-col gap-3 px-2 w-full">
+                                        <div className="flex flex-row gap-2">
+                                            <div className="h-6 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                            <div className="h-6 bg-gray-200 rounded animate-pulse w-1/3"></div>
+                                        </div>
+
+                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
+
+                                        <div className="flex flex-row gap-2">
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2">
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                                        </div>
+
+                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                                    </div>
+
+                                    <div className="absolute bottom-2 right-2 bg-gray-200 w-10 h-10 rounded-md animate-pulse"></div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </main>
             </Layout>
         );
     }
@@ -135,14 +221,7 @@ function ListingPage() {
                 <div className="flex flex-col items-center gap-2">
                     <h2>Similar Properties</h2>
                     <div className="w-[80vw] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-2">
-                        {similar.slice(0, 3).map((el, index) => {
-                            if (loading) {
-                                return (
-                                    <Layout key={el.id || index}>
-                                        <div className="p-8 text-center text-gray-500">Loading listings...</div>
-                                    </Layout>
-                                );
-                            }
+                        {similar.slice(0, 3).map((el) => {
 
 
 

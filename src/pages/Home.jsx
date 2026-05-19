@@ -395,9 +395,36 @@ function Home() {
 
                             if (loading) {
                                 return (
-                                    <Layout>
-                                        <div className="p-8 text-center text-gray-500">Loading listings...</div>
-                                    </Layout>
+                                    <div className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 animate-pulse">
+                                        <div className="w-full aspect-square bg-gray-300 rounded-xl"></div>
+
+                                        <div className="flex flex-col gap-1 self-start w-full">
+                                            <div className="flex flex-row gap-2 mb-2">
+                                                <div className="h-6 bg-gray-300 rounded w-3/4"></div>
+                                                <div className="h-6 bg-gray-300 rounded w-1/4"></div>
+                                            </div>
+
+                                            <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
+
+                                            <div className="flex flex-row gap-2 mb-2">
+                                                <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+                                                <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+                                                <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+                                            </div>
+
+                                            <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+
+                                            <div className="flex flex-row gap-2">
+                                                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+                                                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+                                                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+                                            </div>
+
+                                            <div className="h-4 bg-gray-300 rounded w-1/3 mt-2"></div>
+                                        </div>
+
+                                        <div className="border border-gray-500 p-2 rounded-md bottom-2 right-2 absolute bg-gray-300 w-10 h-10"></div>
+                                    </div>
                                 );
                             }
 

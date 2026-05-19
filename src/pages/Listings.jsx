@@ -7,6 +7,7 @@ import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 
@@ -407,6 +408,7 @@ function Listings() {
                         return true;
                     });
                 }
+                toast.success("Loaded Listings!");
                 setListings(allListings);
             })
             .catch((err) => {
@@ -420,7 +422,76 @@ function Listings() {
     if (loading) {
         return (
             <Layout>
-                <div className="p-8 text-center text-gray-500">Loading listings...</div>
+                <div className="flex flex-col xl:flex-row xl:justify-center items-center xl:items-start gap-2 w-full">
+                    <div className="flex flex-col h-full items-start gap-2 w-fit md:w-[60vw] xl:w-fit xl:pl-12 xl:pr-2 pl-2 pr-2">
+                        <div className="h-6 bg-gray-200 rounded animate-pulse w-24 mb-2"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-48 mb-4"></div>
+
+                        <form className="flex flex-col md:flex-wrap xl:flex-col gap-4 w-full">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <div key={i} className="flex flex-col gap-1">
+                                    <div className="h-4 bg-gray-200 rounded animate-pulse w-20 mb-2"></div>
+                                    <div className="h-10 bg-gray-200 rounded animate-pulse w-full"></div>
+                                </div>
+                            ))}
+
+                            <div className="grid grid-cols-2 gap-4">
+                                {[1, 2, 3, 4].map((i) => (
+                                    <div key={i} className="h-5 bg-gray-200 rounded animate-pulse"></div>
+                                ))}
+                            </div>
+
+                            <div className="h-10 bg-gray-200 rounded animate-pulse w-full mt-2"></div>
+                        </form>
+                    </div>
+
+                    <div className="flex-col flex items-center gap-8">
+                        <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
+                            <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
+                            <div className="flex flex-row gap-4">
+                                <div className="h-4 bg-gray-200 rounded animate-pulse w-12"></div>
+                                <div className="h-10 bg-gray-200 rounded animate-pulse w-40"></div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center w-full">
+                            {[1, 2, 3, 4, 5, 6].map((i) => (
+                                <div key={i} className="relative border border-gray-300 rounded-xl p-2 w-4/5 md:w-full flex flex-col gap-4">
+                                    <div className="w-full aspect-square bg-gray-200 rounded-xl animate-pulse"></div>
+
+                                    <div className="flex flex-col gap-3 px-2 w-full">
+                                        <div className="flex flex-row gap-2">
+                                            <div className="h-6 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                            <div className="h-6 bg-gray-200 rounded animate-pulse w-1/3"></div>
+                                        </div>
+
+                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
+
+                                        <div className="flex flex-row gap-2">
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
+                                        </div>
+
+                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3"></div>
+
+                                        <div className="flex flex-wrap gap-2">
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
+                                        </div>
+
+                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                                    </div>
+
+                                    <div className="absolute bottom-2 right-2 bg-gray-200 w-10 h-10 rounded-md animate-pulse"></div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="h-10 bg-gray-200 rounded animate-pulse w-32"></div>
+                    </div>
+                </div>
             </Layout>
         );
     }
@@ -666,16 +737,7 @@ function Listings() {
                                     sortedListings.sort((a, b) => new Date(a.date_listed) - new Date(b.date_listed));
                                 }
 
-                                return sortedListings.slice(0, page * 9).map((el, index) => {
-                                    if (loading) {
-                                        return (
-                                            <Layout key={el.id || index}>
-                                                <div className="p-8 text-center text-gray-500">Loading listings...</div>
-                                            </Layout>
-                                        );
-                                    }
-
-
+                                return sortedListings.slice(0, page * 9).map((el) => {
 
                                     const listingLocation = typeof el.location === 'string' ? JSON.parse(el.location) : el.location;
                                     const listingAmenities = typeof el.amenities === 'string' ? JSON.parse(el.amenities) : el.amenities;
