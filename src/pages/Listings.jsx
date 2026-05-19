@@ -6,7 +6,7 @@ import { FaBath } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 
@@ -14,6 +14,8 @@ function Listings() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const location = useLocation();
+    const navigate = useNavigate();
+    const [activeFilters, setActiveFilters] = useState(null);
 
     const localStates = [
         "Abia",
@@ -189,6 +191,62 @@ function Listings() {
 
     });
 
+
+    useEffect(() => {
+
+        function applyFiltersFromState() {
+            if (location.state?.criteria) {
+                const criteria = location.state.criteria;
+                setActiveFilters(location.state?.criteria);
+                setFormData((prev) => ({
+                    ...prev,
+                    city: criteria.city || '',
+                    state: criteria.state || '',
+                    type: criteria.type || '',
+                    listing_type: criteria.listing_type || '',
+                    maxPrice: criteria.maxPrice || '',
+                    beds: criteria.beds || '',
+                    baths: criteria.baths || '',
+                    amenities: {
+                        wifi: criteria.amenities?.wifi || false,
+                        parking: criteria.amenities?.parking || false,
+                        pool: criteria.amenities?.pool || false,
+                        generator: criteria.amenities?.generator || false,
+                        security: criteria.amenities?.security || false,
+                        gym: criteria.amenities?.gym || false,
+                        furnished: criteria.amenities?.furnished || false
+                    }
+                }));
+            }
+            else {
+                setActiveFilters(null);
+                setFormData({
+                    location: '',
+                    type: '',
+                    listing_type: '',
+                    minPrice: '',
+                    maxPrice: '',
+                    beds: '',
+                    baths: '',
+                    city: '',
+                    state: '',
+                    amenities: {
+                        wifi: false,
+                        parking: false,
+                        pool: false,
+                        generator: false,
+                        security: false,
+                        gym: false,
+                        furnished: false
+                    }
+                });
+            }
+        }
+        if (location.state?.criteria) {
+            applyFiltersFromState();
+        }
+    }, [location.state?.criteria]);
+
     const handleChange = (event) => {
         const { name, value, type, checked } = event.target;
 
@@ -208,19 +266,86 @@ function Listings() {
         }
     };
 
-    const handleSubmit = (event) => {
+    async function handleSubmit(event) {
         event.preventDefault();
 
-        const payload = {
+        const activeAmenities = Object.fromEntries(
+            Object.entries(formData.amenities).filter(([, checked]) => checked === true)
+        );
+
+        const rawPayload = {
             ...formData,
-            minPrice: formData.minPrice ? Number(formData.minPrice) : null,
             maxPrice: formData.maxPrice ? Number(formData.maxPrice) : null,
             beds: formData.beds ? Number(formData.beds) : null,
             baths: formData.baths ? Number(formData.baths) : null,
+            listing_type: formData.listing_type,
+            type: formData.type,
+            state: formData.state,
+            city: formData.city,
+            amenities: Object.keys(activeAmenities).length > 0 ? activeAmenities : null,
         };
 
-        console.log('Submitted Property Criteria:', payload);
+        const filteredPayload = Object.fromEntries(
+            Object.entries(rawPayload).filter(([, value]) => {
+                return value !== null && value !== undefined && value !== '' && value !== 'all';
+            })
+        );
+
+        console.log('Submitted Property Criteria:', filteredPayload);
+        navigate('/listings', { state: { criteria: filteredPayload } });
+    }
+
+    function handleRemoveFilter(filterKey) {
+        const updatedFilters = { ...activeFilters, [filterKey]: null };
+        if (filterKey === 'city' || filterKey === 'state') updatedFilters[filterKey] = '';
+
+        setActiveFilters(updatedFilters);
+        navigate('/listings', { state: { criteria: updatedFilters } }, { replace: true });
     };
+
+    function handleRemoveAmenity(amenityKey) {
+        if (!activeFilters?.amenities) return;
+
+        const updatedAmenities = { ...activeFilters.amenities };
+        delete updatedAmenities[amenityKey];
+
+        const hasRemainingAmenities = Object.keys(updatedAmenities).length > 0;
+
+        const updatedFilters = {
+            ...activeFilters,
+            amenities: hasRemainingAmenities ? updatedAmenities : null
+        };
+
+        setActiveFilters(updatedFilters);
+        navigate('/listings', { state: { criteria: updatedFilters } }, { replace: true });
+    }
+
+    function handleClearAllFilters() {
+        setActiveFilters(null);
+
+        setFormData({
+            location: '',
+            type: '',
+            listing_type: '',
+            minPrice: '',
+            maxPrice: '',
+            beds: '',
+            baths: '',
+            city: '',
+            state: '',
+            amenities: {
+                wifi: false,
+                parking: false,
+                pool: false,
+                generator: false,
+                security: false,
+                gym: false,
+                furnished: false
+            }
+        });
+
+        navigate('/listings', { state: null }, { replace: true });
+    }
 
     useEffect(() => {
         dataService.getListings()
@@ -251,6 +376,22 @@ function Listings() {
                         if (filteredCriteria.maxPrice && item.price > filteredCriteria.maxPrice) {
                             return false;
                         }
+                        if (filteredCriteria.amenities) {
+                            const itemAmenities = typeof item.amenities === 'string'
+                                ? JSON.parse(item.amenities)
+                                : item.amenities;
+
+                            const matchesAllChecked = Object.keys(filteredCriteria.amenities).every((amenityKey) => {
+                                const propertyHasAmenity = Object.entries(itemAmenities || {}).some(
+                                    ([key, val]) => key.toLowerCase() === amenityKey.toLowerCase() && val === true
+                                );
+                                return propertyHasAmenity;
+                            });
+
+                            if (!matchesAllChecked) {
+                                return false;
+                            }
+                        }
 
                         return true;
                     });
@@ -280,7 +421,61 @@ function Listings() {
                     <div className="flex flex-col h-full items-start gap-2 w-fit md:w-[60vw] xl:w-fit xl:pl-12 xl:pr-2 pl-2 pr-2">
                         <h3 className="text-xl font-bold">Filters</h3>
                         <p className="text-sm text-gray-400">Refine your search bto find the perfect home.</p>
-                        <div>APPLIED FILTERS</div>
+                        <div>APPLIED FILTERS:</div>
+                        {activeFilters && Object.entries(activeFilters).some(([, val]) => val !== null && val !== '') && (
+                            <div className="flex flex-wrap items-center gap-2 my-4 p-3 bg-gray-50 rounded-lg border border-gray-200 w-full">
+                                <span className="text-sm font-semibold text-gray-600 mr-2">Active Filters:</span>
+
+                                {Object.entries(activeFilters).map(([key, value]) => {
+                                    if (value === null || value === '' || value === 'all') return null;
+
+                                    if (key === 'amenities' && typeof value === 'object') {
+                                        return Object.keys(value).map((amenityKey) => (
+                                            <div
+                                                key={`amenity-${amenityKey}`}
+                                                className="flex items-center gap-2 bg-primary text-white text-sm font-light  px-3 py-1.5 rounded-lg"
+                                            >
+                                                <span className="capitalize">{amenityKey}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveAmenity(amenityKey)}
+                                                    className=" text-white hover:text-gray-500  font-bold cursor-pointer transition-colors"
+                                                >
+                                                    X
+                                                </button>
+                                            </div>
+                                        ));
+                                    }
+
+                                    let displayLabel = `${key}: ${value}`;
+                                    if (key === 'maxPrice') displayLabel = `Max Price: ₦${Number(value).toLocaleString()}`;
+                                    if (key === 'listing_type') displayLabel = `Type: ${value}`;
+
+                                    return (
+                                        <div
+                                            key={key}
+                                            className="flex items-center gap-2 bg-primary text-white text-sm font-light  px-3 py-1.5 rounded-lg"
+                                        >
+                                            <span className="capitalize">{displayLabel}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => handleRemoveFilter(key)}
+                                                className=" text-white hover:text-gray-500  font-bold cursor-pointer transition-colors"
+                                            >
+                                                X
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+
+                                <button
+                                    onClick={handleClearAllFilters}
+                                    className="text-xs text-error hover:text-red-800 font-medium cursor-pointer underline"
+                                >
+                                    Clear All
+                                </button>
+                            </div>
+                        )}
                         <form onSubmit={handleSubmit} className="flex flex-col md:flex-wrap xl:flex-col gap-4 w-full">
                             <div className="flex flex-col gap-1">
                                 <label htmlFor="city" className="text-sm font-medium text-gray-700">

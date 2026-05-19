@@ -209,8 +209,7 @@ function Home() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        const payload = {
-            ...formData,
+        const rawPayload = {
             maxPrice: formData.maxPrice ? Number(formData.maxPrice) : null,
             beds: formData.beds ? Number(formData.beds) : null,
             baths: formData.baths ? Number(formData.baths) : null,
@@ -218,11 +217,15 @@ function Home() {
             type: formData.type,
             state: formData.state,
             city: formData.city,
-
         };
+        const filteredPayload = Object.fromEntries(
+            Object.entries(rawPayload).filter(([, value]) => {
+                return value !== null && value !== undefined && value !== '' && value !== 'all';
+            })
+        );
 
-        console.log('Submitted Property Criteria:', payload);
-        navigate('/listings', { state: { criteria: payload } });
+        console.log('Submitted Property Criteria:', filteredPayload);
+        navigate('/listings', { state: { criteria: filteredPayload } });
     }
 
 
