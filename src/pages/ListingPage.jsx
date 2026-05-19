@@ -5,6 +5,7 @@ import Layout from "../Layout";
 import { FaHome, FaBed, FaBath, FaHeart, FaWifi, FaCar, FaRing, FaGasPump, FaShieldAlt, FaDumbbell, FaChair, FaPencilRuler } from "react-icons/fa";
 import ImageCarousel from "../components/ImageCarousel";
 import toast from "react-hot-toast";
+import PropertyMap from "../components/PropertyMap";
 
 function ListingPage() {
     const { id } = useParams();
@@ -156,8 +157,8 @@ function ListingPage() {
         <Layout>
             <main className="flex flex-col items-center p-4 my-12 mx-auto gap-4">
                 <ImageCarousel images={listing.images.slice(1, -1).split(',')} />
-                <div className="flex flex-col items-center xl:flex-row justify-center w-full lg:w-[70vw]">
-                    <div className="flex flex-col items-start flex-1 p-4 gap-4">
+                <div className="flex flex-col items-center xl:flex-row justify-center w-full h-full lg:w-[70vw]">
+                    <div className="flex flex-col items-start p-4 gap-4 w-full">
                         <h1 className="text-xl font-semibold">Listing Details</h1>
                         <h2>{listing.title}</h2>
                         <h1 className="text-xl font-semibold">{listing.listing_type}</h1>
@@ -183,7 +184,9 @@ function ListingPage() {
                         </div>
                         <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {listing.host_id}</p>
                     </div>
-                    <div className="w-full h-full bg-primary flex-1">f</div>
+                    <div className="w-full min-h-100 border border-gray-200 rounded-lg overflow-hidden">
+                        <PropertyMap address={listing.location.Address} />
+                    </div>
                 </div>
                 <div className="flex flex-col items-center gap-2 border border-gray-300 w-[85vw] xl:w-[70vw] p-4 rounded-lg">
                     <h2>About this property</h2>
