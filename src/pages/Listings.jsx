@@ -638,7 +638,7 @@ function Listings() {
                         </form>
                     </div>
                     <div className="flex-col flex items-center gap-8">
-                        <div className="flex flex-row justify-between gap-4 w-full px-4">
+                        <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
                             <p>Showing 1 to {page * 9 > listings.length ? listings.length : page * 9} of {listings.length} listings</p>
                             <div className="flex flex-row justify-between items-center gap-4">
                                 <p>Sort</p>

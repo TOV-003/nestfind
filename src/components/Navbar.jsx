@@ -8,7 +8,7 @@ function Navbar() {
         <header>
             <nav className="flex items-center justify-between shadow-sm py-4 px-4">
                 <div className="flex items-center justify-between gap-2">
-                    <div className='w-8 h-8 bg-primary'></div>
+                    <img src="/favicon.svg" alt="logo" className="w-8 h-8" />
                     <h1 className="text-primary hidden md:block">Nestfind</h1>
                 </div>
                 <div className="flex items-center gap-4">
