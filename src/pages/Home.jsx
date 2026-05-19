@@ -3,7 +3,7 @@ import Layout from "../Layout"
 import { useEffect, useState } from "react";
 import { dataService } from '../api/dataService';
 import { Fragment } from "react";
-import { FaBath } from "react-icons/fa";
+import { FaBath, FaPencilRuler } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
@@ -448,6 +448,11 @@ function Home() {
                                                 <FaBath size={12} className="text-primary" />
                                                 <p >{el.baths} ba</p>
                                             </div>
+
+                                        </div>
+                                        <div className="flex flex-row items-center gap-1">
+                                            <FaPencilRuler size={12} className="text-primary" />
+                                            <p className="text-gray-400">{el.area} square feet</p>
                                         </div>
                                         <div className="flex flex-wrap items-center gap-1">
                                             {Object.entries(el.amenities)

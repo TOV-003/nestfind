@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { dataService } from '../api/dataService';
 import { useEffect, useState, Fragment } from "react";
 import Layout from "../Layout";
-import { FaHome, FaBed, FaBath, FaHeart, FaWifi, FaCar, FaRing, FaGasPump, FaShieldAlt, FaDumbbell, FaChair } from "react-icons/fa";
+import { FaHome, FaBed, FaBath, FaHeart, FaWifi, FaCar, FaRing, FaGasPump, FaShieldAlt, FaDumbbell, FaChair, FaPencilRuler } from "react-icons/fa";
 import ImageCarousel from "../components/ImageCarousel";
 
 function ListingPage() {
@@ -10,11 +10,12 @@ function ListingPage() {
     const [listing, setListing] = useState(null);
     const [similar, setSimilar] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [formModal, setFormModal] = useState(false);
     const [host, setHost] = useState(null);
 
-    // const handleRequest = (event) => {
-    //     event.preventDefault();
-    // }
+    const handleRequest = (event) => {
+        event.preventDefault();
+    }
 
     useEffect(() => {
         dataService.getListings()
@@ -69,7 +70,7 @@ function ListingPage() {
         <Layout>
             <main className="flex flex-col items-center p-4 my-12 mx-auto gap-4">
                 <ImageCarousel images={listing.images.slice(1, -1).split(',')} />
-                <div className="flex flex-col items-center xl:flex-row justify-center w-[70vw]">
+                <div className="flex flex-col items-center xl:flex-row justify-center w-full lg:w-[70vw]">
                     <div className="flex flex-col items-start flex-1 p-4 gap-4">
                         <h1 className="text-xl font-semibold">Listing Details</h1>
                         <h2>{listing.title}</h2>
@@ -78,6 +79,7 @@ function ListingPage() {
                         <p className="text-gray-500">{listing.location.Address}</p>
                         <p className="text-gray-400">{listing.location.city}, {listing.location.state} state</p>
                         <p className="text-gray-400">{new Date(listing.date_listed).toLocaleDateString()}</p>
+                        <p className="text-gray-400">{listing.enquiries.length} enquiries</p>
                         <div className="flex flex-row gap-2">
 
                             <div className="flex flex-row items-center gap-1">
@@ -88,6 +90,10 @@ function ListingPage() {
                                 <FaBath size={12} className="text-primary" />
                                 <p>{listing.baths} baths</p>
                             </div>
+                            <div className="flex flex-row items-center gap-1">
+                                <FaPencilRuler size={12} className="text-primary" />
+                                <p className="text-gray-400">{listing.area} square feet</p>
+                            </div>
                         </div>
                         <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {listing.host_id}</p>
                     </div>
@@ -95,37 +101,40 @@ function ListingPage() {
                 </div>
                 <div className="flex flex-col items-center gap-2 border border-gray-300 w-[85vw] xl:w-[70vw] p-4 rounded-lg">
                     <h2>About this property</h2>
-                    <p className="text-center">{listing.description}</p>
+                    <p className="text-center">{listing.description.slice(0, 256)}{listing.description.length > 256 && '...'} {listing.description.length > 256 && <button onClick={(e) => e.target.parentElement.innerHTML = listing.description} className="text-primary font-semibold hover:underline">Read More</button>}</p>
                 </div>
-                <div className="flex flex-col items-center gap-2 border border-gray-300 w-[85vw] xl:w-[70vw] p-4 rounded-lg">
-                    <h2>Amenities</h2>
-                    <div className="text-center">
-                        {listing.amenities && Object.entries(listing.amenities)
-                            .filter(([, value]) => value === true)
-                            .map(([key], index, array) => (
-                                <Fragment key={key}>
-                                    <div className="flex flex-row items-center gap-2">
-                                        {key === "WiFi" ? (<FaWifi />) : key === "Parking" ? (<FaCar />) : key === "Pool" ? (<FaRing />) : key === "Generator" ? (<FaGasPump />) : key === "Security" ? (<FaShieldAlt />) : key === "Gym" ? (<FaDumbbell />) : key === "Furnished" ? (<FaChair />) : null}
-                                        <p className="text-sm text-gray-500">{key}</p>
-                                    </div>
-                                    {index < array.length - 1 && <span className="text-gray-400">|</span>}
-                                </Fragment>
-                            ))
-                        }
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-center w-[70vw] gap-4">
+                    <div className="flex flex-col items-center justify-center gap-2 border border-gray-300 w-full h-full p-4 rounded-lg">
+                        <h2>Amenities</h2>
+                        <div className="text-center flex flex-wrap px-4 justify-center items-center gap-2">
+                            {listing.amenities && Object.entries(listing.amenities)
+                                .filter(([, value]) => value === true)
+                                .map(([key], index, array) => (
+                                    <Fragment key={key}>
+                                        <div className="flex flex-row items-center gap-2">
+                                            {key === "WiFi" ? (<FaWifi />) : key === "Parking" ? (<FaCar />) : key === "Pool" ? (<FaRing />) : key === "Generator" ? (<FaGasPump />) : key === "Security" ? (<FaShieldAlt />) : key === "Gym" ? (<FaDumbbell />) : key === "Furnished" ? (<FaChair />) : null}
+                                            <p className="text-sm text-gray-500">{key}</p>
+                                        </div>
+                                        {index < array.length - 1 && <span className="text-gray-400">|</span>}
+                                    </Fragment>
+                                ))
+                            }
+                        </div>
                     </div>
-                </div>
-                <div className="flex flex-col items-center border border-gray-300 px-4 py-2 rounded-lg">
-                    <h2>Host</h2>
-                    <div className="flex flex-col items-center gap-2">
-                        <img src={host?.avatar} alt="Host Image" className="rounded-lg w-full" />
-                        <p>{host?.name}</p>
-                        <p>{host?.email}</p>
-                        <p className="text-sm text-gray-300">host id: {host?.id}</p>
+                    <div className="flex flex-col gap-2 items-center border border-gray-300 px-4 py-2 rounded-lg flex-1 w-full">
+                        <h2>Host</h2>
+                        <div className="flex flex-col items-center gap-2">
+                            <img src={host?.avatar} alt="Host Image" className="rounded-lg w-full" />
+                            <p>{host?.name}</p>
+                            <p>{host?.email}</p>
+                            <p className="text-sm text-gray-300">host id: {host?.id}</p>
+                        </div>
+                        <button onClick={() => setFormModal(true)} className="bg-primary rounded-lg cursor-pointer px-4 py-2 text-white font-semibold">Contact Host</button>
                     </div>
                 </div>
                 <div className="flex flex-col items-center gap-2">
                     <h2>Similar Properties</h2>
-                    <div className="w-[80vw] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+                    <div className="w-[80vw] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-2">
                         {similar.slice(0, 3).map((el, index) => {
                             if (loading) {
                                 return (
@@ -214,8 +223,27 @@ function ListingPage() {
                         })}
                     </div>
                 </div>
-                {/* <form onSubmit={handleRequest} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
-                </form> */}
+                {formModal ?
+                    (<div onClick={() => setFormModal(false)} className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+                        <form onSubmit={handleRequest} onClick={(e) => e.stopPropagation()} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
+                            <label for="message">Message:</label>
+                            <textarea name="message" id="message" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="Enter your message here..."></textarea>
+                            <label for="name">Name:</label>
+                            <input type="text" name="name" id="name" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="Enter your name here..."></input>
+                            <label for="email">Email:</label>
+                            <input type="email" name="email" id="email" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="Enter your email here..."></input>
+                            <label for="datetime-local">Preferred Visit Date:</label>
+                            <input
+                                type="datetime-local"
+                                required
+                                className="border border-gray-300 p-2 rounded"
+                                name="datetime-local"
+                                id="datetime-local"
+                            />
+                            <button type="submit" className="bg-primary rounded-lg px-4 py-2 text-white font-semibold">Make Enquiry</button>
+                        </form>
+                    </div>) :
+                    (null)}
             </main>
         </Layout>
     );
