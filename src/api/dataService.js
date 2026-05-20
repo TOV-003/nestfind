@@ -1,118 +1,124 @@
-import { supabaseApi, USERS_API_URL, LISTINGS_API_URL } from './supabaseClient';
-
-const STORAGE_UPLOAD_URL = import.meta.env.VITE_SUPABASE_STORAGE_UPLOAD_URL;
-const STORAGE_PUBLIC_BASE_URL = import.meta.env.VITE_SUPABASE_STORAGE_URL;
-const AVATAR_UPLOAD_URL = import.meta.env.VITE_SUPABASE_AVATAR_UPLOAD_URL;
-const AVATAR_PUBLIC_BASE_URL = import.meta.env.VITE_SUPABASE_AVATAR_PUBLIC_URL;
+import { supabase } from './supabaseClient';
 
 export const dataService = {
     // ==========================================
-    // LISTINGS TABLE OPERATIONS (GET, POST, DELETE)
+    // LISTINGS TABLE OPERATIONS
     // ==========================================
 
-    // GET: Fetch all real estate listings from the database
+    // GET: Fetch all real estate listings
     getListings: async () => {
-        // Safe check: If the base URL string already contains select parameters, use it cleanly.
-        const url = LISTINGS_API_URL.includes('select=')
-            ? LISTINGS_API_URL
-            : `${LISTINGS_API_URL}?select=*`;
+        const { data, error } = await supabase
+            .from('listings')
+            .select('*');
 
-        const response = await supabaseApi.get(url);
-        return response.data;
+        if (error) throw error;
+        return data;
     },
 
-    // POST: Insert a new listing row (e.g., containing structural jsonb values)
+    // POST: Insert a new listing row
     createListing: async (listingData) => {
-        // Stripe out any lingering query params for clean write actions
-        const baseUrl = LISTINGS_API_URL.split('?')[0];
-        const response = await supabaseApi.post(baseUrl, listingData, {
-            headers: { 'Prefer': 'return=representation' }
-        });
-        return response.data[0];
+        const { data, error } = await supabase
+            .from('listings')
+            .insert([listingData])
+            .select();
+
+        if (error) throw error;
+        return data[0];
     },
 
-    // DELETE: Remove a specific listing record from the table matching an ID
+    // DELETE: Remove a specific listing record matching an ID
     deleteListing: async (listingId) => {
-        const baseUrl = LISTINGS_API_URL.split('?')[0];
-        const response = await supabaseApi.delete(`${baseUrl}?id=eq.${listingId}`);
-        return response.status; // Returns standard HTTP status 204 (No Content) on success
+        const { status, error } = await supabase
+            .from('listings')
+            .delete()
+            .eq('id', listingId);
+
+        if (error) throw error;
+        return status; // Returns 204 on success
     },
 
     // ==========================================
-    // USERS TABLE OPERATIONS (GET, POST, PATCH)
+    // USERS TABLE OPERATIONS
     // ==========================================
 
-    // GET: Fetch a single user profile from the database matching an ID
+    // GET: Fetch a single user profile matching an ID
     getUserById: async (userId) => {
-        const baseUrl = USERS_API_URL.split('?')[0];
-        const queryUrl = `${baseUrl}?id=eq.${userId}&select=*`;
-        const response = await supabaseApi.get(queryUrl);
-        return response?.data[0];
+        const { data, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        if (error) throw error;
+        return data;
     },
 
     // POST: Insert a new user registration profile record
     createUser: async (userData) => {
-        const baseUrl = USERS_API_URL.split('?')[0];
-        const response = await supabaseApi.post(baseUrl, userData, {
-            headers: { 'Prefer': 'return=representation' }
-        });
-        return response.data[0];
+        const { data, error } = await supabase
+            .from('users')
+            .insert([userData])
+            .select();
+
+        if (error) throw error;
+        return data[0];
     },
 
-    // PATCH: Update specific arrays or subfields (e.g., modifying the saved_listings JSONB field)
+    // PATCH: Update specific arrays or subfields (saved_listings JSONB)
     updateUserSavedListings: async (userId, savedListingsArray) => {
-        const baseUrl = USERS_API_URL.split('?')[0];
-        const response = await supabaseApi.patch(
-            `${baseUrl}?id=eq.${userId}`,
-            { saved_listings: savedListingsArray },
-            { headers: { 'Prefer': 'return=representation' } }
-        );
-        return response.data[0];
+        const { data, error } = await supabase
+            .from('users')
+            .update({ saved_listings: savedListingsArray })
+            .eq('id', userId)
+            .select();
+
+        if (error) throw error;
+        return data[0];
     },
 
     // ==========================================
     // STORAGE BUCKET UPLOAD OPERATIONS
     // ==========================================
 
-    // POST: Uploads a single compressed file blob and returns its public bucket URL
+    // POST: Uploads a single file to the listings bucket and returns public URL
     uploadListingImage: async (fileBlob, fileName) => {
-        // Inject a unique timestamp string wrapper to prevent filename collisions inside the bucket
         const uniqueFileName = `${Date.now()}_${fileName}`;
 
-        const response = await supabaseApi.post(
-            `${STORAGE_UPLOAD_URL}/${uniqueFileName}`,
-            fileBlob,
-            {
-                headers: {
-                    // Explicitly define binary stream metadata matching payload formatting
-                    'Content-Type': fileBlob.type || 'image/jpeg',
-                },
-            }
-        );
+        // Upload file to 'listings' bucket
+        const { error: uploadError } = await supabase.storage
+            .from('listings')
+            .upload(uniqueFileName, fileBlob, {
+                contentType: fileBlob.type || 'image/jpeg',
+            });
 
-        if (response.status === 200 || response.status === 201) {
-            // Constructs the standard accessible URL linking to your public asset storage location
-            return `${STORAGE_PUBLIC_BASE_URL}/${uniqueFileName}`;
-        }
-        throw new Error(`Upload transaction failed for target file reference: ${fileName}`);
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data } = supabase.storage
+            .from('listings')
+            .getPublicUrl(uniqueFileName);
+
+        return data.publicUrl;
     },
 
+    // POST: Uploads a single file to the avatars bucket and returns public URL
     uploadUserAvatar: async (fileBlob, fileName) => {
         const uniqueFileName = `avatar_${Date.now()}_${fileName}`;
 
-        const response = await supabaseApi.post(
-            `${AVATAR_UPLOAD_URL}/${uniqueFileName}`,
-            fileBlob,
-            {
-                headers: {
-                    'Content-Type': fileBlob.type || 'image/jpeg',
-                },
-            }
-        );
+        // Upload file to 'avatars' bucket
+        const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(uniqueFileName, fileBlob, {
+                contentType: fileBlob.type || 'image/jpeg',
+            });
 
-        if (response.status === 200 || response.status === 201) {
-            return `${AVATAR_PUBLIC_BASE_URL}/${uniqueFileName}`;
-        }
-        throw new Error('Avatar image upload failed');
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(uniqueFileName);
+
+        return data.publicUrl;
     }
 };

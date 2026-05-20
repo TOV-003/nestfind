@@ -9,8 +9,6 @@ import { FaHeart } from "react-icons/fa";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 
-
-
 function Listings() {
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -21,163 +19,34 @@ function Listings() {
     const [sort, setSort] = useState('default');
 
     const localStates = [
-        "Abia",
-        "Adamawa",
-        "Akwa Ibom",
-        "Anambra",
-        "Bauchi",
-        "Bayelsa",
-        "Benue",
-        "Borno",
-        "Cross River",
-        "Delta",
-        "Ebonyi",
-        "Edo",
-        "Ekiti",
-        "Enugu",
-        "FCT",
-        "Gombe",
-        "Imo",
-        "Jigawa",
-        "Kaduna",
-        "Kano",
-        "Katsina",
-        "Kebbi",
-        "Kogi",
-        "Kwara",
-        "Lagos",
-        "Nasarawa",
-        "Niger",
-        "Ogun",
-        "Ondo",
-        "Osun",
-        "Oyo",
-        "Plateau",
-        "Rivers",
-        "Sokoto",
-        "Taraba",
-        "Yobe",
-        "Zamfara"
-    ];
-    const localCities = [
-        "Aba",
-        "Abakaliki",
-        "Abeokuta",
-        "Aboh",
-        "Abuja",
-        "Ado Ekiti",
-        "Afikpo",
-        "Agbor",
-        "Aguata",
-        "Agulu",
-        "Ahoada",
-        "Akure",
-        "Ankpa",
-        "Asaba",
-        "Awka",
-        "Badagry",
-        "Bauchi",
-        "Beli",
-        "Benin City",
-        "Bida",
-        "Birnin Kebbi",
-        "Biu",
-        "Calabar",
-        "Damaturu",
-        "Daura",
-        "Dere",
-        "Dutse",
-        "Ede",
-        "Effurun",
-        "Eket",
-        "Enugu",
-        "Epe",
-        "Funtua",
-        "Gashua",
-        "Gboko",
-        "Gombe",
-        "Gusau",
-        "Hadejia",
-        "Ibadan",
-        "Idah",
-        "Ife",
-        "Ifon",
-        "Ijebu-Ode",
-        "Ikeja",
-        "Ikenne",
-        "Ikorodu",
-        "Ikot Ekpene",
-        "Ila Orangun",
-        "Ilesa",
-        "Ilorin",
-        "Inisa",
-        "Iseyin",
-        "Iwo",
-        "Jalingo",
-        "Jimeta",
-        "Jos",
-        "Kaduna",
-        "Kafanchan",
-        "Kano",
-        "Katsina",
-        "Keffi",
-        "Koko",
-        "Kontagora",
-        "Lafia",
-        "Lagos",
-        "Lokoja",
-        "Madalla",
-        "Maiduguri",
-        "Makurdi",
-        "Minna",
-        "Mubi",
-        "Nasarawa",
-        "New Bussa",
-        "Nnewi",
-        "Nningi",
-        "Nsukka",
-        "Obudu",
-        "Offa",
-        "Ogale",
-        "Ogbomosho",
-        "Ogoja",
-        "Okene",
-        "Okigwe",
-        "Okitipupa",
-        "Okrika",
-        "Ondo",
-        "Onitsha",
-        "Oron",
-        "Orlu",
-        "Oshogbo",
-        "Otite",
-        "Otukpo",
-        "Owerri",
-        "Owo",
-        "Oyo",
-        "Port Harcourt",
-        "Potiskum",
-        "Sagamu",
-        "Saki",
-        "Sapele",
-        "Sokoto",
-        "Suleja",
-        "Ugep",
-        "Umuahia",
-        "Uromi",
-        "Uyo",
-        "Warri",
-        "Wukari",
-        "Yenagoa",
-        "Yola",
-        "Zaria"
+        "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+        "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo",
+        "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa",
+        "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba",
+        "Yobe", "Zamfara"
     ];
 
+    const localCities = [
+        "Aba", "Abakaliki", "Abeokuta", "Aboh", "Abuja", "Ado Ekiti", "Afikpo", "Agbor",
+        "Aguata", "Agulu", "Ahoada", "Akure", "Ankpa", "Asaba", "Awka", "Badagry", "Bauchi",
+        "Beli", "Benin City", "Bida", "Birnin Kebbi", "Biu", "Calabar", "Damaturu", "Daura",
+        "Dere", "Dutse", "Ede", "Effurun", "Eket", "Enugu", "Epe", "Funtua", "Gashua", "Gboko",
+        "Gombe", "Gusau", "Hadejia", "Ibadan", "Idah", "Ife", "Ifon", "Ijebu-Ode", "Ikeja",
+        "Ikenne", "Ikorodu", "Ikot Ekpene", "Ila Orangun", "Ilesa", "Ilorin", "Inisa", "Iseyin",
+        "Iwo", "Jalingo", "Jimeta", "Jos", "Kaduna", "Kafanchan", "Kano", "Katsina", "Keffi",
+        "Koko", "Kontagora", "Lafia", "Lagos", "Lokoja", "Madalla", "Maiduguri", "Makurdi",
+        "Minna", "Mubi", "Nasarawa", "New Bussa", "Nnewi", "Nningi", "Nsukka", "Obudu", "Offa",
+        "Ogale", "Ogbomosho", "Ogoja", "Okene", "Okigwe", "Okitipupa", "Okrika", "Ondo",
+        "Onitsha", "Oron", "Orlu", "Oshogbo", "Otite", "Otukpo", "Owerri", "Owo", "Oyo",
+        "Port Harcourt", "Potiskum", "Sagamu", "Saki", "Sapele", "Sokoto", "Suleja", "Ugep",
+        "Umuahia", "Uromi", "Uyo", "Warri", "Wukari", "Yenagoa", "Yola", "Zaria"
+    ];
 
     const [formData, setFormData] = useState({
-        location: '',
-        type: '',
-        listing_type: '',
+        city: '',
+        state: '',
+        type: 'house',
+        listing_type: 'rent',
         minPrice: '',
         maxPrice: '',
         beds: '',
@@ -191,22 +60,19 @@ function Listings() {
             gym: false,
             furnished: false
         }
-
     });
 
-
     useEffect(() => {
-
         function applyFiltersFromState() {
             if (location.state?.criteria) {
                 const criteria = location.state.criteria;
-                setActiveFilters(location.state?.criteria);
+                setActiveFilters(criteria);
                 setFormData((prev) => ({
                     ...prev,
                     city: criteria.city || '',
                     state: criteria.state || '',
-                    type: criteria.type || '',
-                    listing_type: criteria.listing_type || '',
+                    type: criteria.type || 'house',
+                    listing_type: criteria.listing_type || 'rent',
                     maxPrice: criteria.maxPrice || '',
                     beds: criteria.beds || '',
                     baths: criteria.baths || '',
@@ -220,19 +86,17 @@ function Listings() {
                         furnished: criteria.amenities?.furnished || false
                     }
                 }));
-            }
-            else {
+            } else {
                 setActiveFilters(null);
                 setFormData({
-                    location: '',
-                    type: '',
-                    listing_type: '',
+                    city: '',
+                    state: '',
+                    type: 'house',
+                    listing_type: 'rent',
                     minPrice: '',
                     maxPrice: '',
                     beds: '',
                     baths: '',
-                    city: '',
-                    state: '',
                     amenities: {
                         wifi: false,
                         parking: false,
@@ -245,9 +109,7 @@ function Listings() {
                 });
             }
         }
-        if (location.state?.criteria) {
-            applyFiltersFromState();
-        }
+        applyFiltersFromState();
     }, [location.state?.criteria]);
 
     const handleChange = (event) => {
@@ -258,7 +120,7 @@ function Listings() {
                 ...prevData,
                 amenities: {
                     ...prevData.amenities,
-                    [name]: checked // Writes true or false directly
+                    [name]: checked
                 }
             }));
         } else {
@@ -294,7 +156,6 @@ function Listings() {
             })
         );
 
-        console.log('Submitted Property Criteria:', filteredPayload);
         navigate('/listings', { state: { criteria: filteredPayload } });
     }
 
@@ -304,7 +165,7 @@ function Listings() {
 
         setActiveFilters(updatedFilters);
         navigate('/listings', { state: { criteria: updatedFilters } }, { replace: true });
-    };
+    }
 
     function handleRemoveAmenity(amenityKey) {
         if (!activeFilters?.amenities) return;
@@ -325,17 +186,15 @@ function Listings() {
 
     function handleClearAllFilters() {
         setActiveFilters(null);
-
         setFormData({
-            location: '',
-            type: '',
-            listing_type: '',
+            city: '',
+            state: '',
+            type: 'house',
+            listing_type: 'rent',
             minPrice: '',
             maxPrice: '',
             beds: '',
             baths: '',
-            city: '',
-            state: '',
             amenities: {
                 wifi: false,
                 parking: false,
@@ -346,7 +205,6 @@ function Listings() {
                 furnished: false
             }
         });
-
         navigate('/listings', { state: null }, { replace: true });
     }
 
@@ -360,10 +218,15 @@ function Listings() {
     }
 
     useEffect(() => {
+        function triggerLoading() {
+            setLoading(true);
+        }
+        triggerLoading();
         dataService.getListings()
             .then((data) => {
                 let allListings = data || [];
                 const filteredCriteria = location.state?.criteria;
+
                 if (filteredCriteria) {
                     allListings = allListings.filter((item) => {
                         if (filteredCriteria.type && item.type !== filteredCriteria.type) {
@@ -378,7 +241,8 @@ function Listings() {
                         if (filteredCriteria.baths && item.baths !== filteredCriteria.baths) {
                             return false;
                         }
-                        const loc = typeof item.location === 'string' ? JSON.parse(item.location) : item.location;
+
+                        const loc = item.location;
                         if (filteredCriteria.city && loc?.city?.toLowerCase() !== filteredCriteria.city.toLowerCase()) {
                             return false;
                         }
@@ -388,23 +252,19 @@ function Listings() {
                         if (filteredCriteria.maxPrice && item.price > filteredCriteria.maxPrice) {
                             return false;
                         }
-                        if (filteredCriteria.amenities) {
-                            const itemAmenities = typeof item.amenities === 'string'
-                                ? JSON.parse(item.amenities)
-                                : item.amenities;
 
+                        if (filteredCriteria.amenities) {
+                            const itemAmenities = item.amenities || {};
                             const matchesAllChecked = Object.keys(filteredCriteria.amenities).every((amenityKey) => {
-                                const propertyHasAmenity = Object.entries(itemAmenities || {}).some(
+                                return Object.entries(itemAmenities).some(
                                     ([key, val]) => key.toLowerCase() === amenityKey.toLowerCase() && val === true
                                 );
-                                return propertyHasAmenity;
                             });
 
                             if (!matchesAllChecked) {
                                 return false;
                             }
                         }
-
                         return true;
                     });
                 }
@@ -413,6 +273,7 @@ function Listings() {
             })
             .catch((err) => {
                 console.error("Error loading properties:", err);
+                toast.error("Failed to load listings");
             })
             .finally(() => {
                 setLoading(false);
@@ -422,11 +283,10 @@ function Listings() {
     if (loading) {
         return (
             <Layout>
-                <div className="flex flex-col xl:flex-row xl:justify-center items-center xl:items-start gap-2 w-full">
+                <div className="flex flex-col xl:flex-row xl:justify-center items-center xl:items-start gap-2 w-full my-12">
                     <div className="flex flex-col h-full items-start gap-2 w-fit md:w-[60vw] xl:w-fit xl:pl-12 xl:pr-2 pl-2 pr-2">
                         <div className="h-6 bg-gray-200 rounded animate-pulse w-24 mb-2"></div>
                         <div className="h-4 bg-gray-200 rounded animate-pulse w-48 mb-4"></div>
-
                         <form className="flex flex-col md:flex-wrap xl:flex-col gap-4 w-full">
                             {[1, 2, 3, 4, 5].map((i) => (
                                 <div key={i} className="flex flex-col gap-1">
@@ -434,62 +294,14 @@ function Listings() {
                                     <div className="h-10 bg-gray-200 rounded animate-pulse w-full"></div>
                                 </div>
                             ))}
-
-                            <div className="grid grid-cols-2 gap-4">
-                                {[1, 2, 3, 4].map((i) => (
-                                    <div key={i} className="h-5 bg-gray-200 rounded animate-pulse"></div>
-                                ))}
-                            </div>
-
-                            <div className="h-10 bg-gray-200 rounded animate-pulse w-full mt-2"></div>
                         </form>
                     </div>
-
-                    <div className="flex-col flex items-center gap-8">
-                        <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
-                            <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
-                            <div className="flex flex-row gap-4">
-                                <div className="h-4 bg-gray-200 rounded animate-pulse w-12"></div>
-                                <div className="h-10 bg-gray-200 rounded animate-pulse w-40"></div>
-                            </div>
-                        </div>
-
+                    <div className="flex-col flex items-center gap-8 w-full">
                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center w-full">
                             {[1, 2, 3, 4, 5, 6].map((i) => (
-                                <div key={i} className="relative border border-gray-300 rounded-xl p-2 w-4/5 md:w-full flex flex-col gap-4">
-                                    <div className="w-full aspect-square bg-gray-200 rounded-xl animate-pulse"></div>
-
-                                    <div className="flex flex-col gap-3 px-2 w-full">
-                                        <div className="flex flex-row gap-2">
-                                            <div className="h-6 bg-gray-200 rounded animate-pulse flex-1"></div>
-                                            <div className="h-6 bg-gray-200 rounded animate-pulse w-1/3"></div>
-                                        </div>
-
-                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
-
-                                        <div className="flex flex-row gap-2">
-                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
-                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
-                                            <div className="h-4 bg-gray-200 rounded animate-pulse flex-1"></div>
-                                        </div>
-
-                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3"></div>
-
-                                        <div className="flex flex-wrap gap-2">
-                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
-                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
-                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-16"></div>
-                                        </div>
-
-                                        <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
-                                    </div>
-
-                                    <div className="absolute bottom-2 right-2 bg-gray-200 w-10 h-10 rounded-md animate-pulse"></div>
-                                </div>
+                                <div key={i} className="relative border border-gray-300 rounded-xl p-2 w-full flex flex-col gap-4 h-100 animate-pulse bg-gray-50" />
                             ))}
                         </div>
-
-                        <div className="h-10 bg-gray-200 rounded animate-pulse w-32"></div>
                     </div>
                 </div>
             </Layout>
@@ -498,32 +310,25 @@ function Listings() {
 
     return (
         <Layout>
-            <main className=" flex flex-col items-center gap-4 my-12 mx-auto px-4">
-                <div className="flex flex-col xl:flex-row xl:justify-center items-center xl:items-start gap-2 w-full">
-                    <div className="flex flex-col h-full items-start gap-2 w-fit md:w-[60vw] xl:w-fit xl:pl-12 xl:pr-2 pl-2 pr-2">
-                        <h3 className="text-xl font-bold">Filters</h3>
-                        <p className="text-sm text-gray-400">Refine your search bto find the perfect home.</p>
-                        {activeFilters && Object.entries(activeFilters).some(([, val]) => val !== null && val !== '') && (
-                            <div className="flex flex-wrap items-center gap-2 my-4 p-3 bg-gray-50 rounded-lg border border-gray-200 w-full">
-                                <span className="text-sm font-semibold text-gray-600 mr-2">Active Filters:</span>
+            <main className="flex flex-col items-center gap-4 my-12 mx-auto px-4 w-full">
+                <div className="flex flex-col xl:flex-row xl:justify-center items-center xl:items-start gap-6 w-full">
 
+                    {/* FILTER SIDEBAR */}
+                    <div className="flex flex-col h-full items-start gap-2 w-full md:w-[60vw] xl:w-75 xl:shrink-0 px-2">
+                        <h3 className="text-xl font-bold">Filters</h3>
+                        <p className="text-sm text-gray-400">Refine your search to find the perfect home.</p>
+
+                        {activeFilters && Object.entries(activeFilters).some(([, val]) => val !== null && val !== '') && (
+                            <div className="flex flex-wrap items-center gap-2 my-2 p-3 bg-gray-50 rounded-lg border border-gray-200 w-full">
+                                <span className="text-sm font-semibold text-gray-600 mr-2">Active Filters:</span>
                                 {Object.entries(activeFilters).map(([key, value]) => {
                                     if (value === null || value === '' || value === 'all') return null;
 
                                     if (key === 'amenities' && typeof value === 'object') {
                                         return Object.keys(value).map((amenityKey) => (
-                                            <div
-                                                key={`amenity-${amenityKey}`}
-                                                className="flex items-center gap-2 bg-primary text-white text-sm font-light  px-3 py-1.5 rounded-lg"
-                                            >
+                                            <div key={`amenity-${amenityKey}`} className="flex items-center gap-2 bg-primary text-white text-sm font-light px-3 py-1.5 rounded-lg">
                                                 <span className="capitalize">{amenityKey}</span>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveAmenity(amenityKey)}
-                                                    className=" text-white hover:text-gray-500  font-bold cursor-pointer transition-colors"
-                                                >
-                                                    X
-                                                </button>
+                                                <button type="button" onClick={() => handleRemoveAmenity(amenityKey)} className="text-white hover:text-gray-500 font-bold cursor-pointer">X</button>
                                             </div>
                                         ));
                                     }
@@ -533,81 +338,36 @@ function Listings() {
                                     if (key === 'listing_type') displayLabel = `Type: ${value}`;
 
                                     return (
-                                        <div
-                                            key={key}
-                                            className="flex items-center gap-2 bg-primary text-white text-sm font-light  px-3 py-1.5 rounded-lg"
-                                        >
+                                        <div key={key} className="flex items-center gap-2 bg-primary text-white text-sm font-light px-3 py-1.5 rounded-lg">
                                             <span className="capitalize">{displayLabel}</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveFilter(key)}
-                                                className=" text-white hover:text-gray-500  font-bold cursor-pointer transition-colors"
-                                            >
-                                                X
-                                            </button>
+                                            <button type="button" onClick={() => handleRemoveFilter(key)} className="text-white hover:text-gray-500 font-bold cursor-pointer">X</button>
                                         </div>
                                     );
                                 })}
-
-                                <button
-                                    onClick={handleClearAllFilters}
-                                    className="text-xs text-error hover:text-red-800 font-medium cursor-pointer underline"
-                                >
-                                    Clear All
-                                </button>
+                                <button onClick={handleClearAllFilters} className="text-xs text-error hover:text-red-800 font-medium cursor-pointer underline">Clear All</button>
                             </div>
                         )}
-                        <form onSubmit={handleSubmit} className="flex flex-col md:flex-wrap xl:flex-col gap-4 w-full">
+
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
                             <div className="flex flex-col gap-1">
-                                <label htmlFor="city" className="text-sm font-medium text-gray-700">
-                                    City/Town
-                                </label>
-                                <input
-                                    list="cities"
-                                    id="city"
-                                    name="city"
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Lagos, Ibadan"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                />
+                                <label htmlFor="city" className="text-sm font-medium text-gray-700">City/Town</label>
+                                <input list="cities" id="city" name="city" value={formData.city} onChange={handleChange} placeholder="e.g. Lagos, Ibadan" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
                                 <datalist id="cities">
-                                    {localCities.map((city) => (
-                                        <option key={city} value={city} />
-                                    ))}
+                                    {localCities.map((city) => <option key={city} value={city} />)}
                                 </datalist>
                             </div>
+
                             <div className="flex flex-col gap-1">
-                                <label htmlFor="state" className="text-sm font-medium text-gray-700">
-                                    State
-                                </label>
-                                <input
-                                    list="states"
-                                    id="state"
-                                    type="text"
-                                    name="state"
-                                    value={formData.state}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Lagos, Rivers"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                />
+                                <label htmlFor="state" className="text-sm font-medium text-gray-700">State</label>
+                                <input list="states" id="state" type="text" name="state" value={formData.state} onChange={handleChange} placeholder="e.g. Lagos, Rivers" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
                                 <datalist id="states">
-                                    {localStates.map((state) => (
-                                        <option key={state} value={state} />
-                                    ))}
+                                    {localStates.map((state) => <option key={state} value={state} />)}
                                 </datalist>
                             </div>
+
                             <div className="flex flex-col gap-1">
-                                <label htmlFor="type" className="text-sm font-medium text-gray-700">
-                                    Property Type
-                                </label>
-                                <select
-                                    id="type"
-                                    name="type"
-                                    value={formData.type}
-                                    onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
-                                >
+                                <label htmlFor="type" className="text-sm font-medium text-gray-700">Property Type</label>
+                                <select id="type" name="type" value={formData.type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white">
                                     <option value="house">House</option>
                                     <option value="apartment">Apartment</option>
                                     <option value="condo">Studio</option>
@@ -616,113 +376,65 @@ function Listings() {
                                 </select>
                             </div>
 
-                            <div className="flex gap-1">
-                                <div className="flex gap-2 flex-col w-1/2">
-                                    <span className="text-sm font-medium text-gray-700">Max Price</span>
-                                    <input
-                                        type="number"
-                                        name="maxPrice"
-                                        value={formData.maxPrice}
-                                        onChange={handleChange}
-                                        placeholder="Max Price"
-                                        min="0"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                    />
+                            <div className="flex gap-2">
+                                <div className="flex gap-1 flex-col w-1/2">
+                                    <label htmlFor="maxPrice" className="text-sm font-medium text-gray-700">Max Price</label>
+                                    <input type="number" id="maxPrice" name="maxPrice" value={formData.maxPrice} onChange={handleChange} placeholder="Max Price" min="0" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
                                 </div>
 
-                                <div className="flex gap-2 flex-col w-1/2">
-                                    <label htmlFor="type" className="text-sm font-medium text-gray-700">
-                                        Listing Type
-                                    </label>
-                                    <select
-                                        id="listing_type"
-                                        name="type"
-                                        value={formData.listing_type}
-                                        onChange={handleChange}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                    >
+                                <div className="flex gap-1 flex-col w-1/2">
+                                    <label htmlFor="listing_type" className="text-sm font-medium text-gray-700">Listing Type</label>
+                                    <select id="listing_type" name="listing_type" value={formData.listing_type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white">
                                         <option value="rent">Rent</option>
                                         <option value="sale">Sale</option>
                                         <option value="shortlet">Short Let</option>
                                     </select>
                                 </div>
                             </div>
+
                             <div className="flex gap-2">
                                 <div className="flex flex-col gap-1 w-1/2">
-                                    <label htmlFor="beds" className="text-sm font-medium text-gray-700">
-                                        Beds
-                                    </label>
-                                    <input
-                                        id="beds"
-                                        type="number"
-                                        name="beds"
-                                        value={formData.beds}
-                                        onChange={handleChange}
-                                        min="1"
-                                        placeholder="1"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                    />
+                                    <label htmlFor="beds" className="text-sm font-medium text-gray-700">Beds</label>
+                                    <input id="beds" type="number" name="beds" value={formData.beds} onChange={handleChange} min="1" placeholder="1" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
                                 </div>
                                 <div className="flex flex-col gap-1 w-1/2">
-                                    <label htmlFor="baths" className="text-sm font-medium text-gray-700">
-                                        Baths
-                                    </label>
-                                    <input
-                                        id="baths"
-                                        type="number"
-                                        name="baths"
-                                        value={formData.baths}
-                                        onChange={handleChange}
-                                        min="1"
-                                        placeholder="1"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                                    />
+                                    <label htmlFor="baths" className="text-sm font-medium text-gray-700">Baths</label>
+                                    <input id="baths" type="number" name="baths" value={formData.baths} onChange={handleChange} min="1" placeholder="1" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-4 my-2">
                                 {Object.keys(formData.amenities).map((el) => (
                                     <div key={el} className="flex justify-start">
                                         <label className="flex items-center gap-2 cursor-pointer capitalize text-sm text-gray-600">
-                                            <input
-                                                type="checkbox"
-                                                name={el}
-                                                checked={formData.amenities[el]}
-                                                onChange={handleChange}
-                                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                            />
+                                            <input type="checkbox" name={el} checked={formData.amenities[el]} onChange={handleChange} className="w-4 h-4 text-blue-600 border-gray-300 rounded" />
                                             {el}
                                         </label>
                                     </div>
                                 ))}
                             </div>
 
-                            <button
-                                type="submit"
-                                className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm transition-colors"
-
-                            >
-                                Apply Filters
-                            </button>
-
+                            <button type="submit" className="w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md text-sm transition-colors">Apply Filters</button>
                         </form>
                     </div>
-                    <div className="flex-col flex items-center gap-8">
+
+                    {/* LISTINGS DISPLAY */}
+                    <div className="flex-col flex items-center gap-8 w-full">
                         <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
                             <p>Showing 1 to {page * 9 > listings.length ? listings.length : page * 9} of {listings.length} listings</p>
                             <div className="flex flex-row justify-between items-center gap-4">
                                 <p>Sort</p>
-                                <select name="sort" id="sort" onChange={handleSort} className="border broder-gray-500 text-gray-500 px-4 py-2 rounded-lg">
+                                <select name="sort" id="sort" onChange={handleSort} className="border border-gray-500 text-gray-500 px-4 py-2 rounded-lg bg-white">
                                     <option value="default">Default</option>
                                     <option value="price">Price: Low to High</option>
                                     <option value="price-desc">Price: High to Low</option>
                                     <option value="date-desc">Date: Newest to Oldest</option>
                                     <option value="date-asc">Date: Oldest to Newest</option>
                                 </select>
-
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center">
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center w-full">
                             {(() => {
                                 let sortedListings = [...listings];
 
@@ -737,80 +449,72 @@ function Listings() {
                                 }
 
                                 return sortedListings.slice(0, page * 9).map((el) => {
-
-                                    const listingLocation = typeof el.location === 'string' ? JSON.parse(el.location) : el.location;
-                                    const listingAmenities = typeof el.amenities === 'string' ? JSON.parse(el.amenities) : el.amenities;
+                                    const listingLocation = el.location;
+                                    const listingAmenities = el.amenities;
 
                                     return (
-                                        <div key={el.id} className="relative border border-gray-300 rounded-xl p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
-                                            <Link to={`/listings/${el.id}`}>
+                                        <div key={el.id} className="relative border border-gray-300 rounded-xl p-2 w-full h-full flex flex-col items-center gap-4">
+                                            <Link to={`/listings/${el.id}`} className="w-full">
                                                 <img
-                                                    src={el.images.slice(1, -1).split(',')[0]}
+                                                    src={Array.isArray(el.images) ? el.images[0] : el.images}
                                                     className="w-full aspect-square object-cover rounded-xl"
                                                     alt={el.title || "Property Image"}
                                                 />
                                             </Link>
-                                            <div className="flex flex-col gap-1 self-start">
-                                                <div className="flex flex-row gap-2">
-                                                    <p className="text-xl font-bold">{el.title}</p>
-                                                    <h3 className="text-primary w-fit text-xl">
+                                            <div className="flex flex-col gap-1 self-start w-full px-2 pb-12">
+                                                <div className="flex flex-row justify-between items-start gap-2 w-full">
+                                                    <p className="text-lg font-bold line-clamp-1">{el.title}</p>
+                                                    <h3 className="text-primary font-bold text-lg whitespace-nowrap">
                                                         ₦{el.price?.toLocaleString('en-US')}
-                                                        {el.listing_type === 'rent' ? ' per year' : el.listing_type === 'shortlet' ? ' per day' : ''}
+                                                        {el.listing_type === 'rent' ? '/yr' : el.listing_type === 'shortlet' ? '/day' : ''}
                                                     </h3>
                                                 </div>
-                                                <p className="text-gray-400">
+                                                <p className="text-gray-400 text-sm">
                                                     {listingLocation?.city}, {listingLocation?.state} state. Listed {(() => {
-                                                        const standardizedStr = el.date_listed
-                                                            .replace(' ', 'T')
-                                                            .replace(/([+-]\d{2})$/, '$1:00');
-
-                                                        const inputDate = new Date(standardizedStr);
+                                                        if (!el.date_listed) return 'N/A';
+                                                        const inputDate = new Date(el.date_listed);
                                                         const currentDate = new Date();
-
                                                         if (isNaN(inputDate.getTime())) return 'Invalid Date';
-
                                                         const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
-
                                                         if (diffInDays < 0) return 'In the future';
                                                         if (diffInDays === 0) return 'Today';
                                                         if (diffInDays === 1) return '1 day ago';
-
                                                         return `${diffInDays} days ago`;
                                                     })()}
                                                 </p>
 
-                                                <div className="flex flex-row gap-2">
+                                                <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
                                                     <div className="flex flex-row items-center gap-1">
-                                                        <FaHome size={12} className="text-primary" />
-                                                        <p>{el.type ? el.type.charAt(0).toUpperCase() + el.type.slice(1) : ''} for {el.listing_type}</p>
+                                                        <FaHome size={14} className="text-primary" />
+                                                        <p className="capitalize">{el.type} for {el.listing_type}</p>
                                                     </div>
                                                     <div className="flex flex-row items-center gap-1">
-                                                        <FaBed size={12} className="text-primary" />
+                                                        <FaBed size={14} className="text-primary" />
                                                         <p>{el.beds} bd</p>
                                                     </div>
                                                     <div className="flex flex-row items-center gap-1">
-                                                        <FaBath size={12} className="text-primary" />
+                                                        <FaBath size={14} className="text-primary" />
                                                         <p>{el.baths} ba</p>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-row items-center gap-1">
+                                                <div className="flex flex-row items-center gap-1 mt-1 text-sm text-gray-500">
                                                     <FaPencilRuler size={12} className="text-primary" />
-                                                    <p className="text-gray-400">{el.area} square feet</p>
+                                                    <p>{el.area} sq ft</p>
                                                 </div>
-                                                <div className="flex flex-wrap items-center gap-1">
+                                                <div className="flex flex-wrap items-center gap-1 mt-2">
                                                     {listingAmenities && Object.entries(listingAmenities)
                                                         .filter(([, value]) => value === true)
                                                         .map(([key], index, array) => (
                                                             <Fragment key={key}>
-                                                                <p className="text-sm text-gray-500">{key}</p>
-                                                                {index < array.length - 1 && <span className="text-gray-400">|</span>}
+                                                                <p className="text-xs text-gray-500 capitalize">{key}</p>
+                                                                {index < array.length - 1 && <span className="text-gray-300 text-xs">|</span>}
                                                             </Fragment>
                                                         ))
                                                     }
                                                 </div>
-                                                <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {el.host_id}</p>
+                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host ID:</span> {el.host_id}</p>
                                             </div>
-                                            <button className="border border-gray-500 p-2 rounded-md bottom-2 right-2 absolute">
+                                            <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
                                                 <FaHeart size={16} className="text-primary" />
                                             </button>
                                         </div>
@@ -818,18 +522,12 @@ function Listings() {
                                 });
                             })()}
                         </div>
+
                         {listings.length > page * 9 && (
-                            <button
-                                className="bg-primary text-white px-4 py-2 w-fit rounded-lg cursor-pointer"
-                                onClick={handleLoadMore}
-                            >
-                                Load More
-                            </button>
+                            <button className="bg-primary text-white px-6 py-2 w-fit rounded-lg cursor-pointer font-medium mt-4" onClick={handleLoadMore}>Load More</button>
                         )}
                     </div>
-
                 </div>
-
             </main>
         </Layout>
     );

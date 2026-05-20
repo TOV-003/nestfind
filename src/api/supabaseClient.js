@@ -1,15 +1,7 @@
-import axios from 'axios';
+import { createClient } from '@supabase/supabase-js';
 
-export const USERS_API_URL = import.meta.env.VITE_SUPABASE_URL_USERS;
-export const LISTINGS_API_URL = import.meta.env.VITE_SUPABASE_URL_LISTINGS;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-
-export const supabaseApi = axios.create({
-
-    headers: {
-        'apikey': supabaseAnonKey,
-        'Authorization': `Bearer ${supabaseAnonKey}`,
-        'Content-Type': 'application/json',
-    },
-});
+// Export the initialized Supabase client instance
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

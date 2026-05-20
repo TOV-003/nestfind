@@ -1,4 +1,3 @@
-
 import Layout from "../Layout"
 import { useEffect, useState } from "react";
 import { dataService } from '../api/dataService';
@@ -9,164 +8,34 @@ import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useNavigate, Link } from 'react-router-dom';
 
-
 function Home() {
-
     const heroIMGs = ["/IMG1.jpg", "/IMG2.jpg", "/IMG3.jpg"];
     const [index, setIndex] = useState(0);
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
+
     const localStates = [
-        "Abia",
-        "Adamawa",
-        "Akwa Ibom",
-        "Anambra",
-        "Bauchi",
-        "Bayelsa",
-        "Benue",
-        "Borno",
-        "Cross River",
-        "Delta",
-        "Ebonyi",
-        "Edo",
-        "Ekiti",
-        "Enugu",
-        "FCT",
-        "Gombe",
-        "Imo",
-        "Jigawa",
-        "Kaduna",
-        "Kano",
-        "Katsina",
-        "Kebbi",
-        "Kogi",
-        "Kwara",
-        "Lagos",
-        "Nasarawa",
-        "Niger",
-        "Ogun",
-        "Ondo",
-        "Osun",
-        "Oyo",
-        "Plateau",
-        "Rivers",
-        "Sokoto",
-        "Taraba",
-        "Yobe",
-        "Zamfara"
+        "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+        "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo",
+        "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa",
+        "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba",
+        "Yobe", "Zamfara"
     ];
+
     const localCities = [
-        "Aba",
-        "Abakaliki",
-        "Abeokuta",
-        "Aboh",
-        "Abuja",
-        "Ado Ekiti",
-        "Afikpo",
-        "Agbor",
-        "Aguata",
-        "Agulu",
-        "Ahoada",
-        "Akure",
-        "Ankpa",
-        "Asaba",
-        "Awka",
-        "Badagry",
-        "Bauchi",
-        "Beli",
-        "Benin City",
-        "Bida",
-        "Birnin Kebbi",
-        "Biu",
-        "Calabar",
-        "Damaturu",
-        "Daura",
-        "Dere",
-        "Dutse",
-        "Ede",
-        "Effurun",
-        "Eket",
-        "Enugu",
-        "Epe",
-        "Funtua",
-        "Gashua",
-        "Gboko",
-        "Gombe",
-        "Gusau",
-        "Hadejia",
-        "Ibadan",
-        "Idah",
-        "Ife",
-        "Ifon",
-        "Ijebu-Ode",
-        "Ikeja",
-        "Ikenne",
-        "Ikorodu",
-        "Ikot Ekpene",
-        "Ila Orangun",
-        "Ilesa",
-        "Ilorin",
-        "Inisa",
-        "Iseyin",
-        "Iwo",
-        "Jalingo",
-        "Jimeta",
-        "Jos",
-        "Kaduna",
-        "Kafanchan",
-        "Kano",
-        "Katsina",
-        "Keffi",
-        "Koko",
-        "Kontagora",
-        "Lafia",
-        "Lagos",
-        "Lokoja",
-        "Madalla",
-        "Maiduguri",
-        "Makurdi",
-        "Minna",
-        "Mubi",
-        "Nasarawa",
-        "New Bussa",
-        "Nnewi",
-        "Nningi",
-        "Nsukka",
-        "Obudu",
-        "Offa",
-        "Ogale",
-        "Ogbomosho",
-        "Ogoja",
-        "Okene",
-        "Okigwe",
-        "Okitipupa",
-        "Okrika",
-        "Ondo",
-        "Onitsha",
-        "Oron",
-        "Orlu",
-        "Oshogbo",
-        "Otite",
-        "Otukpo",
-        "Owerri",
-        "Owo",
-        "Oyo",
-        "Port Harcourt",
-        "Potiskum",
-        "Sagamu",
-        "Saki",
-        "Sapele",
-        "Sokoto",
-        "Suleja",
-        "Ugep",
-        "Umuahia",
-        "Uromi",
-        "Uyo",
-        "Warri",
-        "Wukari",
-        "Yenagoa",
-        "Yola",
-        "Zaria"
+        "Aba", "Abakaliki", "Abeokuta", "Aboh", "Abuja", "Ado Ekiti", "Afikpo", "Agbor",
+        "Aguata", "Agulu", "Ahoada", "Akure", "Ankpa", "Asaba", "Awka", "Badagry", "Bauchi",
+        "Beli", "Benin City", "Bida", "Birnin Kebbi", "Biu", "Calabar", "Damaturu", "Daura",
+        "Dere", "Dutse", "Ede", "Effurun", "Eket", "Enugu", "Epe", "Funtua", "Gashua", "Gboko",
+        "Gombe", "Gusau", "Hadejia", "Ibadan", "Idah", "Ife", "Ifon", "Ijebu-Ode", "Ikeja",
+        "Ikenne", "Ikorodu", "Ikot Ekpene", "Ila Orangun", "Ilesa", "Ilorin", "Inisa", "Iseyin",
+        "Iwo", "Jalingo", "Jimeta", "Jos", "Kaduna", "Kafanchan", "Kano", "Katsina", "Keffi",
+        "Koko", "Kontagora", "Lafia", "Lagos", "Lokoja", "Madalla", "Maiduguri", "Makurdi",
+        "Minna", "Mubi", "Nasarawa", "New Bussa", "Nnewi", "Nningi", "Nsukka", "Obudu", "Offa",
+        "Ogale", "Ogbomosho", "Ogoja", "Okene", "Okigwe", "Okitipupa", "Okrika", "Ondo",
+        "Onitsha", "Oron", "Orlu", "Oshogbo", "Otite", "Otukpo", "Owerri", "Owo", "Oyo",
+        "Port Harcourt", "Potiskum", "Sagamu", "Saki", "Sapele", "Sokoto", "Suleja", "Ugep",
+        "Umuahia", "Uromi", "Uyo", "Warri", "Wukari", "Yenagoa", "Yola", "Zaria"
     ];
 
     const allCities = listings.map(el => el.location?.city).filter(Boolean);
@@ -183,13 +52,14 @@ function Home() {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setIndex((prev) => (prev + 1) % 3)
+            setIndex((prev) => (prev + 1) % 3);
         }, 10000);
-        return () => clearInterval(timer)
-    }, [])
+        return () => clearInterval(timer);
+    }, []);
 
     const [formData, setFormData] = useState({
-        location: '',
+        city: '',
+        state: '',
         type: '',
         listing_type: '',
         minPrice: '',
@@ -218,18 +88,15 @@ function Home() {
             state: formData.state,
             city: formData.city,
         };
+
         const filteredPayload = Object.fromEntries(
             Object.entries(rawPayload).filter(([, value]) => {
                 return value !== null && value !== undefined && value !== '' && value !== 'all';
             })
         );
 
-
-
-        console.log('Submitted Property Criteria:', filteredPayload);
         navigate('/listings', { state: { criteria: filteredPayload } });
     }
-
 
     useEffect(() => {
         dataService.getListings()
@@ -244,9 +111,6 @@ function Home() {
             });
     }, []);
 
-
-
-
     return (
         <Layout>
             <main className="my-12 md:w-3/4 flex flex-col items-center mx-auto gap-8">
@@ -254,10 +118,9 @@ function Home() {
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
                         <h1 className="text-xl font-semibold">Find Your Next Home With Next Find</h1>
                         <h3 className="text-sm">Search verified listings, compare neighbourhoods, and save favourites</h3>
+
                         <div className="flex flex-col gap-1">
-                            <label htmlFor="city" className="text-sm font-medium text-gray-700">
-                                City/Town
-                            </label>
+                            <label htmlFor="city" className="text-sm font-medium text-gray-700">City/Town</label>
                             <input
                                 list="cities"
                                 id="city"
@@ -265,18 +128,15 @@ function Home() {
                                 value={formData.city}
                                 onChange={handleChange}
                                 placeholder="e.g. Lagos, Ibadan"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
                             />
                             <datalist id="cities">
-                                {localCities.map((city) => (
-                                    <option key={city} value={city} />
-                                ))}
+                                {localCities.map((city) => <option key={city} value={city} />)}
                             </datalist>
                         </div>
+
                         <div className="flex flex-col gap-1">
-                            <label htmlFor="state" className="text-sm font-medium text-gray-700">
-                                State
-                            </label>
+                            <label htmlFor="state" className="text-sm font-medium text-gray-700">State</label>
                             <input
                                 list="states"
                                 id="state"
@@ -285,26 +145,21 @@ function Home() {
                                 value={formData.state}
                                 onChange={handleChange}
                                 placeholder="e.g. Lagos, Rivers"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
                             />
                             <datalist id="states">
-                                {localStates.map((state) => (
-                                    <option key={state} value={state} />
-                                ))}
+                                {localStates.map((state) => <option key={state} value={state} />)}
                             </datalist>
                         </div>
 
-
                         <div className="flex flex-col gap-1">
-                            <label htmlFor="type" className="text-sm font-medium text-gray-700">
-                                Property Type
-                            </label>
+                            <label htmlFor="type" className="text-sm font-medium text-gray-700">Property Type</label>
                             <select
                                 id="type"
                                 name="type"
                                 value={formData.type}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white"
                             >
                                 <option value="house">House</option>
                                 <option value="apartment">Apartment</option>
@@ -324,20 +179,18 @@ function Home() {
                                     onChange={handleChange}
                                     placeholder="Max Price"
                                     min="0"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
                                 />
                             </div>
 
                             <div className="flex gap-2 flex-col w-1/2">
-                                <label htmlFor="type" className="text-sm font-medium text-gray-700">
-                                    Listing Type
-                                </label>
+                                <label htmlFor="listing_type" className="text-sm font-medium text-gray-700">Listing Type</label>
                                 <select
                                     id="listing_type"
                                     name="listing_type"
                                     value={formData.listing_type}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white"
                                 >
                                     <option value="rent">Rent</option>
                                     <option value="sale">Sale</option>
@@ -345,11 +198,10 @@ function Home() {
                                 </select>
                             </div>
                         </div>
+
                         <div className="flex gap-2">
                             <div className="flex flex-col gap-1 w-1/2">
-                                <label htmlFor="beds" className="text-sm font-medium text-gray-700">
-                                    Beds
-                                </label>
+                                <label htmlFor="beds" className="text-sm font-medium text-gray-700">Beds</label>
                                 <input
                                     id="beds"
                                     type="number"
@@ -358,13 +210,11 @@ function Home() {
                                     onChange={handleChange}
                                     min="0"
                                     placeholder="0"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
                                 />
                             </div>
                             <div className="flex flex-col gap-1 w-1/2">
-                                <label htmlFor="baths" className="text-sm font-medium text-gray-700">
-                                    Baths
-                                </label>
+                                <label htmlFor="baths" className="text-sm font-medium text-gray-700">Baths</label>
                                 <input
                                     id="baths"
                                     type="number"
@@ -374,135 +224,107 @@ function Home() {
                                     min="0"
                                     step="0.5"
                                     placeholder="0"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
                                 />
                             </div>
                         </div>
 
-                        <button
-                            type="submit"
-                            className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-sm transition-colors"
-
-                        >
-                            Search Properties
-                        </button>
-
+                        <button type="submit" className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md text-sm transition-colors">Search Properties</button>
                     </form>
-                    <img key={index} src={heroIMGs[index]} className="w-96  lg:w-120 rounded-lg animate-fade-in" alt="Interior Image" />
+                    <img key={index} src={heroIMGs[index]} className="w-96 lg:w-120 rounded-lg animate-fade-in" alt="Interior Asset" />
                 </div>
-                <div className="flex flex-col items-center gap-2">
+
+                <div className="flex flex-col items-center gap-2 w-full">
                     <h2 className="font-semibold">Featured Listings</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center">
-                        {listings.slice(0, 9).map((el) => {
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 place-items-center w-full">
+                        {loading ? (
+                            [1, 2, 3].map((i) => (
+                                <div key={i} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 animate-pulse">
+                                    <div className="w-full aspect-square bg-gray-300 rounded-xl"></div>
+                                    <div className="flex flex-col gap-1 self-start w-full px-2">
+                                        <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+                                        <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
+                                        <div className="h-4 bg-gray-300 rounded w-2/3"></div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            listings.slice(0, 9).map((el) => {
+                                const listingLocation = el.location || {};
+                                const listingAmenities = el.amenities || {};
 
-                            if (loading) {
                                 return (
-                                    <div className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 animate-pulse">
-                                        <div className="w-full aspect-square bg-gray-300 rounded-xl"></div>
-
-                                        <div className="flex flex-col gap-1 self-start w-full">
-                                            <div className="flex flex-row gap-2 mb-2">
-                                                <div className="h-6 bg-gray-300 rounded w-3/4"></div>
-                                                <div className="h-6 bg-gray-300 rounded w-1/4"></div>
+                                    <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
+                                        <Link to={`/listings/${el.id}`} className="w-full">
+                                            <img
+                                                src={el.images?.[0] || '/placeholder-property.jpg'}
+                                                className="w-full aspect-square object-cover rounded-xl"
+                                                alt={el.title || "Property Image"}
+                                            />
+                                        </Link>
+                                        <div className="flex flex-col gap-1 self-start px-2 pb-12 w-full">
+                                            <div className="flex flex-row justify-between items-start gap-2 w-full">
+                                                <p className="text-lg font-bold line-clamp-1">{el.title}</p>
+                                                <h3 className="text-primary font-bold text-lg whitespace-nowrap">
+                                                    ₦{el.price?.toLocaleString('en-US')}
+                                                    {el.listing_type === 'rent' ? '/yr' : el.listing_type === 'shortlet' ? '/day' : ''}
+                                                </h3>
                                             </div>
+                                            <p className="text-gray-400 text-sm">
+                                                {listingLocation.city}, {listingLocation.state} state. Listed {(() => {
+                                                    if (!el.date_listed) return 'N/A';
+                                                    const inputDate = new Date(el.date_listed);
+                                                    const currentDate = new Date();
+                                                    if (isNaN(inputDate.getTime())) return 'Invalid Date';
+                                                    const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
+                                                    if (diffInDays < 0) return 'In the future';
+                                                    if (diffInDays === 0) return 'Today';
+                                                    if (diffInDays === 1) return '1 day ago';
+                                                    return `${diffInDays} days ago`;
+                                                })()}
+                                            </p>
 
-                                            <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
-
-                                            <div className="flex flex-row gap-2 mb-2">
-                                                <div className="h-4 bg-gray-300 rounded w-1/3"></div>
-                                                <div className="h-4 bg-gray-300 rounded w-1/3"></div>
-                                                <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+                                            <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaHome size={14} className="text-primary" />
+                                                    <p className="capitalize">{el.type} for {el.listing_type}</p>
+                                                </div>
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaBed size={14} className="text-primary" />
+                                                    <p>{el.beds} bd</p>
+                                                </div>
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaBath size={14} className="text-primary" />
+                                                    <p>{el.baths} ba</p>
+                                                </div>
                                             </div>
-
-                                            <div className="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
-
-                                            <div className="flex flex-row gap-2">
-                                                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
-                                                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
-                                                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+                                            <div className="flex flex-row items-center gap-1 mt-1 text-sm text-gray-500">
+                                                <FaPencilRuler size={12} className="text-primary" />
+                                                <p>{el.area} sq ft</p>
                                             </div>
-
-                                            <div className="h-4 bg-gray-300 rounded w-1/3 mt-2"></div>
+                                            <div className="flex flex-wrap items-center gap-1 mt-2">
+                                                {Object.entries(listingAmenities)
+                                                    .filter(([, value]) => value === true)
+                                                    .map(([key], index, array) => (
+                                                        <Fragment key={key}>
+                                                            <p className="text-xs text-gray-500 capitalize">{key}</p>
+                                                            {index < array.length - 1 && <span className="text-gray-300 text-xs">|</span>}
+                                                        </Fragment>
+                                                    ))
+                                                }
+                                            </div>
+                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host ID:</span> {el.host_id}</p>
                                         </div>
-
-                                        <div className="border border-gray-500 p-2 rounded-md bottom-2 right-2 absolute bg-gray-300 w-10 h-10"></div>
+                                        <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
+                                            <FaHeart size={16} className="text-primary" />
+                                        </button>
                                     </div>
                                 );
-                            }
-
-                            return (
-                                <div key={el.id} className=" relative border border-gray-300 rounded-lg p-2 w-4/5  md:w-full h-full flex flex-col items-center gap-4">
-
-                                    <Link to={`/listings/${el.id}`}>
-                                        <img
-                                            src={el.images.slice(1, -1).split(',')[0]}
-                                            className="w-full aspect-square object-cover rounded-xl"
-                                            alt={el.title || "Property Image"}
-                                        />
-                                    </Link>
-                                    <div className="flex flex-col gap-1 self-start">
-                                        <div className="flex flex-row gap-2">
-                                            <p className="text-lg font-bold">{el.title}</p>
-                                            <h3 className="text-primary w-fit text-xl">₦{el.price?.toLocaleString('en-US')}{el.listing_type === 'rent' ? ' per year' : el.listing_type === 'shortlet' ? ' per day' : ''}</h3>
-                                        </div>
-                                        <p className="text-gray-400">{el.location?.city}, {el.location?.state} state. Listed {(() => {
-                                            const standardizedStr = el.date_listed
-                                                .replace(' ', 'T')
-                                                .replace(/([+-]\d{2})$/, '$1:00');
-
-                                            const inputDate = new Date(standardizedStr);
-                                            const currentDate = new Date();
-
-                                            if (isNaN(inputDate.getTime())) return 'Invalid Date';
-
-                                            const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
-
-                                            if (diffInDays < 0) return 'In the future';
-                                            if (diffInDays === 0) return 'Today';
-                                            if (diffInDays === 1) return '1 day ago';
-
-                                            return `${diffInDays} days ago`;
-                                        })()}</p>
-
-                                        <div className="flex flex-row gap-2">
-                                            <div className="flex flex-row items-center gap-1">
-                                                <FaHome size={12} className="text-primary" />
-                                                <p >{el.type.charAt(0).toUpperCase() + el.type.slice(1)} for {el.listing_type}</p>
-                                            </div>
-                                            <div className="flex flex-row items-center gap-1">
-                                                <FaBed size={12} className="text-primary" />
-                                                <p>{el.beds} bd</p>
-                                            </div>
-                                            <div className="flex flex-row items-center gap-1">
-                                                <FaBath size={12} className="text-primary" />
-                                                <p >{el.baths} ba</p>
-                                            </div>
-
-                                        </div>
-                                        <div className="flex flex-row items-center gap-1">
-                                            <FaPencilRuler size={12} className="text-primary" />
-                                            <p className="text-gray-400">{el.area} square feet</p>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-1">
-                                            {Object.entries(el.amenities)
-                                                .filter(([, value]) => value === true)
-                                                .map(([key], index, array) => (
-                                                    <Fragment key={key}>
-                                                        <p className="text-sm text-gray-500">{key}</p>
-                                                        {index < array.length - 1 && <span className="text-gray-400">|</span>}
-                                                    </Fragment>
-                                                ))
-                                            }
-                                        </div>
-                                        <p className="text-gray-400 text-sm"><span className="font-bold">Host ID</span>: {el.host_id}</p>
-
-                                    </div>
-                                    <button className="border border-gray-500 p-2 rounded-md bottom-2 right-2 absolute"><FaHeart size={16} className="text-primary" /></button>
-                                </div>
-                            );
-                        })}
+                            })
+                        )}
                     </div>
                 </div>
+
                 <div className="flex flex-col items-center gap-6">
                     <h2 className="font-semibold">How It Works</h2>
                     <div className="flex flex-col items-center px-2 md:px-0 gap-4 text-center">
@@ -522,6 +344,7 @@ function Home() {
                         <p>Submit formal inquiry requests directly through the property detail page interface. Your inquiries, including preferred inspection dates and direct contact details, route immediately to the verified host's dashboard for review.</p>
                     </div>
                 </div>
+
                 <div className="flex flex-col items-center gap-2">
                     <h2>Popular Cities</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center">
@@ -532,11 +355,9 @@ function Home() {
                         ))}
                     </div>
                 </div>
-
-
             </main>
-        </Layout >
-    )
+        </Layout>
+    );
 }
 
-export default Home
+export default Home;

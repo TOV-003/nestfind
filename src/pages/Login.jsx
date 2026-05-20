@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import Layout from '../Layout';
+import { supabase } from '../api/supabaseClient';
+import toast from 'react-hot-toast';
 
 function Login() {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -17,7 +20,24 @@ function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        console.log('Submitted Form Data:', formData);
+        setLoading(true);
+
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: formData.email,
+                password: formData.password,
+            });
+
+            if (error) throw error;
+
+            toast.success('Successfully logged in!');
+            console.log('Authentication successful:', data);
+        } catch (error) {
+            console.error('Authentication error:', error.message);
+            toast.error(error.message || 'Failed to authenticate user.');
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -37,7 +57,8 @@ function Login() {
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                disabled={loading}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
                                 autoComplete='email'
                             />
                         </div>
@@ -52,14 +73,16 @@ function Login() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                disabled={loading}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
                             />
                         </div>
                         <button
                             type="submit"
-                            className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors"
+                            disabled={loading}
+                            className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
-                            Log In
+                            {loading ? 'Logging in...' : 'Log In'}
                         </button>
                     </form>
                 </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
+import { supabase } from '../api/supabaseClient';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 function PropertyMap({ addresses = [] }) {
@@ -35,7 +36,27 @@ function PropertyMap({ addresses = [] }) {
                 const validPositions = [];
                 const uniqueAddresses = [...new Set(addresses)];
 
-                for (const address of uniqueAddresses) {
+                const { data: cachedGeo, error: supabaseError } = await supabase
+                    .from('geocaching')
+                    .select('address, latitude, longitude')
+                    .in('address', uniqueAddresses);
+
+                if (supabaseError) {
+                    console.error(supabaseError);
+                }
+
+                const cachedMap = new Map(cachedGeo?.map(item => [item.address, item]) || []);
+                const missingAddresses = uniqueAddresses.filter(addr => !cachedMap.has(addr));
+
+                for (const item of cachedGeo || []) {
+                    validPositions.push({
+                        address: item.address,
+                        latitude: item.latitude,
+                        longitude: item.longitude
+                    });
+                }
+
+                for (const address of missingAddresses) {
                     try {
                         const response = await fetch(
                             `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&email=victortoba03@gmail.com`
@@ -52,11 +73,18 @@ function PropertyMap({ addresses = [] }) {
 
                         const data = await response.json();
                         if (data && data.length > 0) {
+                            const lat = parseFloat(data[0].lat);
+                            const lon = parseFloat(data[0].lon);
+
                             validPositions.push({
                                 address,
-                                latitude: parseFloat(data[0].lat),
-                                longitude: parseFloat(data[0].lon),
+                                latitude: lat,
+                                longitude: lon,
                             });
+
+                            await supabase
+                                .from('geocaching')
+                                .insert([{ address, latitude: lat, longitude: lon }]);
                         }
                     } catch (err) {
                         console.error(err);
