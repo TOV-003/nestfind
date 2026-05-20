@@ -463,7 +463,7 @@ function Listings() {
                                             </Link>
                                             <div className="flex flex-col gap-1 self-start w-full px-2 pb-12">
                                                 <div className="flex flex-row justify-between items-start gap-2 w-full">
-                                                    <p className="text-lg font-bold line-clamp-1">{el.title}</p>
+                                                    <p className="text-lg font-bold">{el.title}</p>
                                                     <h3 className="text-primary font-bold text-lg whitespace-nowrap">
                                                         ₦{el.price?.toLocaleString('en-US')}
                                                         {el.listing_type === 'rent' ? '/yr' : el.listing_type === 'shortlet' ? '/day' : ''}
