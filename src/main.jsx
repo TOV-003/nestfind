@@ -3,12 +3,14 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
+import AuthProvider from './context/AuthContext.jsx'
 import ErrorPage from './components/ErrorPage.jsx'
 import Home from './pages/Home.jsx'
 import Listings from './pages/Listings.jsx'
 import ListingPage from './pages/ListingPage.jsx'
 import Register from './pages/Register.jsx'
 import Login from './pages/Login.jsx'
+import Profile from './pages/Profile.jsx'
 
 const router = createBrowserRouter([
   {
@@ -35,6 +37,10 @@ const router = createBrowserRouter([
       {
         element: <Login />,
         path: "/Login"
+      },
+      {
+        element: <Profile />,
+        path: "/Profile"
       }
 
     ],
@@ -43,6 +49,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>
 )

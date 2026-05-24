@@ -6,6 +6,7 @@ import { FaBed, FaBath, FaWifi, FaCar, FaChair, FaPencilRuler } from "react-icon
 import toast from "react-hot-toast";
 import ImageCarousel from "../components/ImageCarousel";
 import PropertyMap from "../components/PropertyMap";
+import UserIDName from "../components/UserIDName";
 
 function ListingPage() {
     const { id } = useParams();
@@ -205,6 +206,7 @@ function ListingPage() {
                                 </Link>
                                 <p className="font-bold">{el.title}</p>
                                 <p className="text-primary font-bold">₦{el.price?.toLocaleString()}</p>
+                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host ID:</span> <UserIDName userId={el.host_id} /></p>
                             </div>
                         ))}
                     </div>

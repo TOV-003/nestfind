@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Layout from '../Layout';
 import { supabase } from '../api/supabaseClient';
+import { useAuth } from '../context/useAuth';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 function Login() {
@@ -9,6 +11,9 @@ function Login() {
         password: '',
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -20,6 +25,16 @@ function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
+        setError(null);
+        try {
+            await login(formData.email, formData.password);
+            toast.success('Successfully logged in!');
+            navigate('/');
+        } catch (err) {
+            setError(err.message);
+            console.log(error);
+
+        }
         setLoading(true);
 
         try {
