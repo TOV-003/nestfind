@@ -9,7 +9,11 @@ export const dataService = {
     getListings: async () => {
         const { data, error } = await supabase
             .from('listings')
-            .select('*');
+            .select(`*, users(
+                name
+            )`);
+
+        console.log("Listings with Joined Users:", data);
 
         if (error) throw error;
         return data;

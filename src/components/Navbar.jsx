@@ -5,6 +5,7 @@ function Navbar() {
     const links = [
         { title: "Home", path: "/" },
         { title: "Listings", path: "/Listings" },
+        { title: "Search Hosts", path: "/Search" }
     ];
 
 

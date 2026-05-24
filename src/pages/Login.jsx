@@ -25,6 +25,7 @@ function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
+        setLoading(true)
         setError(null);
         try {
             await login(formData.email, formData.password);

@@ -37,8 +37,26 @@ export default function AuthProvider({ children }) {
         await supabase.auth.signOut();
     }
 
+    async function signUp(email, password, userData) {
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    name: userData.name,
+                    role: userData.role,
+                    avatar_link: userData.avatar_link,
+                    phone: userData.phone
+                }
+            }
+        });
+
+        if (error) throw error;
+        return data;
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, signUp }}>
             {children}
         </AuthContext.Provider>
     );

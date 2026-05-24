@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import Layout from '../Layout';
-import { supabase } from '../api/supabaseClient';
+import { useAuth } from '../context/useAuth';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { dataService } from '../api/dataService';
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -9,12 +11,13 @@ function Register() {
         name: '',
         password: '',
         password2: '',
-        role: 'user',
+        role: '',
         phone: '',
         avatar: '',
-        message: '',
     });
     const [loading, setLoading] = useState(false);
+    const { signUp } = useAuth();
+    const navigate = useNavigate();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -35,25 +38,24 @@ function Register() {
         setLoading(true);
 
         try {
-            const { data, error } = await supabase.auth.signUp({
-                email: formData.email,
-                password: formData.password,
-                options: {
-                    data: {
-                        display_name: formData.name,
-                        role: formData.role,
-                        phone: formData.phone,
-                    }
-                }
+            const file = event.target.avatar.files[0];
+            let avatarUrl = '';
+            if (file) {
+                avatarUrl = await dataService.uploadUserAvatar(file, file.name);
+            }
+
+            await signUp(formData.email, formData.password, {
+                name: formData.name,
+                role: formData.role,
+                avatar: avatarUrl,
+                phone: formData.phone
             });
-
-            if (error) throw error;
-
-            toast.success('Registration initiated! Check your email for verification.');
-            console.log('Registration data:', data);
+            alert('Check your email for confirmation');
+            console.log('Registration successful, user ID:', formData.name);
+            toast.success('Account created successfully!');
+            navigate('/Login');
         } catch (error) {
-            console.error('Registration error:', error.message);
-            toast.error(error.message || 'Failed to register account.');
+            toast.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -66,6 +68,11 @@ function Register() {
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
                         <h1 className="text-xl font-semibold">Create Your Profile</h1>
                         <h3 className="text-sm">Sign up to get instant verification and start tracking your real estate listings</h3>
+
+                        <div>
+                            <label htmlFor="avatar" className="text-sm font-medium text-gray-700">Profile Picture</label>
+                            <input type="file" name="avatar" id="avatar" accept="image/*" onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm cursor-pointer" />
+                        </div>
 
                         <div className="flex flex-col gap-1">
                             <label htmlFor='name' className="text-sm font-medium text-gray-700">Full Name</label>
@@ -99,7 +106,7 @@ function Register() {
                         </div>
 
                         <div className="flex flex-col gap-1">
-                            <label htmlFor='phone' className="text-sm font-medium text-gray-700">Phone Number</label>
+                            <label htmlFor='phone' className="text-sm font-medium text-gray-700">Phone Number(+234**********)</label>
                             <input
                                 id='phone'
                                 name='phone'

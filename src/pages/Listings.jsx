@@ -7,7 +7,6 @@ import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import UserIDName from "../components/UserIDName";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/useAuth";
 
@@ -515,7 +514,7 @@ function Listings() {
                                                         ))
                                                     }
                                                 </div>
-                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> <UserIDName userId={el.host_id} /></p>
+                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span>{el.users?.name || 'Unknown Host'}</p>
                                             </div>
                                             <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
                                                 <FaHeart size={16} className={user ? "text-primary" : "text-gray-400"} />
