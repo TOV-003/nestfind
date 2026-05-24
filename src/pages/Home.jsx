@@ -137,7 +137,7 @@ function Home() {
     return (
         <Layout>
             <main className="my-12 md:w-3/4 flex flex-col items-center mx-auto gap-8">
-                <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0">
+                <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0 lg:items-stretch">
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
                         <h1 className="text-xl font-semibold">Find Your Next Home With Next Find</h1>
                         <h3 className="text-sm">Search verified listings, compare neighbourhoods, and save favourites</h3>
@@ -254,7 +254,7 @@ function Home() {
 
                         <button type="submit" className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md text-sm transition-colors">Search Properties</button>
                     </form>
-                    <img key={index} src={heroIMGs[index]} className="w-96 lg:w-120 rounded-lg animate-fade-in" alt="Interior Asset" />
+                    <img key={index} src={heroIMGs[index]} className="sm:w-96 lg:w-1/2 object-cover rounded-lg animate-fade-in" alt="Interior Asset" />
                 </div>
 
                 <div className="flex flex-col items-center gap-2 w-full">
