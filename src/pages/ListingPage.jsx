@@ -131,7 +131,10 @@ function ListingPage() {
                     </div>
                     <div className="flex flex-col gap-2 items-center border border-gray-300 px-4 py-2 rounded-lg flex-1 w-full">
                         <h2>Host</h2>
-                        <img src={host?.avatar} alt="Host" className=" h-64 rounded-full object-cover" />
+                        {console.log(host)}
+                        <Link to={`/Host/${host?.id}`}>
+                            <img src={host?.avatar} alt="Host" className=" h-64 rounded-full object-cover" />
+                        </Link>
                         <p>{host?.name}</p>
                         <button onClick={() => setFormModal(true)} className="cursor-pointer bg-primary rounded-lg px-4 py-2 text-white font-semibold">Contact Host</button>
                     </div>

@@ -16,6 +16,20 @@ function Home() {
     const [loading, setLoading] = useState(true);
     const [pageLoading, setPageLoading] = useState(true);
     const { user } = useAuth();
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        if (user) {
+            dataService.getUserById(user.id)
+                .then((data) => {
+                    setUserData(data);
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch user data:", err);
+                });
+        }
+    }, [user]);
+    console.log(userData);
 
     const localStates = [
         "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
@@ -77,6 +91,29 @@ function Home() {
             ...prevData,
             [name]: value
         }));
+    };
+
+    async function save(listingid) {
+        if (user) {
+            const currentList = user ? JSON.parse(userData.saved_listings) : [];
+
+            const newList = currentList.includes(listingid)
+                ? currentList.filter(id => id !== listingid)
+                : [...currentList, listingid];
+
+            const stringifiedList = JSON.stringify(newList);
+
+            try {
+                const updatedUser = await dataService.updateUserSavedListings(user.id, stringifiedList);
+
+                setUserData((prev) => ({
+                    ...prev,
+                    saved_listings: updatedUser.saved_listings
+                }));
+            } catch (err) {
+                console.error("Failed to update saved listings:", err);
+            }
+        }
     };
 
     async function handleSubmit(event) {
@@ -342,8 +379,8 @@ function Home() {
                                             </div>
                                             <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
                                         </div>
-                                        <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
-                                            <FaHeart size={16} className={user ? "text-primary" : "text-gray-400"} />
+                                        <button onClick={() => save(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
+                                            <FaHeart size={16} className={userData?.saved_listings && JSON.parse(userData.saved_listings).includes(el.id) ? "text-primary" : "text-gray-400"} />
                                         </button>
                                     </div>
                                 );
@@ -376,8 +413,8 @@ function Home() {
                     <h2>Popular Cities</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center">
                         {top6Cities.map((el, index) => (
-                            <button className="cursor-pointer" onClick={() => cityLoader(el)}>
-                                <div key={index} className="flex flex-col items-baseline bg-linear-to-br from-white to-primary text-white font-semibold pt-8 pb-1 px-12 rounded-lg">
+                            <button key={index} className="cursor-pointer" onClick={() => cityLoader(el)}>
+                                <div className="flex flex-col items-baseline bg-linear-to-br from-white to-primary text-white font-semibold pt-8 pb-1 px-12 rounded-lg">
                                     <h2>{el}</h2>
                                 </div>
                             </button>

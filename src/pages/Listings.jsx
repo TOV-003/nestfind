@@ -19,6 +19,19 @@ function Listings() {
     const [page, setPage] = useState(1);
     const [sort, setSort] = useState('default');
     const { user } = useAuth();
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        if (user) {
+            dataService.getUserById(user.id)
+                .then((data) => {
+                    setUserData(data);
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch user data:", err);
+                });
+        }
+    }, [user]);
 
     const localStates = [
         "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
@@ -517,7 +530,7 @@ function Listings() {
                                                 <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span>{el.host_name || 'Unknown Host'}</p>
                                             </div>
                                             <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
-                                                <FaHeart size={16} className={user ? "text-primary" : "text-gray-400"} />
+                                                <FaHeart size={16} className={userData?.saved_listings && JSON.parse(userData.saved_listings).includes(el.id) ? "text-primary" : "text-gray-400"} />
                                             </button>
                                         </div>
                                     );

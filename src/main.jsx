@@ -11,6 +11,7 @@ import ListingPage from './pages/ListingPage.jsx'
 import Register from './pages/Register.jsx'
 import Login from './pages/Login.jsx'
 import Profile from './pages/Profile.jsx'
+import Host from './pages/Host.jsx'
 import HostSearch from './pages/HostSearch.jsx'
 
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         element: <ListingPage />,
         path: "/Listings/:id"
+      },
+      {
+        element: <Host />,
+        path: "/Host/:id"
       },
       {
         element: <Register />,

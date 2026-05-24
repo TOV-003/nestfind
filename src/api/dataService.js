@@ -18,6 +18,17 @@ export const dataService = {
         return data;
     },
 
+    getListingById: async (id) => {
+        const { data, error } = await supabase
+            .from('listings')
+            .select('*')
+            .eq('id', id) // Filters exactly for the row with this ID
+            .single();    // Ensures you get a single object instead of an array
+
+        if (error) throw error;
+        return data;
+    },
+
     // POST: Insert a new listing row
     createListing: async (listingData) => {
         const { data, error } = await supabase
