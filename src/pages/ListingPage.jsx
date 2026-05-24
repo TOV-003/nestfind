@@ -205,7 +205,7 @@ function ListingPage() {
                                 </Link>
                                 <p className="font-bold">{el.title}</p>
                                 <p className="text-primary font-bold">₦{el.price?.toLocaleString()}</p>
-                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host ID:</span>{el.users.name}</p>
+                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host ID:</span>{el.host_name}</p>
                             </div>
                         ))}
                     </div>

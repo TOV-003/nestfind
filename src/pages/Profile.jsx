@@ -78,6 +78,7 @@ export default function Profile() {
     return (
         <Layout>
             <div className='my-12 flex flex-col items-center gap-4'>
+                <img src={profile?.avatar} alt="avatar" className="rounded-full w-32 h-32" />
                 <h1>{profile?.name}</h1>
                 <button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>Log Out</button>
                 <button className="bg-warning cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggle}>Delete My Account</button>
