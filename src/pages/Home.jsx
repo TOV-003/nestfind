@@ -101,6 +101,10 @@ function Home() {
         navigate('/listings', { state: { criteria: filteredPayload } });
     }
 
+    async function cityLoader(e) {
+        navigate('/listings', { state: { criteria: { city: e } } });
+    }
+
     useEffect(() => {
         function loader() {
             setPageLoading(true);
@@ -372,9 +376,12 @@ function Home() {
                     <h2>Popular Cities</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 place-items-center">
                         {top6Cities.map((el, index) => (
-                            <div key={index} className="flex flex-col items-baseline bg-linear-to-br from-white to-primary text-white font-semibold pt-8 pb-1 px-12 rounded-lg">
-                                <h2>{el}</h2>
-                            </div>
+                            <button className="cursor-pointer" onClick={() => cityLoader(el)}>
+                                <div key={index} className="flex flex-col items-baseline bg-linear-to-br from-white to-primary text-white font-semibold pt-8 pb-1 px-12 rounded-lg">
+                                    <h2>{el}</h2>
+                                </div>
+                            </button>
+
                         ))}
                     </div>
                 </div>
