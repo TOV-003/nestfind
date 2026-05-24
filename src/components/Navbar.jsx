@@ -20,12 +20,13 @@ function Navbar() {
                     <img src="/favicon.svg" alt="logo" className="w-8 h-8" />
                     <h1 className="text-primary hidden md:block">Nestfind</h1>
                 </div>
-                <div className="actions flex justify-between items-center gap-4 md:gap-8">
-                    {links.map((el, index) => (<NavLink to={el.path} key={index} className={({ isActive }) => isActive ? "text-primary" : "text-gray-600"}>{el.title}</NavLink>))}
-                </div>
+
                 {
                     isMobile ?
                         <>
+                            <div className="actions flex justify-between items-center gap-4 md:gap-8">
+                                {links.map((el, index) => (<NavLink to={el.path} key={index} className={({ isActive }) => isActive ? "text-primary" : "text-gray-600"}>{el.title}</NavLink>))}
+                            </div>
                             <div>
                                 <button className="bg-primary aspect-square py-1 px-2 text-white font-bold rounded-lg cursor-pointer text-2xl" onClick={() => setShowOptions(!showOptions)}>☰</button>
                                 {showOptions &&
