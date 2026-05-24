@@ -1,16 +1,37 @@
-# React + Vite
+# NestFind - Real Estate Listing Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+NestFind is a React-based real estate application that allows users to browse, list, and manage property listings. It features a robust authentication system, profile management, and image uploads via Cloudinary.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+-   **User Authentication**: Secure Sign Up and Login powered by Supabase Auth.
+-   **Role-Based Access**: Support for both 'User' and 'Host' roles.
+-   **Profile Management**: Users can update their profiles, including profile pictures and contact information.
+-   **Image Uploads**: Integrated with Cloudinary for efficient image hosting and management.
+-   **Account Deletion**: Secure account deletion via Supabase Edge Functions.
+-   **Responsive Design**: Built with Tailwind CSS for a seamless experience across mobile and desktop.
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+-   **Frontend**: React, React Router, Tailwind CSS
+-   **Backend/Database**: Supabase (PostgreSQL, Auth, Edge Functions)
+-   **Media Storage**: Cloudinary
+-   **Notifications**: React Hot Toast
 
-## Expanding the ESLint configuration
+## 📋 Prerequisites
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Before you begin, ensure you have the following:
+
+-   Node.js installed
+-   A Supabase project created
+-   A Cloudinary account for image uploads
+
+## ⚙️ Environment Variables
+
+Create a `.env` file in the root directory and add the following:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
