@@ -12,6 +12,13 @@ export default function Profile() {
     const { logout } = useAuth();
     const navigate = useNavigate();
     const [modal, setModal] = useState(false);
+    const url = import.meta.env.VITE_SUPABASE_URL;
+
+    useEffect(() => {
+        if (!user) {
+            navigate('/Login');
+        }
+    }, [user, navigate]);
 
     function logOut() {
         logout();
@@ -34,29 +41,29 @@ export default function Profile() {
 
     async function deleteMyAccount() {
         const { data: { session } } = await supabase.auth.getSession();
+        console.log("Full URL being fetched:", `${url}/functions/v1/delete-user`);
 
-        if (!session) {
-            throw new Error('No active session found. User must be logged in.');
+        if (!session || !session.access_token) {
+            console.error("No session or token found!");
+            throw new Error('No active session found.');
         }
 
         try {
-            const response = await fetch('YOUR_PROJECT_URL/functions/v1/delete-user', {
+            const response = await fetch(`${url}/functions/v1/delete-user`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${session.access_token}`,
-                    'Content-Type': 'application/json',
-                }
+                    'Content-Type': 'application/json'
+                },
             });
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                // This logs the specific error message from your Edge Function
-                console.error('Edge Function Error:', result);
-                throw new Error(result.error || 'Could not delete account');
+            if (!response.ok) throw new Error('Could not delete account');
+            try {
+                await supabase.auth.signOut();
+            } catch (authErr) {
+                console.warn("Session already revoked or user deleted:", authErr);
             }
 
-            await supabase.auth.signOut();
             return true;
         } catch (err) {
             console.error('Network or Server Error:', err);
@@ -80,7 +87,15 @@ export default function Profile() {
                         className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
                     >
                         <form
-                            onSubmit={deleteMyAccount}
+                            onSubmit={async (e) => {
+                                e.preventDefault();
+                                try {
+                                    await deleteMyAccount();
+                                    navigate('/');
+                                } catch (err) {
+                                    console.error("Delete failed:", err);
+                                }
+                            }}
                             onClick={(e) => e.stopPropagation()}
                             className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg"
                         >

@@ -14,6 +14,7 @@ function Home() {
     const [index, setIndex] = useState(0);
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [pageLoading, setPageLoading] = useState(true);
     const { user } = useAuth();
 
     const localStates = [
@@ -101,6 +102,10 @@ function Home() {
     }
 
     useEffect(() => {
+        function loader() {
+            setPageLoading(true);
+        }
+        loader();
         dataService.getListings()
             .then((data) => {
                 setListings(data || []);
@@ -110,8 +115,24 @@ function Home() {
             })
             .finally(() => {
                 setLoading(false);
+                setPageLoading(false);
             });
     }, []);
+
+    if (pageLoading) return <Layout>
+        {
+            [1, 2, 3].map((i) => (
+                <div key={i} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 animate-pulse">
+                    <div className="w-full aspect-square bg-gray-300 rounded-xl"></div>
+                    <div className="flex flex-col gap-1 self-start w-full px-2">
+                        <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+                        <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
+                        <div className="h-4 bg-gray-300 rounded w-2/3"></div>
+                    </div>
+                </div>
+            ))
+        }
+    </Layout>;
 
     return (
         <Layout>
@@ -315,7 +336,7 @@ function Home() {
                                                     ))
                                                 }
                                             </div>
-                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.users.name}</p>
+                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
                                         </div>
                                         <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
                                             <FaHeart size={16} className={user ? "text-primary" : "text-gray-400"} />

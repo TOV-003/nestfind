@@ -514,7 +514,7 @@ function Listings() {
                                                         ))
                                                     }
                                                 </div>
-                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span>{el.users?.name || 'Unknown Host'}</p>
+                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span>{el.host_name || 'Unknown Host'}</p>
                                             </div>
                                             <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
                                                 <FaHeart size={16} className={user ? "text-primary" : "text-gray-400"} />

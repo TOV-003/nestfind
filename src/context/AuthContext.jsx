@@ -45,7 +45,7 @@ export default function AuthProvider({ children }) {
                 data: {
                     name: userData.name,
                     role: userData.role,
-                    avatar_link: userData.avatar_link,
+                    avatar: userData.avatar,
                     phone: userData.phone
                 }
             }

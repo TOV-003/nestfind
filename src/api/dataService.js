@@ -7,13 +7,12 @@ export const dataService = {
 
     // GET: Fetch all real estate listings
     getListings: async () => {
+
         const { data, error } = await supabase
             .from('listings')
-            .select(`*, users(
-                name
-            )`);
+            .select('*')
 
-        console.log("Listings with Joined Users:", data);
+        console.log("Listings", data);
 
         if (error) throw error;
         return data;
@@ -106,23 +105,32 @@ export const dataService = {
     },
 
     // POST: Uploads a single file to the avatars bucket and returns public URL
-    uploadUserAvatar: async (fileBlob, fileName) => {
-        const uniqueFileName = `avatar_${Date.now()}_${fileName}`;
+    async uploadUserAvatar(file, originalName) {
+        // 1. Sanitize the filename to prevent 400 Bad Request errors
+        const fileExt = originalName.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
 
-        // Upload file to 'avatars' bucket
-        const { error: uploadError } = await supabase.storage
+        // 2. Perform the upload
+        const { data, error } = await supabase.storage
             .from('avatars')
-            .upload(uniqueFileName, fileBlob, {
-                contentType: fileBlob.type || 'image/jpeg',
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
             });
 
-        if (uploadError) throw uploadError;
+        console.log(data);
 
-        // Get public URL
-        const { data } = supabase.storage
+        if (error) {
+            console.error('Upload error:', error.message);
+            throw new Error(`Avatar upload failed: ${error.message}`);
+        }
+
+        // 3. Get the public URL for the file
+        const { data: publicUrlData } = supabase.storage
             .from('avatars')
-            .getPublicUrl(uniqueFileName);
+            .getPublicUrl(filePath);
 
-        return data.publicUrl;
+        return publicUrlData.publicUrl;
     }
 };

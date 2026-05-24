@@ -3,7 +3,6 @@ import Layout from '../Layout';
 import { useAuth } from '../context/useAuth';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { dataService } from '../api/dataService';
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -37,12 +36,28 @@ function Register() {
 
         setLoading(true);
 
+        const fileInput = document.getElementById('avatar');
+        const file = fileInput.files[0];
+        let avatarUrl = "";
+
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            );
+
+            const data = await response.json();
+            avatarUrl = data.secure_url;
+        }
+
         try {
-            const file = event.target.avatar.files[0];
-            let avatarUrl = '';
-            if (file) {
-                avatarUrl = await dataService.uploadUserAvatar(file, file.name);
-            }
 
             await signUp(formData.email, formData.password, {
                 name: formData.name,
