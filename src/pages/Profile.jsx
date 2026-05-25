@@ -19,6 +19,8 @@ export default function Profile() {
     const [modal, setModal] = useState(false);
     const url = import.meta.env.VITE_SUPABASE_URL;
     const [listings, setListings] = useState([]);
+    const [savedIds, setSavedIds] = useState([]);
+
 
     useEffect(() => {
         if (!user) {
@@ -34,37 +36,56 @@ export default function Profile() {
 
     useEffect(() => {
         if (user?.id) {
-            dataService.getUserById(user.id)
-                .then((data) => {
-                    setProfile(data);
-                })
-                .catch((err) => {
-                    console.error("Failed to fetch profile:", err);
+            supabase
+                .from('users')
+                .select('*')
+                .eq('id', user.id)
+                .then(({ data, error }) => {
+                    if (data) {
+                        setProfile(data[0]);
+                    } else {
+                        console.error("Failed to fetch saved IDs:", error);
+                    }
                 });
         }
     }, [user]);
-    console.log(profile);
 
     useEffect(() => {
-        if (profile) {
-            function setList() { setListings([]) }
-            setList();
-            let listingsArray = JSON.parse(profile.saved_listings);
-            listingsArray.forEach(async (el) => {
-                dataService.getListingById(el)
-                    .then((data) => {
-                        setListings((prev) => [...prev, data]);
-                    })
-                    .catch((err) => {
-                        console.error("Failed to fetch listing:", err);
-                    });
-            });
+        if (user?.id) {
+            supabase
+                .from('saved_listings')
+                .select('listing_id')
+                .eq('user_id', user.id)
+                .then(({ data, error }) => {
+                    if (data) {
+                        const ids = data.map(item => item.listing_id);
+                        setSavedIds(ids);
+                    } else {
+                        console.error("Failed to fetch saved IDs:", error);
+                    }
+                });
         }
-        else {
-            console.log("No profile found");
-        }
+    }, [user]);
 
-    }, [profile]);
+    useEffect(() => {
+        function setListing() {
+            setListings([]);
+        }
+        if (savedIds.length > 0) {
+
+            setListing();
+
+            Promise.all(savedIds.map(id => dataService.getListingById(id)))
+                .then((results) => {
+                    setListings(results);
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch saved listings:", err);
+                });
+        } else {
+            setListing();
+        }
+    }, [savedIds]);
 
     async function deleteMyAccount() {
         const { data: { session } } = await supabase.auth.getSession();
@@ -96,6 +117,20 @@ export default function Profile() {
             console.error('Network or Server Error:', err);
             throw err;
         }
+    }
+
+    async function unsave(listingId) {
+        await supabase
+            .from('saved_listings')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('listing_id', listingId);
+    }
+
+    async function triggerUnsave(listingId) {
+
+        setSavedIds(prev => prev.filter(id => id !== listingId));
+        await unsave(listingId);
     }
 
     function toggle() {
@@ -214,7 +249,7 @@ export default function Profile() {
                                             </div>
                                             <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
                                         </div>
-                                        <button className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
+                                        <button onClick={() => triggerUnsave(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
                                             <FaHeart size={16} className={user ? "text-primary" : "text-gray-400"} />
                                         </button>
                                     </div>

@@ -8,6 +8,7 @@ import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "../context/useAuth";
+import { supabase } from '../api/supabaseClient';
 
 function Home() {
     const heroIMGs = ["/IMG1.jpg", "/IMG2.jpg", "/IMG3.jpg"];
@@ -16,20 +17,60 @@ function Home() {
     const [loading, setLoading] = useState(true);
     const [pageLoading, setPageLoading] = useState(true);
     const { user } = useAuth();
-    const [userData, setUserData] = useState(null);
+    const [savedIds, setSavedIds] = useState([]);
 
     useEffect(() => {
         if (user) {
-            dataService.getUserById(user.id)
-                .then((data) => {
-                    setUserData(data);
-                })
-                .catch((err) => {
-                    console.error("Failed to fetch user data:", err);
+            // Fetch only the listing_ids for the current user
+            supabase
+                .from('saved_listings')
+                .select('listing_id')
+                .eq('user_id', user.id)
+                .then(({ data }) => {
+                    if (data) setSavedIds(data.map(item => item.listing_id));
                 });
         }
     }, [user]);
-    console.log(userData);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex((prev) => (prev + 1) % 3);
+        }, 10000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const [formData, setFormData] = useState({
+        city: '',
+        state: '',
+        type: '',
+        listing_type: '',
+        minPrice: '',
+        maxPrice: '',
+        beds: '',
+        baths: ''
+    });
+
+    useEffect(() => {
+        function loader() {
+            setPageLoading(true);
+        }
+        loader();
+        dataService.getListings()
+            .then((data) => {
+                setListings(data || []);
+            })
+            .catch((err) => {
+                console.error("Error loading properties:", err);
+            })
+            .finally(() => {
+                setLoading(false);
+                setPageLoading(false);
+            });
+    }, []);
+
+
 
     const localStates = [
         "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
@@ -65,25 +106,6 @@ function Home() {
         .slice(0, 6)
         .map(entry => entry[0]);
 
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setIndex((prev) => (prev + 1) % 3);
-        }, 10000);
-        return () => clearInterval(timer);
-    }, []);
-
-    const [formData, setFormData] = useState({
-        city: '',
-        state: '',
-        type: '',
-        listing_type: '',
-        minPrice: '',
-        maxPrice: '',
-        beds: '',
-        baths: ''
-    });
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -93,28 +115,33 @@ function Home() {
         }));
     };
 
-    async function save(listingid) {
-        if (user) {
-            const currentList = user ? JSON.parse(userData.saved_listings) : [];
+    async function save(listingId) {
+        await supabase
+            .from('saved_listings')
+            .insert({ user_id: user.id, listing_id: listingId });
+    }
 
-            const newList = currentList.includes(listingid)
-                ? currentList.filter(id => id !== listingid)
-                : [...currentList, listingid];
+    async function unsave(listingId) {
+        await supabase
+            .from('saved_listings')
+            .delete()
+            .eq('user_id', user.id)
+            .eq('listing_id', listingId);
+    }
 
-            const stringifiedList = JSON.stringify(newList);
+    async function handleToggle(listingId) {
+        if (!user) return;
 
-            try {
-                const updatedUser = await dataService.updateUserSavedListings(user.id, stringifiedList);
+        const isCurrentlySaved = savedIds.includes(listingId);
 
-                setUserData((prev) => ({
-                    ...prev,
-                    saved_listings: updatedUser.saved_listings
-                }));
-            } catch (err) {
-                console.error("Failed to update saved listings:", err);
-            }
+        if (isCurrentlySaved) {
+            setSavedIds(prev => prev.filter(id => id !== listingId));
+            await unsave(listingId);
+        } else {
+            setSavedIds(prev => [...prev, listingId]);
+            await save(listingId);
         }
-    };
+    }
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -142,23 +169,7 @@ function Home() {
         navigate('/listings', { state: { criteria: { city: e } } });
     }
 
-    useEffect(() => {
-        function loader() {
-            setPageLoading(true);
-        }
-        loader();
-        dataService.getListings()
-            .then((data) => {
-                setListings(data || []);
-            })
-            .catch((err) => {
-                console.error("Error loading properties:", err);
-            })
-            .finally(() => {
-                setLoading(false);
-                setPageLoading(false);
-            });
-    }, []);
+
 
     if (pageLoading) return <Layout>
         {
@@ -351,7 +362,7 @@ function Home() {
                                             <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
                                                 <div className="flex flex-row items-center gap-1">
                                                     <FaHome size={14} className="text-primary" />
-                                                    <p className="capitalize">{el.type} for {el.listing_type}</p>
+                                                    <p className="capitalize">{el.type === "apartment" ? "Apt" : el.type} for {el.listing_type === "shortlet" ? "STR" : el.listing_type}</p>
                                                 </div>
                                                 <div className="flex flex-row items-center gap-1">
                                                     <FaBed size={14} className="text-primary" />
@@ -379,8 +390,8 @@ function Home() {
                                             </div>
                                             <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
                                         </div>
-                                        <button onClick={() => save(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
-                                            <FaHeart size={16} className={userData?.saved_listings && JSON.parse(userData.saved_listings).includes(el.id) ? "text-primary" : "text-gray-400"} />
+                                        <button onClick={() => handleToggle(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
+                                            <FaHeart size={16} className={savedIds.includes(el.id) ? "text-primary" : "text-gray-400"} />
                                         </button>
                                     </div>
                                 );

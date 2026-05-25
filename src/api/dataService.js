@@ -80,14 +80,16 @@ export const dataService = {
 
     // PATCH: Update specific arrays or subfields (saved_listings JSONB)
     updateUserSavedListings: async (userId, savedListingsArray) => {
+        const stringifiedData = JSON.stringify(savedListingsArray);
+
         const { data, error } = await supabase
             .from('users')
-            .update({ saved_listings: savedListingsArray })
+            .update({ saved_listings: stringifiedData })
             .eq('id', userId)
-            .select();
+            .select(); 
 
         if (error) throw error;
-        return data[0];
+        return data[0]; 
     },
 
     // ==========================================
