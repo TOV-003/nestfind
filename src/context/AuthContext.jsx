@@ -55,8 +55,16 @@ export default function AuthProvider({ children }) {
         return data;
     }
 
+    async function addEnquiry(message, name, email, date, listing_id) {
+        const { data, error } = await supabase
+            .from('enquiries')
+            .insert({ message, name, email, date, listing_id, user_id: user.id });
+        if (error) throw error;
+        return data;
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, signUp }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry }}>
             {children}
         </AuthContext.Provider>
     );

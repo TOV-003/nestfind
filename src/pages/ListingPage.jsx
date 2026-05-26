@@ -6,6 +6,7 @@ import { FaBed, FaBath, FaWifi, FaCar, FaChair, FaPencilRuler } from "react-icon
 import toast from "react-hot-toast";
 import ImageCarousel from "../components/ImageCarousel";
 import PropertyMap from "../components/PropertyMap";
+import { useAuth } from "../context/useAuth";
 
 function ListingPage() {
     const { id } = useParams();
@@ -14,6 +15,7 @@ function ListingPage() {
     const [loading, setLoading] = useState(true);
     const [formModal, setFormModal] = useState(false);
     const [host, setHost] = useState(null);
+    const { user, addEnquiry } = useAuth();
 
     useEffect(() => {
         async function fetchData() {
@@ -26,34 +28,66 @@ function ListingPage() {
                     .single();
 
                 if (listingError) throw listingError;
-
                 setListing(listingData);
-                toast.success("Loaded Listing!");
+                toast.success("Listing Loaded Successfully!");
 
-                const { data: hostData } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('id', listingData.host_id)
-                    .single();
-                setHost(hostData);
+                if (listingData?.host_id) {
+                    const { data: hostData, error } = await supabase
+                        .from('users')
+                        .select('*')
+                        .eq('id', listingData.host_id)
+                        .single();
+                    if (error) {
+                        console.error("DEBUG ERROR:", error);
+                    } else {
+                        setHost(hostData);
+                    }
+                }
 
-                const { data: similarData } = await supabase
+                const { data: similarData, error: similarError } = await supabase
                     .from('listings')
                     .select('*')
-                    .neq('id', id)
-                    .eq('location->>city', listingData.location.city)
-                    .limit(3);
+                    .neq('id', id) // Exclude current listing
+                    .limit(3);     // Fetch a subset for the similar grid
+
+                if (similarError) throw similarError;
                 setSimilar(similarData || []);
 
             } catch (err) {
-                console.error("Error loading data:", err);
+                console.error("Error fetching page data:", err);
             } finally {
                 setLoading(false);
             }
         }
-
-        if (id) fetchData();
+        fetchData();
     }, [id]);
+
+    const getHostJoinDate = async (hostId) => {
+        const { data } = await supabase
+            .from('user_public_data')
+            .select('email_confirmed_at')
+            .eq('id', hostId)
+            .maybeSingle();
+
+        const formattedDate = data?.email_confirmed_at
+            ? new Date(data.email_confirmed_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+            : null;
+
+        return formattedDate || "N/A";
+    };
+
+    const [joinDate, setJoinDate] = useState("Loading...");
+
+    useEffect(() => {
+        const fetchDate = async () => {
+            const since = await getHostJoinDate(host.id);
+            setJoinDate(since);
+        };
+
+        if (host?.id) {
+            fetchDate();
+        }
+    }, [host?.id]);
 
     if (loading) {
         return (
@@ -75,6 +109,16 @@ function ListingPage() {
 
     function handleRequest(event) {
         event.preventDefault();
+        addEnquiry(
+            event.target.message.value,
+            event.target.name.value,
+            user.email,
+            new Date().toISOString().split('T')[0],
+            listing.id
+        );
+        event.target.reset();
+        setFormModal(false);
+        toast.success("Enquiry Sent Successfully!");
     }
 
     return (
@@ -131,16 +175,16 @@ function ListingPage() {
                     </div>
                     <div className="flex flex-col gap-2 items-center border border-gray-300 px-4 py-2 rounded-lg flex-1 w-full">
                         <h2>Host</h2>
-                        {console.log(host)}
                         <Link to={`/Host/${host?.id}`}>
                             <img src={host?.avatar} alt="Host" className=" h-64 rounded-full object-cover" />
                         </Link>
                         <p>{host?.name}</p>
-                        <button onClick={() => setFormModal(true)} className="cursor-pointer bg-primary rounded-lg px-4 py-2 text-white font-semibold">Contact Host</button>
+                        <p>Member since: {joinDate}</p>
+                        <button onClick={() => setFormModal(true)} className="cursor-pointer bg-primary rounded-lg px-4 py-2 text-white font-semibold">Make Enquiry About Property</button>
                     </div>
                 </div>
 
-                {formModal ? (
+                {formModal && user ? (
                     <div
                         onClick={() => setFormModal(false)}
                         className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
@@ -160,32 +204,18 @@ function ListingPage() {
                             ></textarea>
 
                             <label htmlFor="name">Name:</label>
-                            <input
-                                type="text"
-                                name="name"
-                                id="name"
-                                required
-                                className="w-full rounded-lg border border-gray-300 p-2 text-sm"
-                                placeholder="Enter your name here..."
-                            ></input>
+                            <input type="text" name="name" id="name" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" value={user.user_metadata.name} readOnly />
 
                             <label htmlFor="email">Email:</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                required
-                                className="w-full rounded-lg border border-gray-300 p-2 text-sm"
-                                placeholder="Enter your email here..."
-                            ></input>
+                            <input type="email" name="email" id="email" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" value={user.email} readOnly />
 
-                            <label htmlFor="datetime-local">Preferred Visit Date:</label>
+                            <label htmlFor="date">Preferred Visit Date:</label>
                             <input
-                                type="datetime-local"
+                                type="date"
                                 required
                                 className="border border-gray-300 p-2 rounded"
-                                name="datetime-local"
-                                id="datetime-local"
+                                name="date"
+                                id="date"
                             />
 
                             <button
@@ -198,17 +228,21 @@ function ListingPage() {
                     </div>
                 ) : null}
 
+                {formModal && !user ? (
+                    alert("Log In or Sign Up to Make Enquiry!!!")
+                ) : null}
+
                 <div className="flex flex-col items-center gap-2">
                     <h2>Similar Properties</h2>
                     <div className="w-[80vw] grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 place-items-center gap-2">
                         {similar.map((el) => (
                             <div key={el.id} className="relative border border-gray-300 rounded-xl p-2 w-full h-full flex flex-col gap-2">
                                 <Link to={`/listings/${el.id}`}>
-                                    <img src={Array.isArray(el.images) ? el.images[0] : el.images.replace(/[[\]"]/g, '').split(',')[0]} className="w-full aspect-square object-cover rounded-xl" alt={el.title} />
+                                    <img src={Array.isArray(el.images) ? el.images[0] : el.images.replace(/[[\]"]/g, '').split(',')[0]} className="w-full aspect-square object-cover rounded-lg" alt={el.title} />
                                 </Link>
                                 <p className="font-bold">{el.title}</p>
                                 <p className="text-primary font-bold">₦{el.price?.toLocaleString()}</p>
-                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host ID:</span>{el.host_name}</p>
+                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span>{el.host_name}</p>
                             </div>
                         ))}
                     </div>

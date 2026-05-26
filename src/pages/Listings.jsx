@@ -24,17 +24,28 @@ function Listings() {
     const [savedIds, setSavedIds] = useState([]);
 
     useEffect(() => {
-        if (user) {
-            // Fetch only the listing_ids for the current user
+        if (user?.id) {
             supabase
                 .from('saved_listings')
                 .select('listing_id')
                 .eq('user_id', user.id)
-                .then(({ data }) => {
-                    if (data) setSavedIds(data.map(item => item.listing_id));
+                .then(({ data, error }) => {
+                    if (error) {
+                        console.error("Supabase Error:", error);
+                        return;
+                    }
+                    if (data) {
+                        setSavedIds(data.map(item => item.listing_id));
+                    }
                 });
+        } else {
+            function revert() {
+                setSavedIds([]);
+            }
+            revert();
         }
-    }, [user]);
+    }, [user?.id]);
+
     const localStates = [
         "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
         "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo",

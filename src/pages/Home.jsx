@@ -21,7 +21,6 @@ function Home() {
 
     useEffect(() => {
         if (user) {
-            // Fetch only the listing_ids for the current user
             supabase
                 .from('saved_listings')
                 .select('listing_id')
