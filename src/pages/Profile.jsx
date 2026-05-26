@@ -169,7 +169,7 @@ export default function Profile() {
                     <img src={profile?.avatar} alt="avatar" className="rounded-full w-32 h-32" />
                     <h1>{profile?.name}</h1>
                     <h2 className='text-lg text-gray-400 font-normal'>{profile?.role === "host" && profile?.role}</h2>
-                    <button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>My Enquiries</button>
+                    <button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={() => document.getElementById('enquiries').scrollIntoView({ behavior: 'smooth' })}>My Enquiries</button>
                     <button className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>Log Out</button>
                     <button className="bg-warning cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggle}>Delete My Account</button>
                     {modal ? (
@@ -205,7 +205,7 @@ export default function Profile() {
                     ) : null}
                 </div>
                 <div className='flex flex-col gap-2 items-center flex-2'>
-                    <h2>Saved Listings</h2>
+                    <h2 id='saved'>Saved Listings</h2>
                     <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
                         {
                             listings.map((el) => {
@@ -282,7 +282,7 @@ export default function Profile() {
                             })
                         }
                     </div>
-                    <h2>Enquiried Listings</h2>
+                    <h2 id='enquiries'>Enquiried Listings</h2>
                     <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
                         {
                             enquiredListings.map((el) => {

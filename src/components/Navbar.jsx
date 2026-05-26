@@ -16,10 +16,10 @@ function Navbar() {
     return (
         <header className="sticky top-0 z-10 bg-white">
             <nav className="flex items-center justify-between shadow-sm py-4 px-4">
-                <div className="flex items-center justify-between gap-2">
+                <Link to="/" className="flex items-center justify-between gap-2">
                     <img src="/favicon.svg" alt="logo" className="w-8 h-8" />
                     <h1 className="text-primary hidden md:block">Nestfind</h1>
-                </div>
+                </Link>
 
                 {
                     isMobile ?
@@ -28,22 +28,23 @@ function Navbar() {
                                 {links.map((el, index) => (<NavLink to={el.path} key={index} className={({ isActive }) => isActive ? "text-primary" : "text-gray-600"}>{el.title}</NavLink>))}
                             </div>
                             <div>
-                                <button className="bg-primary aspect-square py-1 px-2 text-white font-bold rounded-lg cursor-pointer text-2xl" onClick={() => setShowOptions(!showOptions)}>☰</button>
+                                {user ?
+                                    <div className="flex flex-col items-end gap-4">
+                                        <Link to="/Profile">
+                                            <img src={user.user_metadata.avatar} alt="avatar" className="w-12 h-12 rounded-full" />
+                                        </Link>
+
+                                    </div> :
+                                    <button className="bg-primary aspect-square py-1 px-2 text-white font-bold rounded-lg cursor-pointer text-2xl" onClick={() => setShowOptions(!showOptions)}>☰</button>
+
+                                }
                                 {showOptions &&
                                     <div className="absolute top-15 right-4">
                                         <div className="flex flex-col justify-between items-end gap-4 md:gap-8 pr-8 pl-16 py-3 bg-white rounded-lg border-gray-300 border" >
-                                            {
-                                                user ?
-                                                    <Link to="/Profile" className="text-lg text-black">Profile
-                                                    </Link>
-
-                                                    :
-                                                    <>
-                                                        <Link to="/Login" className="text-lg text-black">Log In
-                                                        </Link>
-                                                        <Link to="/Register" className="text-lg text-black">Sign Up
-                                                        </Link>
-                                                    </>}
+                                            <Link to="/Login" className="text-lg text-black">Log In
+                                            </Link>
+                                            <Link to="/Register" className="text-lg text-black">Sign Up
+                                            </Link>
                                         </div>
                                     </div>
                                 }
@@ -59,9 +60,10 @@ function Navbar() {
                             </div>
                             {
                                 user ?
-                                    <div>
+                                    <div className="flex items-center gap-4">
+                                        <p className="text-sm">{user.user_metadata.name}</p>
                                         <Link to="/Profile">
-                                            <button className="bg-primary px-2 py-1 md:px-4 md:py-2 text-white rounded-lg cursor-pointer text-sm md:text-base">Profile</button>
+                                            <img src={user.user_metadata.avatar} alt="avatar" className="w-12 h-12 rounded-full" />
                                         </Link>
                                     </div>
 
