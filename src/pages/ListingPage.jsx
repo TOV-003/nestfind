@@ -115,7 +115,7 @@ function ListingPage() {
                 event.target.message.value,
                 event.target.name.value,
                 user.email,
-                new Date().toISOString().split('T')[0],
+                event.target.date.value,
                 listing.id
             );
             event.target.reset();

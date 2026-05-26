@@ -59,10 +59,12 @@ export default function AuthProvider({ children }) {
         const { data, error } = await supabase
             .from('enquiries')
             .insert({ message, name, email, date, listing_id, user_id: user.id });
-        if (error.code === '23505') {
-            alert("You have already sent an enquiry for this listing on this date.");
-            throw new Error("Duplicate");
-        } else if (error) throw error;
+        if (error) {
+            if (error.code === '23505') {
+                alert("You have already sent an enquiry for this listing on this date.");
+            }
+            throw error;
+        }
 
         return data;
     }
