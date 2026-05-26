@@ -19,7 +19,9 @@ export default function Profile() {
     const [modal, setModal] = useState(false);
     const url = import.meta.env.VITE_SUPABASE_URL;
     const [listings, setListings] = useState([]);
+    const [enquiredListings, setEnquiredListings] = useState([]);
     const [savedIds, setSavedIds] = useState([]);
+    const [enquiredIds, setEnquiredIds] = useState([]);
 
 
     useEffect(() => {
@@ -68,24 +70,47 @@ export default function Profile() {
     }, [user]);
 
     useEffect(() => {
-        function setListing() {
-            setListings([]);
+        if (user?.id) {
+            supabase
+                .from('enquiries')
+                .select('listing_id')
+                .eq('user_id', user.id)
+                .then(({ data, error }) => {
+                    if (data) {
+                        const ids = data.map(item => item.listing_id);
+                        setEnquiredIds(ids);
+                    } else {
+                        console.error("Failed to fetch saved IDs:", error);
+                    }
+                });
         }
+    }, [user]);
+
+    useEffect(() => {
         if (savedIds.length > 0) {
-
-            setListing();
-
             Promise.all(savedIds.map(id => dataService.getListingById(id)))
                 .then((results) => {
-                    setListings(results);
+                    setListings(prev => {
+                        if (JSON.stringify(prev) === JSON.stringify(results)) return prev;
+                        return results;
+                    });
                 })
-                .catch((err) => {
-                    console.error("Failed to fetch saved listings:", err);
-                });
-        } else {
-            setListing();
+                .catch((err) => console.error(err));
         }
     }, [savedIds]);
+
+    useEffect(() => {
+        if (enquiredIds.length > 0) {
+            Promise.all(enquiredIds.map(id => dataService.getListingById(id)))
+                .then((results) => {
+                    setEnquiredListings(prev => {
+                        if (JSON.stringify(prev) === JSON.stringify(results)) return prev;
+                        return results;
+                    });
+                })
+                .catch((err) => console.error(err));
+        }
+    }, [enquiredIds]);
 
     async function deleteMyAccount() {
         const { data: { session } } = await supabase.auth.getSession();
@@ -192,7 +217,84 @@ export default function Profile() {
                                         <Link to={`/listings/${el.id}`} className="w-full">
                                             <img
                                                 src={el.images?.[0] || '/placeholder-property.jpg'}
-                                                className="w-full aspect-square object-cover rounded-xl"
+                                                className="w-full aspect-video object-cover rounded-xl"
+                                                alt={el.title || "Property Image"}
+                                            />
+                                        </Link>
+                                        <div className="flex flex-col gap-1 self-start px-2 pb-12 w-full">
+                                            <div className="flex flex-row justify-between items-start gap-2 w-full">
+                                                <p className="text-lg font-bold">{el.title}</p>
+                                                <h3 className="text-primary font-bold text-lg whitespace-nowrap">
+                                                    ₦{el.price?.toLocaleString('en-US')}
+                                                    {el.listing_type === 'rent' ? '/yr' : el.listing_type === 'shortlet' ? '/day' : ''}
+                                                </h3>
+                                            </div>
+                                            <p className="text-gray-400 text-sm">
+                                                {listingLocation.city}, {listingLocation.state} state. Listed {(() => {
+                                                    if (!el.date_listed) return 'N/A';
+                                                    const inputDate = new Date(el.date_listed);
+                                                    const currentDate = new Date();
+                                                    if (isNaN(inputDate.getTime())) return 'Invalid Date';
+                                                    const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
+                                                    if (diffInDays < 0) return 'In the future';
+                                                    if (diffInDays === 0) return 'Today';
+                                                    if (diffInDays === 1) return '1 day ago';
+                                                    return `${diffInDays} days ago`;
+                                                })()}
+                                            </p>
+
+                                            <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaHome size={14} className="text-primary" />
+                                                    <p className="capitalize">{el.type} for {el.listing_type}</p>
+                                                </div>
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaBed size={14} className="text-primary" />
+                                                    <p>{el.beds} bd</p>
+                                                </div>
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <FaBath size={14} className="text-primary" />
+                                                    <p>{el.baths} ba</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-row items-center gap-1 mt-1 text-sm text-gray-500">
+                                                <FaPencilRuler size={12} className="text-primary" />
+                                                <p>{el.area} sq ft</p>
+                                            </div>
+                                            <div className="flex flex-wrap items-center gap-1 mt-2">
+                                                {Object.entries(listingAmenities)
+                                                    .filter(([, value]) => value === true)
+                                                    .map(([key], index, array) => (
+                                                        <Fragment key={key}>
+                                                            <p className="text-xs text-gray-500 capitalize">{key}</p>
+                                                            {index < array.length - 1 && <span className="text-gray-300 text-xs">|</span>}
+                                                        </Fragment>
+                                                    ))
+                                                }
+                                            </div>
+                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
+                                        </div>
+                                        <button onClick={() => triggerUnsave(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
+                                            <FaHeart size={16} className={user ? "text-primary" : "text-gray-400"} />
+                                        </button>
+                                    </div>
+                                );
+                            })
+                        }
+                    </div>
+                    <h2>Enquiried Listings</h2>
+                    <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
+                        {
+                            enquiredListings.map((el) => {
+                                const listingLocation = el.location || {};
+                                const listingAmenities = el.amenities || {};
+
+                                return (
+                                    <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
+                                        <Link to={`/listings/${el.id}`} className="w-full">
+                                            <img
+                                                src={el.images?.[0] || '/placeholder-property.jpg'}
+                                                className="w-full aspect-video object-cover rounded-xl"
                                                 alt={el.title || "Property Image"}
                                             />
                                         </Link>
