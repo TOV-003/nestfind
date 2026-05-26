@@ -107,18 +107,24 @@ function ListingPage() {
         );
     }
 
-    function handleRequest(event) {
+    async function handleRequest(event) {
         event.preventDefault();
-        addEnquiry(
-            event.target.message.value,
-            event.target.name.value,
-            user.email,
-            new Date().toISOString().split('T')[0],
-            listing.id
-        );
-        event.target.reset();
-        setFormModal(false);
-        toast.success("Enquiry Sent Successfully!");
+
+        try {
+            await addEnquiry(
+                event.target.message.value,
+                event.target.name.value,
+                user.email,
+                new Date().toISOString().split('T')[0],
+                listing.id
+            );
+            event.target.reset();
+            setFormModal(false);
+            toast.success("Enquiry Sent Successfully!");
+
+        } catch (error) {
+            console.error("Enquiry failed:", error);
+        }
     }
 
     return (

@@ -86,10 +86,10 @@ export const dataService = {
             .from('users')
             .update({ saved_listings: stringifiedData })
             .eq('id', userId)
-            .select(); 
+            .select();
 
         if (error) throw error;
-        return data[0]; 
+        return data[0];
     },
 
     // ==========================================
@@ -145,5 +145,15 @@ export const dataService = {
             .getPublicUrl(filePath);
 
         return publicUrlData.publicUrl;
-    }
+    },
+    getEnquiryById: async (id) => {
+        const { data, error } = await supabase
+            .from('enquiries')
+            .select('*')
+            .eq('listing_id', id) // Filters exactly for the row with this ID
+            .single();    // Ensures you get a single object instead of an array
+
+        if (error) throw error;
+        return data;
+    },
 };
