@@ -13,6 +13,9 @@ import Login from './pages/Login.jsx'
 import Profile from './pages/Profile.jsx'
 import Host from './pages/Host.jsx'
 import HostSearch from './pages/HostSearch.jsx'
+import Saved from './pages/Saved.jsx'
+import Enquiries from './pages/Enquiries.jsx'
+import Dashboard from './pages/Dashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -51,8 +54,19 @@ const router = createBrowserRouter([
       {
         element: <HostSearch />,
         path: "/Search"
+      },
+      {
+        element: <Saved />,
+        path: "/Saved"
+      },
+      {
+        element: <Enquiries />,
+        path: "/Enquiries"
+      },
+      {
+        element: <Dashboard />,
+        path: "/Dashboard"
       }
-
     ],
   },
 ])
