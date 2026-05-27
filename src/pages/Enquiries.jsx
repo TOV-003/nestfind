@@ -116,13 +116,13 @@ function Enquiries() {
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
                 <h2 id='saved'>Enquiries</h2>
                 {console.log(enquiries)}
-                <div className='flex flex-col gap-4'>
+                <div className='grid grid-cols-3 gap-4'>
                     {
                         compiledEnquiries.map((el) => {
 
                             return (
-                                <div key={el.user_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-fit items-center gap-2">
-                                    <div className='flex flex-col items-center'>
+                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                    <div className='flex flex-col items-center '>
                                         <Link to={`/listings/${el.listing.id}`}>
                                             <img
                                                 src={el.listing.images?.[0] || '/placeholder-property.jpg'}
@@ -145,6 +145,10 @@ function Enquiries() {
                                     <div className='w-4/5'>
                                         <p><span className='font-bold'>Message:</span> {el.message}</p>
                                         <p><span className='font-bold'>Date:</span> {el.date}</p>
+                                        {el.responded ?
+                                            <p className='text-primary font-bold'>Ready for Visit</p>
+                                            : <p className='text-gray-400 font-bold'>Awaiting Review</p>
+                                        }
                                     </div>
 
                                 </div>

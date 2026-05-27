@@ -12,7 +12,6 @@ import { FaHeart } from "react-icons/fa";
 
 function Saved() {
     const { user } = useAuth();
-    // const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
     const [listings, setListings] = useState([]);
     const [savedIds, setSavedIds] = useState([]);
@@ -31,8 +30,6 @@ function Saved() {
             navigate('/Login');
         }
     }, [user, isChecking, navigate]);
-
-    // useEffect(() => {
     //     if (user?.id) {
     //         supabase
     //             .from('users')

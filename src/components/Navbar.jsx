@@ -30,7 +30,7 @@ function Navbar() {
                             <div>
                                 {user ?
                                     <div className="flex flex-col items-end gap-4">
-                                        <Link to="/Profile">
+                                        <Link to={user?.user_metadata?.role === "host" ? "/Dashboard" : "/Profile"}>
                                             <img src={user.user_metadata.avatar} alt="avatar" className="w-12 h-12 rounded-full" />
                                         </Link>
 
@@ -62,7 +62,7 @@ function Navbar() {
                                 user ?
                                     <div className="flex items-center gap-4">
                                         <p className="text-sm">{user.user_metadata.name}</p>
-                                        <Link to="/Profile">
+                                        <Link to={user?.user_metadata?.role === "host" ? "/Dashboard" : "/Profile"}>
                                             <img src={user.user_metadata.avatar} alt="avatar" className="w-12 h-12 rounded-full" />
                                         </Link>
                                     </div>

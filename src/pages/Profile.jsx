@@ -54,7 +54,7 @@ export default function Profile() {
                     if (data) {
                         setProfile(data[0]);
                     } else {
-                        console.error("Failed to fetch saved IDs:", error);
+                        console.error("Failed to fetch user IDs:", error);
                     }
                 });
         }
@@ -211,7 +211,6 @@ export default function Profile() {
                     <div className='flex flex-wrap gap-2 md:w-3/4 justify-center'>
                         <Link to="/Enquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Enquiries</button></Link>
                         <Link to="/Saved"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Saved Listings</button></Link>
-                        {user.user_metadata.role === "host" && <Link to="/Dashboard"><button className="bg-blue-800 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" >My Dashboard</button></Link>}
                         <button className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>Log Out</button>
                         <button className="bg-warning cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggle}>Delete My Account</button>
                     </div>

@@ -69,8 +69,55 @@ export default function AuthProvider({ children }) {
         return data;
     }
 
+    async function updateEnquiry(user_id, listing_id, date) {
+        const { data, error } = await supabase
+            .from('enquiries')
+            .update({ responded: true })
+            .eq('listing_id', listing_id)
+            .eq('date', date)
+            .eq('user_id', user.id);
+        if (error) {
+            if (error.code === '23505') {
+                alert("You have already sent an enquiry for this listing on this date.");
+            }
+            throw error;
+        }
+
+        return data;
+    }
+
+    async function deleteEnquiry(message, name, email, date, listing_id) {
+        const { data, error } = await supabase
+            .from('enquiries')
+            .delete()
+            .eq('message', message)
+            .eq('name', name)
+            .eq('email', email)
+            .eq('date', date)
+            .eq('listing_id', listing_id)
+            .eq('user_id', user.id);
+        if (error) {
+            if (error.code === '23505') {
+                alert("You have already sent an enquiry for this listing on this date.");
+            }
+            throw error;
+        }
+
+        return data;
+    }
+
+    async function createListing(listingData) {
+        const { data, error } = await supabase
+            .from('listings')
+            .insert([listingData])
+            .select();
+
+        if (error) throw error;
+        return data[0];
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry, deleteEnquiry, updateEnquiry, createListing }}>
             {children}
         </AuthContext.Provider>
     );

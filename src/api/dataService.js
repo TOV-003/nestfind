@@ -5,12 +5,12 @@ export const dataService = {
     // LISTINGS TABLE OPERATIONS
     // ==========================================
 
-    // GET: Fetch all real estate listings
     getListings: async () => {
 
         const { data, error } = await supabase
             .from('listings')
             .select('*')
+            .eq('active', true)
 
         console.log("Listings", data);
 
@@ -22,14 +22,13 @@ export const dataService = {
         const { data, error } = await supabase
             .from('listings')
             .select('*')
-            .eq('id', id) // Filters exactly for the row with this ID
-            .single();    // Ensures you get a single object instead of an array
+            .eq('id', id)
+            .single();
 
         if (error) throw error;
         return data;
     },
 
-    // POST: Insert a new listing row
     createListing: async (listingData) => {
         const { data, error } = await supabase
             .from('listings')
@@ -40,7 +39,6 @@ export const dataService = {
         return data[0];
     },
 
-    // DELETE: Remove a specific listing record matching an ID
     deleteListing: async (listingId) => {
         const { status, error } = await supabase
             .from('listings')
@@ -55,7 +53,6 @@ export const dataService = {
     // USERS TABLE OPERATIONS
     // ==========================================
 
-    // GET: Fetch a single user profile matching an ID
     getUserById: async (userId) => {
         const { data, error } = await supabase
             .from('users')
@@ -67,7 +64,6 @@ export const dataService = {
         return data;
     },
 
-    // POST: Insert a new user registration profile record
     createUser: async (userData) => {
         const { data, error } = await supabase
             .from('users')
@@ -78,7 +74,6 @@ export const dataService = {
         return data[0];
     },
 
-    // PATCH: Update specific arrays or subfields (saved_listings JSONB)
     updateUserSavedListings: async (userId, savedListingsArray) => {
         const stringifiedData = JSON.stringify(savedListingsArray);
 
@@ -96,11 +91,8 @@ export const dataService = {
     // STORAGE BUCKET UPLOAD OPERATIONS
     // ==========================================
 
-    // POST: Uploads a single file to the listings bucket and returns public URL
     uploadListingImage: async (fileBlob, fileName) => {
         const uniqueFileName = `${Date.now()}_${fileName}`;
-
-        // Upload file to 'listings' bucket
         const { error: uploadError } = await supabase.storage
             .from('listings')
             .upload(uniqueFileName, fileBlob, {
@@ -108,8 +100,6 @@ export const dataService = {
             });
 
         if (uploadError) throw uploadError;
-
-        // Get public URL
         const { data } = supabase.storage
             .from('listings')
             .getPublicUrl(uniqueFileName);
@@ -117,14 +107,11 @@ export const dataService = {
         return data.publicUrl;
     },
 
-    // POST: Uploads a single file to the avatars bucket and returns public URL
     async uploadUserAvatar(file, originalName) {
-        // 1. Sanitize the filename to prevent 400 Bad Request errors
         const fileExt = originalName.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
 
-        // 2. Perform the upload
         const { data, error } = await supabase.storage
             .from('avatars')
             .upload(filePath, file, {
@@ -138,8 +125,6 @@ export const dataService = {
             console.error('Upload error:', error.message);
             throw new Error(`Avatar upload failed: ${error.message}`);
         }
-
-        // 3. Get the public URL for the file
         const { data: publicUrlData } = supabase.storage
             .from('avatars')
             .getPublicUrl(filePath);
@@ -150,8 +135,8 @@ export const dataService = {
         const { data, error } = await supabase
             .from('enquiries')
             .select('*')
-            .eq('listing_id', id) // Filters exactly for the row with this ID
-            .single();    // Ensures you get a single object instead of an array
+            .eq('listing_id', id)
+            .single();
 
         if (error) throw error;
         return data;
