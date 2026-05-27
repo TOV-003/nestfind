@@ -17,10 +17,12 @@ function Dashboard() {
     const { user, logout, createListing } = useAuth();
     const navigate = useNavigate();
     const [hostListings, setHostListings] = useState([]);
+    const [refresh, setRefresh] = useState(false);
     const [profile, setProfile] = useState(null);
     const [modal, setModal] = useState(false);
     const [uploadModal, setUploadModal] = useState(false);
     const url = import.meta.env.VITE_SUPABASE_URL;
+    const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState({
         title: '',
         type: '',
@@ -45,6 +47,7 @@ function Dashboard() {
             "Generator": false
         },
         description: '',
+        area: '',
     });
 
     const localStates = [
@@ -134,6 +137,8 @@ function Dashboard() {
 
     async function handleCreateListing(event) {
         event.preventDefault();
+        console.log("Submitting formData:", formData);
+        setUploading(true);
 
         const fileInput = document.getElementById('avatar');
         const files = Array.from(fileInput.files);
@@ -186,6 +191,9 @@ function Dashboard() {
                 host_name: user?.user_metadata?.name,
             });
             toast.success('Listing created successfully!');
+            setUploadModal(false);
+            setRefresh((prev) => !prev);
+            setUploading(false);
         } catch (error) {
             toast.error(error.message);
         }
@@ -199,12 +207,12 @@ function Dashboard() {
         }));
     };
     const handleAmenityChange = (event) => {
-        const { name, value } = event.target;
+        const { name, checked } = event.target;
         setFormData((prevData) => ({
             ...prevData,
             amenities: {
                 ...prevData.amenities,
-                [name]: value
+                [name]: checked
             }
         }));
     };
@@ -240,18 +248,17 @@ function Dashboard() {
         if (user?.id) {
             supabase
                 .from('listings')
-                .select('id')
+                .select('*')
                 .eq('host_id', user.id)
                 .then(({ data, error }) => {
                     if (data) {
-                        const ids = data.map(item => item.listing_id);
-                        setHostListings(ids);
+                        setHostListings(data);
                     } else {
                         console.error("Failed to fetch host listings:", error);
                     }
                 });
         }
-    }, [user]);
+    }, [user, refresh]);
 
     return (
         <Layout>
@@ -277,6 +284,7 @@ function Dashboard() {
                                     <label>
                                         <p>Type</p>
                                         <select name="type" value={formData.type} id="type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
+                                            <option value="" disabled>Select Property Type</option>
                                             <option value="house">House</option>
                                             <option value="apartment">Apartment</option>
                                             <option value="studio">Studio</option>
@@ -286,6 +294,7 @@ function Dashboard() {
                                     <label>
                                         <p>Listing Type</p>
                                         <select name="listing_type" value={formData.listing_type} id="listing_type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
+                                            <option value="" disabled>Select Listing Type</option>
                                             <option value="rent">Rent</option>
                                             <option value="sale">Sale</option>
                                             <option value="shortlet">Short Let</option>
@@ -329,11 +338,11 @@ function Dashboard() {
                                     </div>
                                     <label>
                                         <p>Address</p>
-                                        <input type="text" value={formData.location.Address} name="address" id="address" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
+                                        <input type="text" value={formData.location.Address} name="Address" id="address" required onChange={handleLocationChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
                                     </label>
                                     <label>
                                         <p>Images (Minimum of 3, Maximum of 6, No larger than 1mb)</p>
-                                        <input type="file" name="images" multiple id="images" accept="image/*" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
+                                        <input type="file" name="images" multiple id="avatar" accept="image/*" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
                                     </label>
                                     <label>
                                         <p>Beds</p>
@@ -342,6 +351,10 @@ function Dashboard() {
                                     <label>
                                         <p>Baths</p>
                                         <input type="number" value={formData.baths} onChange={handleChange} name="baths" id="baths" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 2" />
+                                    </label>
+                                    <label>
+                                        <p>Area (sq ft)</p>
+                                        <input type="number" value={formData.area} onChange={handleChange} name="area" id="area" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 100" />
                                     </label>
                                     <div className='flex flex-wrap justify-center gap-2'>
                                         {['Gym', 'Pool', 'WiFi', 'Parking', 'Security', 'Furnished', 'Generator'].map((amenity) => (
@@ -357,7 +370,6 @@ function Dashboard() {
                                                     className="w-4 h-4 text-blue-600 border-gray-300 rounded"
                                                     checked={formData.amenities[amenity] || false}
                                                     onChange={handleAmenityChange}
-                                                    required
                                                 />
                                             </div>
                                         ))}
@@ -367,7 +379,7 @@ function Dashboard() {
                                         <textarea name="description" value={formData.description} id="description" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. This is a description of the property"></textarea>
                                     </label>
 
-                                    <button type="submit" className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Create Listing</button>
+                                    <button type="submit" className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">{uploading ? 'Uploading...' : 'Create Listing'}</button>
                                 </form>
                             </div>
                         }
@@ -410,8 +422,9 @@ function Dashboard() {
                     <div className='flex flex-col gap-2'>
                         <h2 id='saved'>My Listings</h2>
                         <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
+                            {console.log("Host Listings IDs:", hostListings)}
                             {
-                                hostListings.slice(0, 4).map((el) => {
+                                hostListings.map((el) => {
                                     const listingLocation = el.location || {};
                                     const listingAmenities = el.amenities || {};
 
