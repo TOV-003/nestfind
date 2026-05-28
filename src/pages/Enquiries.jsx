@@ -4,9 +4,10 @@ import { useAuth } from '../context/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../api/supabaseClient';
 import Layout from '../Layout';
+import { toast } from 'react-hot-toast';
 
 function Enquiries() {
-    const { user } = useAuth();
+    const { user, editEnquiry } = useAuth();
     const navigate = useNavigate();
     const [enquiries, setEnquiries] = useState([]);
     const [listings, setListings] = useState([]);
@@ -110,18 +111,34 @@ function Enquiries() {
         );
     }
 
+    async function handleEditEnquiry(listingId, newDate) {
+        try {
+            await editEnquiry(listingId, newDate);
+            setCompiledEnquiries(prev => prev.map(enq =>
+                enq.listing_id === listingId
+                    ? { ...enq, date: newDate, responded: false }
+                    : enq
+            ));
+
+            toast.success("Enquiry Updated Successfully!");
+        } catch (error) {
+            console.error("Update failed:", error);
+            toast.error("Failed to update enquiry.");
+        }
+    }
+
 
     return (
         <Layout>
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
                 <h2 id='saved'>My Enquiries</h2>
                 {console.log(enquiries)}
-                <div className='grid grid-cols-3 gap-4'>
+                <div className='grid grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {
                         compiledEnquiries.map((el) => {
 
                             return (
-                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col justify-between relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
                                     <div className='flex flex-col items-center '>
                                         <Link to={`/listings/${el.listing.id}`}>
                                             <img
@@ -130,7 +147,7 @@ function Enquiries() {
                                                 alt={el.listing.title || "Property Image"}
                                             />
                                         </Link>
-                                        <div className="flex flex-col gap-1 items-center px-2 w-full">
+                                        <div className="flex flex-col gap-1 items-center px-2 w-full text-center">
                                             <div className="flex flex-col items-center gap-2 w-full">
                                                 <p className="text-lg font-bold">{el.listing.title}</p>
                                                 <h3 className="text-primary font-bold text-lg whitespace-nowrap">
@@ -142,13 +159,41 @@ function Enquiries() {
                                         </div>
                                     </div>
                                     <hr className='border-t border-primary w-full' />
-                                    <div className='w-4/5'>
+                                    <div className='w-4/5 flex flex-col items-start'>
                                         <p><span className='font-bold'>Message:</span> {el.message}</p>
                                         <p><span className='font-bold'>Date:</span> {el.date}</p>
-                                        {el.responded ?
-                                            <p className='text-primary font-bold'>Ready for Visit</p>
-                                            : <p className='text-gray-400 font-bold'>Awaiting Review</p>
-                                        }
+                                        {
+                                            (() => {
+                                                console.log("Evaluating status for enquiry:", el);
+                                                const targetDate = new Date(el.date);
+                                                const now = new Date();
+                                                targetDate.setHours(0, 0, 0, 0);
+                                                now.setHours(0, 0, 0, 0);
+
+                                                if (el.responded) {
+                                                    return <p className='text-primary font-bold'>Ready for Visit</p>;
+                                                } else if (now > targetDate) {
+                                                    return (
+                                                        <>
+                                                            <p className='text-red-600 font-bold'>Expired - Action Required(Change Date)</p>
+                                                            <input
+                                                                type="date"
+                                                                className="cursor-pointer border border-gray-300 rounded-lg px-2 py-1 text-sm bg-warning font-bold text-white "
+                                                                min={new Date().toISOString().split('T')[0]}
+                                                                onChange={(e) => {
+                                                                    const newDate = e.target.value;
+                                                                    if (newDate) {
+                                                                        handleEditEnquiry(el.listing_id, newDate);
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </>
+                                                    );
+                                                } else {
+                                                    return <p className='text-gray-400 font-bold'>Awaiting Review</p>;
+                                                }
+                                            })()}
+
                                     </div>
 
                                 </div>

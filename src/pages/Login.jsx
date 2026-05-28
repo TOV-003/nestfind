@@ -12,8 +12,12 @@ function Login() {
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { login } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
+
+    if (user.user_metadata.role === "host") {
+        navigate('/Dashboard');
+    }
 
     const handleChange = (event) => {
         const { name, value } = event.target;

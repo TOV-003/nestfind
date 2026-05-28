@@ -55,10 +55,10 @@ export default function AuthProvider({ children }) {
         return data;
     }
 
-    async function addEnquiry(message, name, email, date, listing_id) {
+    async function addEnquiry(message, name, email, date, listing_id, created_at) {
         const { data, error } = await supabase
             .from('enquiries')
-            .insert({ message, name, email, date, listing_id, user_id: user.id });
+            .insert({ message, name, email, date, listing_id, user_id: user.id, created_at });
         if (error) {
             if (error.code === '23505') {
                 alert("You have already sent an enquiry for this listing on this date.");
@@ -69,22 +69,23 @@ export default function AuthProvider({ children }) {
         return data;
     }
 
-    async function updateEnquiry(user_id, listing_id, date) {
+    async function respondEnquiry(listing_id, date) {
         const { data, error } = await supabase
             .from('enquiries')
-            .update({ responded: true })
+            .update({
+                responded: true
+            })
+            .eq('user_id', user.id)
             .eq('listing_id', listing_id)
             .eq('date', date)
-            .eq('user_id', user.id);
-        if (error) {
-            if (error.code === '23505') {
-                alert("You have already sent an enquiry for this listing on this date.");
-            }
-            throw error;
-        }
+            .select();
+
+        if (error) throw error;
 
         return data;
     }
+
+
 
     async function deleteEnquiry(message, name, email, date, listing_id) {
         const { data, error } = await supabase
@@ -103,6 +104,18 @@ export default function AuthProvider({ children }) {
             throw error;
         }
 
+        return data;
+    }
+
+    async function editEnquiry(id, newDate) {
+        const { data, error } = await supabase
+            .from('enquiries')
+            .update({ date: newDate })
+            .eq('listing_id', id)
+            .eq('user_id', user.id)
+            .select();
+
+        if (error) throw error;
         return data;
     }
 
@@ -160,7 +173,7 @@ export default function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry, deleteEnquiry, updateEnquiry, createListing, deleteListing, editListing, toggleActive }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry, editEnquiry, respondEnquiry, deleteEnquiry, createListing, deleteListing, editListing, toggleActive }}>
             {children}
         </AuthContext.Provider>
     );

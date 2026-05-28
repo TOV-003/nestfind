@@ -209,6 +209,7 @@ export default function Profile() {
                     <h1>{profile?.name}</h1>
                     <h2 className='text-lg text-gray-400 font-normal'>{profile?.role === "host" && profile?.role}</h2>
                     <div className='flex flex-wrap gap-2 md:w-3/4 justify-center'>
+                        <h1 className='w-full text-lg'>My Activity</h1>
                         <Link to="/Enquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Enquiries</button></Link>
                         <Link to="/Saved"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Saved Listings</button></Link>
                         <button className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>Log Out</button>

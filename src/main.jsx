@@ -16,6 +16,7 @@ import HostSearch from './pages/HostSearch.jsx'
 import Saved from './pages/Saved.jsx'
 import Enquiries from './pages/Enquiries.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import UserEnquiries from './pages/UserEnquiries.jsx'
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         element: <Enquiries />,
         path: "/Enquiries"
+      },
+      {
+        element: <UserEnquiries />,
+        path: "/UserEnquiries"
       },
       {
         element: <Dashboard />,

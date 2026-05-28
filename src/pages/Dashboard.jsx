@@ -9,6 +9,7 @@ import { Fragment } from "react";
 import Layout from '../Layout';
 import { supabase } from '../api/supabaseClient';
 import { toast } from 'react-hot-toast';
+import { Chart } from '../components/Chart';
 
 
 function Dashboard() {
@@ -17,6 +18,7 @@ function Dashboard() {
     const { user, logout, createListing, deleteListing, editListing, toggleActive } = useAuth();
     const navigate = useNavigate();
     const [hostListings, setHostListings] = useState([]);
+    const [enquiryDates, setEnquiryDates] = useState([]);
     const [refresh, setRefresh] = useState(false);
     const [profile, setProfile] = useState(null);
     const [modal, setModal] = useState(false);
@@ -245,6 +247,7 @@ function Dashboard() {
             [name]: value
         }));
     };
+
     const handleAmenityChange = (event) => {
         const { name, checked } = event.target;
         setFormData((prevData) => ({
@@ -284,20 +287,76 @@ function Dashboard() {
     }, [user]);
 
     useEffect(() => {
-        if (user?.id) {
-            supabase
+        const fetchListingsWithCounts = async () => {
+            if (!user?.id) return;
+
+            const { data: listings, error: listingsError } = await supabase
                 .from('listings')
                 .select('*')
-                .eq('host_id', user.id)
-                .then(({ data, error }) => {
-                    if (data) {
-                        setHostListings(data);
-                    } else {
-                        console.error("Failed to fetch host listings:", error);
-                    }
-                });
-        }
+                .eq('host_id', user.id);
+
+            if (listingsError) {
+                console.error("Failed to fetch host listings:", listingsError);
+                return;
+            }
+            const listingIds = listings.map(l => l.id);
+            const { data: enquiries, error: enquiriesError } = await supabase
+                .from('enquiries')
+                .select('listing_id')
+                .in('listing_id', listingIds);
+
+            if (enquiriesError) {
+                console.error("Error fetching enquiries:", enquiriesError);
+                setHostListings(listings);
+                return;
+            }
+            const listingsWithCounts = listings.map(listing => ({
+                ...listing,
+                enquiryCount: enquiries.filter(e => String(e.listing_id) === String(listing.id)).length
+            }));
+
+            setHostListings(listingsWithCounts);
+
+            const { data: enquiriesDates, error: enquiriesDatesError } = await supabase
+                .from('enquiries')
+                .select('listing_id, created_at')
+                .in('listing_id', listingIds);
+
+            if (enquiriesDatesError) {
+                console.error("Error fetching enquiries:", enquiriesDatesError);
+                return;
+            }
+
+            const enquiryDates = enquiriesDates;
+            setEnquiryDates(enquiryDates);
+            console.log("Enquiry Dates:", enquiryDates);
+        };
+
+
+
+        fetchListingsWithCounts();
     }, [user, refresh]);
+
+    const getListingEnquiryData = () => {
+        const today = new Date();
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(today.getDate() - 30);
+
+        return hostListings.map(listing => {
+            const enquiriesInLast30Days = enquiryDates.filter(enq => {
+                const isMatch = String(enq.listing_id) === String(listing.id);
+                const enquiryDate = new Date(enq.created_at);
+                return isMatch && enquiryDate >= thirtyDaysAgo && enquiryDate <= today;
+            }).length;
+
+            return {
+                name: listing.title,
+                amount: enquiriesInLast30Days
+            };
+        });
+    };
+
+
 
     return (
         <Layout>
@@ -307,8 +366,11 @@ function Dashboard() {
                     <h1>{profile?.name}</h1>
                     <h2 className='text-lg text-gray-400 font-normal'>{profile?.role === "host" && profile?.role}</h2>
                     <div className='flex flex-wrap gap-2 md:w-3/4 justify-center'>
-                        <Link to="/Enquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Enquiries</button></Link>
+                        <h1 className='w-full text-lg'>My Activity</h1>
+                        <Link to="/Enquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">My Enquiries</button></Link>
                         <Link to="/Saved"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Saved Listings</button></Link>
+                        <h1 className='w-full text-lg'>Manage Listings</h1>
+                        <Link to="/UserEnquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To User Enquiries</button></Link>
                         <button className="bg-blue-800 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggleUpload}>Create Listing</button>
                         {uploadModal &&
                             <div
@@ -458,8 +520,14 @@ function Dashboard() {
                     ) : null}
                 </div>
                 <div className='flex flex-col gap-4 items-center flex-2'>
-                    <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col gap-2 items-center md:items-start justify-center'>
                         <h2 id='saved'>My Listings</h2>
+                        <div className='flex items-center gap-4 flex-wrap md:justify-start justify-center'>
+                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Total Listings: {hostListings.length}</p>
+                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Active Listings: {hostListings.filter(listing => listing.active).length}</p>
+                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Inactive Listings: {hostListings.filter(listing => !listing.active).length}</p>
+                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Total Enquiries: {hostListings.reduce((total, listing) => total + (listing.enquiryCount || 0), 0)}</p>
+                        </div>
                         <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
                             {console.log("Host Listings IDs:", hostListings)}
                             {
@@ -528,6 +596,7 @@ function Dashboard() {
                                                     }
                                                 </div>
                                                 <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
+                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Enquiries:</span> {el.enquiryCount ?? 0}</p>
                                             </div>
                                             <div className='flex items-center flex-wrap justify-center gap-2'>
                                                 <button onClick={() => {
@@ -651,6 +720,8 @@ function Dashboard() {
                                 })
                             }
                         </div>
+                        <div className="w-full h-px bg-primary my-4 rounded-full" />
+                        <Chart data={getListingEnquiryData()} />
                     </div>
                 </div>
 

@@ -116,7 +116,8 @@ function ListingPage() {
                 event.target.name.value,
                 user.email,
                 event.target.date.value,
-                listing.id
+                listing.id,
+                new Date().toISOString().replace('T', ' ').slice(0, 19) + '+00',
             );
             event.target.reset();
             setFormModal(false);
@@ -222,6 +223,7 @@ function ListingPage() {
                                 className="border border-gray-300 p-2 rounded"
                                 name="date"
                                 id="date"
+                                min={new Date().toISOString().split('T')[0]}
                             />
 
                             <button
