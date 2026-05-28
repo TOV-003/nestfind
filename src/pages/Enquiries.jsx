@@ -114,7 +114,7 @@ function Enquiries() {
     return (
         <Layout>
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
-                <h2 id='saved'>Enquiries</h2>
+                <h2 id='saved'>My Enquiries</h2>
                 {console.log(enquiries)}
                 <div className='grid grid-cols-3 gap-4'>
                     {

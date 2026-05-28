@@ -116,10 +116,55 @@ export default function AuthProvider({ children }) {
         return data[0];
     }
 
+    async function deleteListing(id) {
+        const { data, error } = await supabase
+            .from('listings')
+            .delete()
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+        return data[0];
+    }
+
+    async function editListing(id, updates) {
+        const { data, error } = await supabase
+            .from('listings')
+            .update(updates)
+            .eq('id', id)
+            .eq('host_id', user.id)
+            .select();
+
+        if (error) throw error;
+        console.log("Supabase Update Response:", data);
+        if (!data || data.length === 0) {
+            throw new Error("No record found to update. Check your host_id or permissions.");
+        }
+        return data[0];
+    }
+
+    async function toggleActive(id, isActive) {
+        const { data, error } = await supabase
+            .from('listings')
+            .update({ active: !isActive })
+            .eq('id', id)
+            .eq('host_id', user.id)
+            .select();
+
+        if (error) throw error;
+        console.log("Supabase Update Response:", data);
+        if (!data || data.length === 0) {
+            throw new Error("No record found to update. Check your host_id or permissions.");
+        }
+        return data[0];
+    }
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry, deleteEnquiry, updateEnquiry, createListing }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry, deleteEnquiry, updateEnquiry, createListing, deleteListing, editListing, toggleActive }}>
             {children}
         </AuthContext.Provider>
     );
+
+
 }
 

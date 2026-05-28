@@ -14,13 +14,16 @@ import { toast } from 'react-hot-toast';
 function Dashboard() {
 
     const [isChecking, setIsChecking] = useState(true);
-    const { user, logout, createListing } = useAuth();
+    const { user, logout, createListing, deleteListing, editListing, toggleActive } = useAuth();
     const navigate = useNavigate();
     const [hostListings, setHostListings] = useState([]);
     const [refresh, setRefresh] = useState(false);
     const [profile, setProfile] = useState(null);
     const [modal, setModal] = useState(false);
     const [uploadModal, setUploadModal] = useState(false);
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [editModal, setEditModal] = useState(false);
+    const [activeId, setActiveId] = useState(null);
     const url = import.meta.env.VITE_SUPABASE_URL;
     const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState({
@@ -197,6 +200,42 @@ function Dashboard() {
         } catch (error) {
             toast.error(error.message);
         }
+    }
+
+    async function removeListing(id) {
+        await deleteListing(id);
+        toast.success('Listing deleted successfully!');
+        setDeleteModal(false);
+        setRefresh((prev) => !prev);
+    }
+
+    function toggleDelete() {
+        setDeleteModal(true);
+    }
+
+    async function editListings(id, updates) {
+        setUploading(true);
+        try {
+            await editListing(id, updates);
+            toast.success('Listing updated successfully!');
+            setEditModal(false);
+            setRefresh((prev) => !prev);
+        } catch (error) {
+            console.error("Update failed:", error);
+            toast.error("Failed to update listing.");
+        } finally {
+            setUploading(false);
+        }
+    }
+
+    async function toggleActiveListing(id, isActive) {
+        await toggleActive(id, isActive);
+        toast.success('Listing updated successfully!');
+        setRefresh((prev) => !prev);
+    }
+
+    function toggleEdit() {
+        setEditModal(true);
     }
 
     const handleChange = (event) => {
@@ -429,7 +468,7 @@ function Dashboard() {
                                     const listingAmenities = el.amenities || {};
 
                                     return (
-                                        <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
+                                        <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 justify-between">
                                             <Link to={`/listings/${el.id}`} className="w-full">
                                                 <img
                                                     src={el.images?.[0] || '/placeholder-property.jpg'}
@@ -489,6 +528,123 @@ function Dashboard() {
                                                     }
                                                 </div>
                                                 <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
+                                            </div>
+                                            <div className='flex items-center flex-wrap justify-center gap-2'>
+                                                <button onClick={() => {
+                                                    toggleDelete();
+                                                    setActiveId(el.id)
+                                                }
+                                                } className='bg-error px-4 py-2 font-bold text-white rounded-lg cursor-pointer'>Delete Listing</button>
+                                                {deleteModal &&
+                                                    <div
+                                                        onClick={() => setModal(false)}
+                                                        className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+                                                    >
+                                                        <form
+                                                            onSubmit={async (e) => {
+                                                                e.preventDefault();
+                                                                await removeListing(activeId);
+                                                                navigate('/dashboard');
+                                                            }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg"
+                                                        >
+                                                            <label>
+                                                                <p>Are you sure you want to delete this listing?</p>
+                                                                <p>This action cannot be undone.</p>
+                                                            </label>
+                                                            <button
+                                                                type="submit"
+                                                                className="bg-error cursor-pointer rounded-lg px-4 py-2 text-white font-semibold"
+                                                            >
+                                                                Delete Listing
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                }
+                                                <button onClick={() => toggleActiveListing(el.id, el.active)} className={`${el.active ? "bg-warning" : "bg-green-800"} px-4 py-2 font-bold text-white rounded-lg cursor-pointer`}>{el.active ? 'Deactivate' : 'Activate'} Listing</button>
+                                                <button onClick={() => {
+                                                    toggleEdit();
+                                                    setActiveId(el.id)
+                                                }
+                                                } className='bg-primary px-4 py-2 font-bold text-white rounded-lg cursor-pointer'>Edit Listing</button>
+                                                {
+
+
+                                                    editModal &&
+                                                    <div
+                                                        onClick={() => setEditModal(false)}
+                                                        className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+                                                    >
+                                                        <form
+                                                            onSubmit={async (e) => {
+                                                                e.preventDefault();
+                                                                await editListings(activeId, {
+                                                                    title: formData.title,
+                                                                    listing_type: formData.listing_type,
+                                                                    price: formData.price,
+                                                                    amenities: formData.amenities,
+                                                                    description: formData.description,
+                                                                });
+                                                                navigate('/dashboard');
+                                                            }}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg"
+                                                        >
+                                                            <label>
+                                                                <p>New Title</p>
+                                                                <input type="text" value={formData.title} onChange={handleChange} name="title" id="title" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. New Apartment" />
+                                                            </label>
+                                                            <label>
+                                                                <p>New Type</p>
+                                                                <select name="type" value={formData.type} id="type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
+                                                                    <option value="" disabled>Select Property Type</option>
+                                                                    <option value="house">House</option>
+                                                                    <option value="apartment">Apartment</option>
+                                                                    <option value="studio">Studio</option>
+                                                                    <option value="duplex">Duplex</option>
+                                                                </select>
+                                                            </label>
+                                                            <label>
+                                                                <p>New Listing Type</p>
+                                                                <select name="listing_type" value={formData.listing_type} id="listing_type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
+                                                                    <option value="" disabled>Select Listing Type</option>
+                                                                    <option value="rent">Rent</option>
+                                                                    <option value="sale">Sale</option>
+                                                                    <option value="shortlet">Short Let</option>
+                                                                </select>
+                                                            </label>
+                                                            <label>
+                                                                <p>New Price</p>
+                                                                <input type="number" value={formData.price} onChange={handleChange} name="price" id="price" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 100000" />
+                                                            </label>
+                                                            <div className='flex flex-wrap justify-center gap-2'>
+                                                                {['Gym', 'Pool', 'WiFi', 'Parking', 'Security', 'Furnished', 'Generator'].map((amenity) => (
+                                                                    <div key={amenity} className='flex gap-2 w-fit'>
+                                                                        <label htmlFor={amenity.toLowerCase()} className="font-medium text-gray-700">
+                                                                            {amenity}
+                                                                        </label>
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            name={amenity}
+                                                                            id={amenity.toLowerCase()}
+                                                                            className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                                                                            checked={formData.amenities[amenity] || false}
+                                                                            onChange={handleAmenityChange}
+                                                                        />
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                            <label>
+                                                                <p>New Description</p>
+                                                                <textarea name="description" value={formData.description} id="description" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. This is a description of the property"></textarea>
+                                                            </label>
+
+                                                            <button type="submit" className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">{uploading ? 'Uploading...' : 'Update Listing'}</button>
+
+                                                        </form>
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                     );
