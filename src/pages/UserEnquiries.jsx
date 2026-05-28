@@ -10,7 +10,7 @@ function UserEnquiries() {
     const navigate = useNavigate();
     const [compiledEnquiries, setCompiledEnquiries] = useState([]);
     const [isChecking, setIsChecking] = useState(true);
-    const [expandedId, setExpandedId] = useState(null);
+    const [expandedId, setExpandedId] = useState(true);
 
     const toggleExpand = (id) => {
         setExpandedId(expandedId === id ? null : id);
@@ -101,11 +101,13 @@ function UserEnquiries() {
                                     <div>
                                         <p className="font-bold text-sm">{enq.listing?.title}</p>
                                         <p className="text-xs text-gray-500">From: {enq.name || 'Guest'}</p>
+                                        <p className="text-xs text-gray-500">{enq.email}</p>
+                                        <p className="text-xs text-gray-500">Date: {new Date(enq.date).toLocaleDateString()}</p>
                                     </div>
                                 </div>
 
                                 <div className="mt-3 md:mt-0 flex-1 md:px-4">
-                                    <p className={`text-sm text-gray-700 ${expandedId === enq.listing_id ? '' : 'truncate'}`}>
+                                    <p className={`text-sm text-gray-700 ${expandedId === enq.listing_id ? '' : 'line-clamp-3'}`}>
                                         {enq.message}
                                     </p>
                                 </div>

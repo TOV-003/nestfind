@@ -14,6 +14,11 @@ function Enquiries() {
     const [compiledEnquiries, setCompiledEnquiries] = useState([]);
     const [savedIds, setSavedIds] = useState([]);
     const [isChecking, setIsChecking] = useState(true);
+    const [expandedId, setExpandedId] = useState(true);
+
+    const toggleExpand = (id) => {
+        setExpandedId(expandedId === id ? null : id);
+    };
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -138,7 +143,7 @@ function Enquiries() {
                         compiledEnquiries.map((el) => {
 
                             return (
-                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col justify-between relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
                                     <div className='flex flex-col items-center '>
                                         <Link to={`/listings/${el.listing.id}`}>
                                             <img
@@ -160,7 +165,9 @@ function Enquiries() {
                                     </div>
                                     <hr className='border-t border-primary w-full' />
                                     <div className='w-4/5 flex flex-col items-start'>
-                                        <p><span className='font-bold'>Message:</span> {el.message}</p>
+                                        <p className={`${expandedId === el.listing_id ? '' : 'line-clamp-1'} cursor-pointer hover:underline`} onClick={() => toggleExpand(el.listing_id)}>
+                                            <span className='font-bold'>Message:</span> {el.message}
+                                        </p>
                                         <p><span className='font-bold'>Date:</span> {el.date}</p>
                                         {
                                             (() => {

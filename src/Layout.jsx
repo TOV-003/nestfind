@@ -3,13 +3,13 @@ import Navbar from "./components/Navbar";
 
 function Layout({ children }) {
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             <Navbar />
-
-            {children}
-
+            <main className="grow">
+                {children}
+            </main>
             <Footer />
-        </>
+        </div>
     );
 }
 
