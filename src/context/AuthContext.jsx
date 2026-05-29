@@ -98,9 +98,6 @@ export default function AuthProvider({ children }) {
             .eq('listing_id', listing_id)
             .eq('user_id', user.id);
         if (error) {
-            if (error.code === '23505') {
-                alert("You have already sent an enquiry for this listing on this date.");
-            }
             throw error;
         }
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../api/supabaseClient';
 import { useAuth } from '../context/useAuth';
+import EmptyState from '../components/EmptyState';
 import Layout from '../Layout';
 
 function UserEnquiries() {
@@ -84,54 +85,58 @@ function UserEnquiries() {
                 <h2 className='text-2xl font-bold self-start'>Enquiries Received</h2>
 
                 <div className='w-full border border-gray-200 rounded-lg overflow-hidden'>
-                    {compiledEnquiries.map((enq) => (
-                        <div key={`${enq.user_id}+${enq.listing?.id}`} className="border-b border-gray-100 last:border-b-0">
-                            <div
-                                className="p-4 flex flex-col md:flex-row md:items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
-                                onClick={() => toggleExpand(enq.listing_id)}
-                            >
-                                <div className="flex items-center gap-4 flex-1">
-                                    <Link to={`/listings/${enq.listing?.id}`}>
-                                        <img
-                                            src={enq.listing?.images?.[0] || '/placeholder-property.jpg'}
-                                            className="w-12 h-12 object-cover rounded-md"
-                                            alt="Property"
-                                        />
-                                    </Link>
-                                    <div>
-                                        <p className="font-bold text-sm">{enq.listing?.title}</p>
-                                        <p className="text-xs text-gray-500">From: {enq.name || 'Guest'}</p>
-                                        <p className="text-xs text-gray-500">{enq.email}</p>
-                                        <p className="text-xs text-gray-500">Date: {new Date(enq.date).toLocaleDateString()}</p>
+                    {
+                        compiledEnquiries.length === 0 ? (
+                            <EmptyState title="No enquiries found" message="No one has made an enquiry for any of your listings, Yet." />
+                        ) :
+                            compiledEnquiries.map((enq) => (
+                                <div key={`${enq.user_id}+${enq.listing?.id}`} className="border-b border-gray-100 last:border-b-0">
+                                    <div
+                                        className="p-4 flex flex-col md:flex-row md:items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                                        onClick={() => toggleExpand(enq.listing_id)}
+                                    >
+                                        <div className="flex items-center gap-4 flex-1">
+                                            <Link to={`/listings/${enq.listing?.id}`}>
+                                                <img
+                                                    src={enq.listing?.images?.[0] || '/placeholder-property.jpg'}
+                                                    className="w-12 h-12 object-cover rounded-md"
+                                                    alt="Property"
+                                                />
+                                            </Link>
+                                            <div>
+                                                <p className="font-bold text-sm">{enq.listing?.title}</p>
+                                                <p className="text-xs text-gray-500">From: {enq.name || 'Guest'}</p>
+                                                <p className="text-xs text-gray-500">{enq.email}</p>
+                                                <p className="text-xs text-gray-500">Date: {new Date(enq.date).toLocaleDateString()}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-3 md:mt-0 flex-1 md:px-4">
+                                            <p className={`text-sm text-gray-700 ${expandedId === enq.listing_id ? '' : 'line-clamp-3'}`}>
+                                                {enq.message}
+                                            </p>
+                                        </div>
+
+                                        <div className="mt-2 md:mt-0 text-xs font-bold md:w-24 text-right">
+                                            {enq.responded ? <button className="bg-primary text-white px-4 py-2 rounded-lg">Responded</button>
+                                                :
+                                                <button
+                                                    onClick={async () => {
+                                                        await respondEnquiry(enq.listing_id, enq.date);
+                                                        setCompiledEnquiries(prev => prev.map(enqItem =>
+                                                            (enqItem.user_id === enq.user_id && enqItem.listing_id === enq.listing_id)
+                                                                ? { ...enqItem, responded: true }
+                                                                : enqItem
+                                                        ));
+                                                    }}
+                                                    className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer"
+                                                >
+                                                    Agree
+                                                </button>}
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div className="mt-3 md:mt-0 flex-1 md:px-4">
-                                    <p className={`text-sm text-gray-700 ${expandedId === enq.listing_id ? '' : 'line-clamp-3'}`}>
-                                        {enq.message}
-                                    </p>
-                                </div>
-
-                                <div className="mt-2 md:mt-0 text-xs font-bold md:w-24 text-right">
-                                    {enq.responded ? <button className="bg-primary text-white px-4 py-2 rounded-lg">Responded</button>
-                                        :
-                                        <button
-                                            onClick={async () => {
-                                                await respondEnquiry(enq.listing_id, enq.date);
-                                                setCompiledEnquiries(prev => prev.map(enqItem =>
-                                                    (enqItem.user_id === enq.user_id && enqItem.listing_id === enq.listing_id)
-                                                        ? { ...enqItem, responded: true }
-                                                        : enqItem
-                                                ));
-                                            }}
-                                            className="bg-primary text-white px-4 py-2 rounded-lg cursor-pointer"
-                                        >
-                                            Agree
-                                        </button>}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                            ))}
                 </div>
             </main>
         </Layout>

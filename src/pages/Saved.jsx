@@ -9,6 +9,7 @@ import { FaBath, FaPencilRuler } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import EmptyState from '../components/EmptyState';
 
 function Saved() {
     const { user } = useAuth();
@@ -119,7 +120,9 @@ function Saved() {
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
                 <h2 id='saved'>Saved Listings</h2>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4'>
-                    {
+                    {   listings.length === 0 ? (
+                        <EmptyState title="No saved listings found" message="Please try saving some listings." />
+                    ) :
                         listings.map((el) => {
                             const listingLocation = el.location || {};
                             const listingAmenities = el.amenities || {};

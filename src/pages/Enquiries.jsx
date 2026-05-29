@@ -4,10 +4,11 @@ import { useAuth } from '../context/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../api/supabaseClient';
 import Layout from '../Layout';
+import EmptyState from '../components/EmptyState';
 import { toast } from 'react-hot-toast';
 
 function Enquiries() {
-    const { user, editEnquiry } = useAuth();
+    const { user, editEnquiry, deleteEnquiry } = useAuth();
     const navigate = useNavigate();
     const [enquiries, setEnquiries] = useState([]);
     const [listings, setListings] = useState([]);
@@ -132,14 +133,27 @@ function Enquiries() {
         }
     }
 
+    async function handleDeleteEnquiry(message, name, email, date, listing_id) {
+        try {
+            await deleteEnquiry(message, name, email, date, listing_id);
+            setCompiledEnquiries(prev => prev.filter(el => el.listing_id !== listing_id));
+
+            toast.success("Enquiry Deleted Successfully!");
+        } catch (error) {
+            console.error("Delete failed:", error);
+            toast.error("Failed to delete enquiry.");
+        }
+    }
+
 
     return (
         <Layout>
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
                 <h2 id='saved'>My Enquiries</h2>
-                {console.log(enquiries)}
                 <div className='grid grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                    {
+                    {compiledEnquiries.length === 0 ? (
+                        <EmptyState title="No enquiries found" message="Please try creating new enquiries." />
+                    ) :
                         compiledEnquiries.map((el) => {
 
                             return (
@@ -200,9 +214,8 @@ function Enquiries() {
                                                     return <p className='text-gray-400 font-bold'>Awaiting Review</p>;
                                                 }
                                             })()}
-
                                     </div>
-
+                                    <button onClick={() => handleDeleteEnquiry(el.message, el.name, el.email, el.date, el.listing_id)} className="bg-error p-2 rounded-md font-bold text-white cursor-pointer">Delete Enquiry</button>
                                 </div>
                             );
                         })

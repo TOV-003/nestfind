@@ -10,6 +10,7 @@ import Layout from '../Layout';
 import { supabase } from '../api/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { Chart } from '../components/Chart';
+import EmptyState from '../components/EmptyState';
 
 
 function Dashboard() {
@@ -530,7 +531,9 @@ function Dashboard() {
                         </div>
                         <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
                             {console.log("Host Listings IDs:", hostListings)}
-                            {
+                            {hostListings.length === 0 ? (
+                                <EmptyState title="No listings found" message="Please try creating new listings." />
+                            ) :
                                 hostListings.map((el) => {
                                     const listingLocation = el.location || {};
                                     const listingAmenities = el.amenities || {};
@@ -721,7 +724,7 @@ function Dashboard() {
                             }
                         </div>
                         <div className="w-full h-px bg-primary my-4 rounded-full" />
-                        <Chart data={getListingEnquiryData()} />
+                        {hostListings.length === 0 ? null : <Chart data={getListingEnquiryData()} />}
                     </div>
                 </div>
 

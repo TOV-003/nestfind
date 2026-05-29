@@ -9,6 +9,7 @@ import { FaBath, FaPencilRuler } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import EmptyState from '../components/EmptyState';
 
 export default function Profile() {
 
@@ -252,7 +253,9 @@ export default function Profile() {
                     <div className='flex flex-col gap-2'>
                         <h2 id='saved'>Saved Listings</h2>
                         <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
-                            {
+                            {listings.length === 0 ? (
+                                <EmptyState title="No saved listings found" message="Please try saving some listings." />
+                            ) :
                                 listings.slice(0, 4).map((el) => {
                                     const listingLocation = el.location || {};
                                     const listingAmenities = el.amenities || {};

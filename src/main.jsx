@@ -17,6 +17,7 @@ import Saved from './pages/Saved.jsx'
 import Enquiries from './pages/Enquiries.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import UserEnquiries from './pages/UserEnquiries.jsx'
+import About from './pages/About.jsx'
 
 const router = createBrowserRouter([
   {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
       {
         element: <Dashboard />,
         path: "/Dashboard"
+      },
+      {
+        element: <About />,
+        path: "/About"
       }
     ],
   },

@@ -369,7 +369,6 @@ function Listings() {
             <main className="flex flex-col items-center gap-4 my-12 mx-auto px-4 w-full">
                 <div className="flex flex-col xl:flex-row xl:justify-center items-center xl:items-start gap-6 w-full">
 
-                    {/* FILTER SIDEBAR */}
                     <div className="flex flex-col h-full items-start gap-2 w-full md:w-[60vw] xl:w-75 xl:shrink-0 px-2">
                         <h3 className="text-xl font-bold">Filters</h3>
                         <p className="text-sm text-gray-400">Refine your search to find the perfect home.</p>
@@ -474,7 +473,6 @@ function Listings() {
                         </form>
                     </div>
 
-                    {/* LISTINGS DISPLAY */}
                     <div className="flex-col flex items-center gap-8 w-full">
                         <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
                             <p>Showing 1 to {page * 9 > listings.length ? listings.length : page * 9} of {listings.length} listings</p>
