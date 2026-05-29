@@ -2,7 +2,7 @@ import { FiInbox } from 'react-icons/fi'; // Using react-icons for a clean aesth
 
 function EmptyState({ title, message }) {
     return (
-        <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+        <div className="flex flex-col items-center justify-center py-20 px-4 text-center lg:col-span-2">
             <div className="w-24 h-24 bg-primary rounded-full flex items-center justify-center mb-6">
                 <FiInbox className="w-10 h-10 bg-primary text-white" />
             </div>

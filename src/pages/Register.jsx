@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '../Layout';
 import { useAuth } from '../context/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +15,7 @@ function Register() {
         avatar: '',
     });
     const [loading, setLoading] = useState(false);
-    const { signUp } = useAuth();
+    const { signUp, user } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (event) => {
@@ -25,6 +25,16 @@ function Register() {
             [name]: value
         }));
     };
+
+    useEffect(() => {
+        if (user) {
+            if (user.user_metadata?.role === "host") {
+                navigate('/Dashboard');
+            } else if (user.user_metadata?.role === "user") {
+                navigate('/Profile');
+            }
+        }
+    }, [user, navigate]);
 
     async function handleSubmit(event) {
         event.preventDefault();

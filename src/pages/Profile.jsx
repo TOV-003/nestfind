@@ -153,6 +153,10 @@ export default function Profile() {
         }
     }
 
+    async function handleEditProfile() {
+
+    }
+
     async function unsave(listingId) {
         await supabase
             .from('saved_listings')
@@ -214,6 +218,9 @@ export default function Profile() {
                         <Link to="/Enquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Enquiries</button></Link>
                         <Link to="/Saved"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Saved Listings</button></Link>
                         <button className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>Log Out</button>
+                        <button className="bg-blue-500 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={handleEditProfile}>
+                            Edit Profile
+                        </button>
                         <button className="bg-warning cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggle}>Delete My Account</button>
                     </div>
 
@@ -250,7 +257,7 @@ export default function Profile() {
                     ) : null}
                 </div>
                 <div className='flex flex-col gap-4 items-center flex-2'>
-                    <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col gap-2 items-center'>
                         <h2 id='saved'>Saved Listings</h2>
                         <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
                             {listings.length === 0 ? (
@@ -334,7 +341,7 @@ export default function Profile() {
                             <button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">View All Saved Listings</button>
                         </Link>
                     </div>
-                    <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col gap-2 items-center'>
                         <h2 id='enquiries'>Enquiried Listings</h2>
                         <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
                             {

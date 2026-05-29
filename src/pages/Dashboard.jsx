@@ -429,6 +429,7 @@ function Dashboard() {
                                                 <p>Description</p>
                                                 <textarea name="description" value={formData.description} id="description" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. This is a description of the property"></textarea>
                                             </label>
+                                            <p>Step {currentStep} of 6</p>
                                             <button type="button" onClick={() => setCurrentStep(2)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
                                         </>
                                     )}
@@ -455,6 +456,7 @@ function Dashboard() {
                                                 <p>Year Built</p>
                                                 <input type="number" value={formData.year_built} onChange={handleChange} name="year_built" id="year_built" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 2020" />
                                             </label>
+                                            <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
                                                 <button type="button" onClick={() => setCurrentStep(1)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
                                                 <button type="button" onClick={() => setCurrentStep(3)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
@@ -482,6 +484,7 @@ function Dashboard() {
                                                 <p>Address</p>
                                                 <input type="text" value={formData.location.Address} name="Address" id="address" required onChange={handleLocationChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
                                             </label>
+                                            <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
                                                 <button type="button" onClick={() => setCurrentStep(2)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
                                                 <button type="button" onClick={() => setCurrentStep(4)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
@@ -500,6 +503,7 @@ function Dashboard() {
                                                     </div>
                                                 ))}
                                             </div>
+                                            <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
                                                 <button type="button" onClick={() => setCurrentStep(3)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
                                                 <button type="button" onClick={() => setCurrentStep(5)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
@@ -513,7 +517,7 @@ function Dashboard() {
                                                 <p>Images (Minimum of 3, Maximum of 10, No larger than 1mb)</p>
                                                 <input type="file" name="images" multiple id="avatar" accept="image/*" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" />
                                             </label>
-
+                                            <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
                                                 <button type="button" onClick={() => setCurrentStep(3)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
                                                 <button type="button" onClick={() => setCurrentStep(6)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
@@ -543,6 +547,8 @@ function Dashboard() {
                                                 <p className="text-sm text-gray-500">{formData.description}</p>
                                             </div>
                                             <p>Make sure all the information is correct before submitting.</p>
+                                            <br />
+                                            <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
                                                 <button type="button" onClick={() => setCurrentStep(5)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
                                                 <button
@@ -594,7 +600,7 @@ function Dashboard() {
                     ) : null}
                 </div>
                 <div className='flex flex-col gap-4 items-center flex-2'>
-                    <div className='flex flex-col gap-2 items-center md:items-start justify-center'>
+                    <div className='flex flex-col gap-2 items-center justify-center'>
                         <h2 id='saved'>My Listings</h2>
                         <div className='flex items-center gap-4 flex-wrap md:justify-start justify-center'>
                             <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Total Listings: {hostListings.length}</p>

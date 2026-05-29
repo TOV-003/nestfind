@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from '../Layout';
 import { supabase } from '../api/supabaseClient';
 import { useAuth } from '../context/useAuth';
@@ -15,9 +15,15 @@ function Login() {
     const { login, user } = useAuth();
     const navigate = useNavigate();
 
-    if (user.user_metadata.role === "host") {
-        navigate('/Dashboard');
-    }
+    useEffect(() => {
+        if (user) {
+            if (user.user_metadata?.role === "host") {
+                navigate('/Dashboard');
+            } else if (user.user_metadata?.role === "user") {
+                navigate('/Profile');
+            }
+        }
+    }, [user, navigate]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
