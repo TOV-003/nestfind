@@ -10,7 +10,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/useAuth";
 import { supabase } from '../api/supabaseClient';
-
+import { motion } from "framer-motion";
 
 function Listings() {
     const [listings, setListings] = useState([]);
@@ -22,6 +22,7 @@ function Listings() {
     const [sort, setSort] = useState('default');
     const { user } = useAuth();
     const [savedIds, setSavedIds] = useState([]);
+    const [mapview, setMapview] = useState(false);
 
     useEffect(() => {
         if (user?.id) {
@@ -472,116 +473,152 @@ function Listings() {
                             <button type="submit" className="w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md text-sm transition-colors">Apply Filters</button>
                         </form>
                     </div>
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="relative flex gap-8 p-1 bg-gray-100 rounded-lg w-fit">
+                            <motion.div
+                                className="absolute top-1 bottom-1 bg-primary rounded-lg"
+                                style={{ width: '128px' }} // Matches button w-20
+                                initial={false}
+                                animate={{
+                                    // 4px padding + 80px button + 32px gap = 116px total shift
+                                    x: mapview ? 0 : 162
+                                }}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                            />
 
-                    <div className="flex-col flex items-center gap-8 w-full">
-                        <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
-                            <p>Showing 1 to {page * 9 > listings.length ? listings.length : page * 9} of {listings.length} listings</p>
-                            <div className="flex flex-row justify-between items-center gap-4">
-                                <p>Sort</p>
-                                <select name="sort" id="sort" onChange={handleSort} className="border border-gray-500 text-gray-500 px-4 py-2 rounded-lg bg-white">
-                                    <option value="default">Default</option>
-                                    <option value="price">Price: Low to High</option>
-                                    <option value="price-desc">Price: High to Low</option>
-                                    <option value="date-desc">Date: Newest to Oldest</option>
-                                    <option value="date-asc">Date: Oldest to Newest</option>
-                                </select>
-                            </div>
+                            <button
+                                onClick={() => setMapview(true)}
+                                className={`z-10 w-32 py-2 text-center font-medium transition-colors duration-300 ${mapview ? 'text-white' : 'text-gray-700'}`}
+                            >
+                                Map View
+                            </button>
+                            <button
+                                onClick={() => setMapview(false)}
+                                className={`z-10 w-32 py-2 text-center font-medium transition-colors duration-300 ${!mapview ? 'text-white' : 'text-gray-700'}`}
+                            >
+                                List View
+                            </button>
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center w-full">
-                            {(() => {
-                                let sortedListings = [...listings];
-
-                                if (sort === 'price') {
-                                    sortedListings.sort((a, b) => (a.price || 0) - (b.price || 0));
-                                } else if (sort === 'price-desc') {
-                                    sortedListings.sort((a, b) => (b.price || 0) - (a.price || 0));
-                                } else if (sort === 'date-desc') {
-                                    sortedListings.sort((a, b) => new Date(b.date_listed) - new Date(a.date_listed));
-                                } else if (sort === 'date-asc') {
-                                    sortedListings.sort((a, b) => new Date(a.date_listed) - new Date(b.date_listed));
-                                }
-
-                                return sortedListings.slice(0, page * 9).map((el) => {
-                                    const listingLocation = el.location;
-                                    const listingAmenities = el.amenities;
-
-                                    return (
-                                        <div key={el.id} className="relative border border-gray-300 rounded-xl p-2 w-full h-full flex flex-col items-center gap-4">
-                                            <Link to={`/listings/${el.id}`} className="w-full">
-                                                <img
-                                                    src={Array.isArray(el.images) ? el.images[0] : el.images}
-                                                    className="w-full aspect-square object-cover rounded-xl"
-                                                    alt={el.title || "Property Image"}
-                                                />
-                                            </Link>
-                                            <div className="flex flex-col gap-1 self-start w-full px-2 pb-12">
-                                                <div className="flex flex-row justify-between items-start gap-2 w-full">
-                                                    <p className="text-lg font-bold">{el.title}</p>
-                                                    <h3 className="text-primary font-bold text-lg whitespace-nowrap">
-                                                        ₦{el.price?.toLocaleString('en-US')}
-                                                        {el.listing_type === 'rent' ? '/yr' : el.listing_type === 'shortlet' ? '/day' : ''}
-                                                    </h3>
-                                                </div>
-                                                <p className="text-gray-400 text-sm">
-                                                    {listingLocation?.city}, {listingLocation?.state} state. Listed {(() => {
-                                                        if (!el.date_listed) return 'N/A';
-                                                        const inputDate = new Date(el.date_listed);
-                                                        const currentDate = new Date();
-                                                        if (isNaN(inputDate.getTime())) return 'Invalid Date';
-                                                        const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
-                                                        if (diffInDays < 0) return 'In the future';
-                                                        if (diffInDays === 0) return 'Today';
-                                                        if (diffInDays === 1) return '1 day ago';
-                                                        return `${diffInDays} days ago`;
-                                                    })()}
-                                                </p>
-                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
-
-                                                <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
-                                                    <div className="flex flex-row items-center gap-1">
-                                                        <FaHome size={14} className="text-primary" />
-                                                        <p className="capitalize">{el.type === "apartment" ? "Apt" : el.type} for {el.listing_type === "shortlet" ? "STR" : el.listing_type}</p>
-                                                    </div>
-                                                    <div className="flex flex-row items-center gap-1">
-                                                        <FaBed size={14} className="text-primary" />
-                                                        <p>{el.beds} bd</p>
-                                                    </div>
-                                                    <div className="flex flex-row items-center gap-1">
-                                                        <FaBath size={14} className="text-primary" />
-                                                        <p>{el.baths} ba</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-row items-center gap-1 mt-1 text-sm text-gray-500">
-                                                    <FaPencilRuler size={12} className="text-primary" />
-                                                    <p>{el.area} sq ft</p>
-                                                </div>
-                                                <div className="flex flex-wrap items-center gap-1 mt-2">
-                                                    {listingAmenities && Object.entries(listingAmenities)
-                                                        .filter(([, value]) => value === true)
-                                                        .map(([key], index, array) => (
-                                                            <Fragment key={key}>
-                                                                <p className="text-xs text-gray-500 capitalize">{key}</p>
-                                                                {index < array.length - 1 && <span className="text-gray-300 text-xs">|</span>}
-                                                            </Fragment>
-                                                        ))
-                                                    }
-                                                </div>
-                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span>{el.host_name || 'Unknown Host'}</p>
-                                            </div>
-                                            <button onClick={() => handleToggle(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
-                                                <FaHeart size={16} className={savedIds.includes(el.id) ? "text-primary" : "text-gray-400"} />
-                                            </button>
+                        {
+                            mapview ?
+                                <div className="w-full flex items-center justify-center p-4">
+                                    <p>Map View Content</p>
+                                </div>
+                                :
+                                <div className="flex-col flex items-center gap-8 w-full">
+                                    <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
+                                        <p>Showing 1 to {page * 9 > listings.length ? listings.length : page * 9} of {listings.length} listings</p>
+                                        <div className="flex flex-row justify-between items-center gap-4">
+                                            <p>Sort</p>
+                                            <select name="sort" id="sort" onChange={handleSort} className="border border-gray-500 text-gray-500 px-4 py-2 rounded-lg bg-white">
+                                                <option value="default">Default</option>
+                                                <option value="price">Price: Low to High</option>
+                                                <option value="price-desc">Price: High to Low</option>
+                                                <option value="date-desc">Date: Newest to Oldest</option>
+                                                <option value="date-asc">Date: Oldest to Newest</option>
+                                            </select>
                                         </div>
-                                    );
-                                });
-                            })()}
-                        </div>
+                                    </div>
 
-                        {listings.length > page * 9 && (
-                            <button className="bg-primary text-white px-6 py-2 w-fit rounded-lg cursor-pointer font-medium mt-4" onClick={handleLoadMore}>Load More</button>
-                        )}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center w-full">
+                                        {(() => {
+                                            let sortedListings = [...listings];
+
+                                            if (sort === 'price') {
+                                                sortedListings.sort((a, b) => (a.price || 0) - (b.price || 0));
+                                            } else if (sort === 'price-desc') {
+                                                sortedListings.sort((a, b) => (b.price || 0) - (a.price || 0));
+                                            } else if (sort === 'date-desc') {
+                                                sortedListings.sort((a, b) => new Date(b.date_listed) - new Date(a.date_listed));
+                                            } else if (sort === 'date-asc') {
+                                                sortedListings.sort((a, b) => new Date(a.date_listed) - new Date(b.date_listed));
+                                            }
+
+                                            return sortedListings.slice(0, page * 9).map((el) => {
+                                                const listingLocation = el.location;
+                                                const listingAmenities = el.amenities;
+
+                                                return (
+                                                    <div key={el.id} className="relative border border-gray-300 rounded-xl p-2 w-full h-full flex flex-col items-center gap-4">
+                                                        <Link to={`/listings/${el.id}`} className="w-full">
+                                                            <img
+                                                                src={Array.isArray(el.images) ? el.images[0] : el.images}
+                                                                className="w-full aspect-square object-cover rounded-xl"
+                                                                alt={el.title || "Property Image"}
+                                                            />
+                                                        </Link>
+                                                        <div className="flex flex-col gap-1 self-start w-full px-2 pb-12">
+                                                            <div className="flex flex-row justify-between items-start gap-2 w-full">
+                                                                <p className="text-lg font-bold">{el.title}</p>
+                                                                <h3 className="text-primary font-bold text-lg whitespace-nowrap">
+                                                                    ₦{el.price?.toLocaleString('en-US')}
+                                                                    {el.listing_type === 'rent' ? '/yr' : el.listing_type === 'shortlet' ? '/day' : ''}
+                                                                </h3>
+                                                            </div>
+                                                            <p className="text-gray-400 text-sm">
+                                                                {listingLocation?.city}, {listingLocation?.state} state. Listed {(() => {
+                                                                    if (!el.date_listed) return 'N/A';
+                                                                    const inputDate = new Date(el.date_listed);
+                                                                    const currentDate = new Date();
+                                                                    if (isNaN(inputDate.getTime())) return 'Invalid Date';
+                                                                    const diffInDays = Math.floor((currentDate - inputDate) / 86400000);
+                                                                    if (diffInDays < 0) return 'In the future';
+                                                                    if (diffInDays === 0) return 'Today';
+                                                                    if (diffInDays === 1) return '1 day ago';
+                                                                    return `${diffInDays} days ago`;
+                                                                })()}
+                                                            </p>
+                                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
+
+                                                            <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
+                                                                <div className="flex flex-row items-center gap-1">
+                                                                    <FaHome size={14} className="text-primary" />
+                                                                    <p className="capitalize">{el.type === "apartment" ? "Apt" : el.type} for {el.listing_type === "shortlet" ? "STR" : el.listing_type}</p>
+                                                                </div>
+                                                                <div className="flex flex-row items-center gap-1">
+                                                                    <FaBed size={14} className="text-primary" />
+                                                                    <p>{el.beds} bd</p>
+                                                                </div>
+                                                                <div className="flex flex-row items-center gap-1">
+                                                                    <FaBath size={14} className="text-primary" />
+                                                                    <p>{el.baths} ba</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex flex-row items-center gap-1 mt-1 text-sm text-gray-500">
+                                                                <FaPencilRuler size={12} className="text-primary" />
+                                                                <p>{el.area} sq ft</p>
+                                                            </div>
+                                                            <div className="flex flex-wrap items-center gap-1 mt-2">
+                                                                {listingAmenities && Object.entries(listingAmenities)
+                                                                    .filter(([, value]) => value === true)
+                                                                    .map(([key], index, array) => (
+                                                                        <Fragment key={key}>
+                                                                            <p className="text-xs text-gray-500 capitalize">{key}</p>
+                                                                            {index < array.length - 1 && <span className="text-gray-300 text-xs">|</span>}
+                                                                        </Fragment>
+                                                                    ))
+                                                                }
+                                                            </div>
+                                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span>{el.host_name || 'Unknown Host'}</p>
+                                                        </div>
+                                                        <button onClick={() => handleToggle(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
+                                                            <FaHeart size={16} className={savedIds.includes(el.id) ? "text-primary" : "text-gray-400"} />
+                                                        </button>
+                                                    </div>
+                                                );
+                                            });
+                                        })()}
+                                    </div>
+
+                                    {listings.length > page * 9 && (
+                                        <button className="bg-primary text-white px-6 py-2 w-fit rounded-lg cursor-pointer font-medium mt-4" onClick={handleLoadMore}>Load More</button>
+                                    )}
+                                </div>
+
+                        }
                     </div>
+
+
                 </div>
             </main>
         </Layout>
