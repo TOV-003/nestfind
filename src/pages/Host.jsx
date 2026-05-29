@@ -145,6 +145,7 @@ export default function Host() {
                                             <FaPencilRuler size={12} className="text-primary" />
                                             <p>{el.area} sq ft</p>
                                         </div>
+                                        <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
                                         <div className="flex flex-wrap items-center gap-1 mt-2">
                                             {Object.entries(listingAmenities)
                                                 .filter(([, value]) => value === true)

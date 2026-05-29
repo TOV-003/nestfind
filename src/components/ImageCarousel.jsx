@@ -11,7 +11,7 @@ function ImageCarousel({ images }) {
         );
     }
 
-    const displayImages = images.slice(0, 6);
+    const displayImages = images.slice(0, 10);
 
     const handlePrev = () => {
         setActiveIndex((prevIndex) =>

@@ -137,6 +137,32 @@ export default function AuthProvider({ children }) {
         return data[0];
     }
 
+    async function cleanupCloudinaryImages(imageUrls) {
+        if (!imageUrls || !Array.isArray(imageUrls)) return;
+
+        await Promise.all(
+            imageUrls.map(async (imageUrl) => {
+                const publicId = imageUrl.split('/').pop().split('.')[0];
+
+                try {
+                    await fetch(
+                        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/destroy`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                public_id: publicId,
+                                api_key: import.meta.env.VITE_CLOUDINARY_API_KEY
+                            })
+                        }
+                    );
+                } catch (error) {
+                    console.error(error, " Cloudinary cleanup failed for:", publicId);
+                }
+            })
+        );
+    }
+
     async function editListing(id, updates) {
         const { data, error } = await supabase
             .from('listings')
@@ -170,7 +196,7 @@ export default function AuthProvider({ children }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry, editEnquiry, respondEnquiry, deleteEnquiry, createListing, deleteListing, editListing, toggleActive }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, signUp, addEnquiry, editEnquiry, respondEnquiry, deleteEnquiry, createListing, deleteListing, cleanupCloudinaryImages, editListing, toggleActive }}>
             {children}
         </AuthContext.Provider>
     );

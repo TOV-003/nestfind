@@ -536,6 +536,7 @@ function Listings() {
                                                         return `${diffInDays} days ago`;
                                                     })()}
                                                 </p>
+                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
 
                                                 <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
                                                     <div className="flex flex-row items-center gap-1">

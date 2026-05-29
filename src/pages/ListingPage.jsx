@@ -141,6 +141,7 @@ function ListingPage() {
                         <p className="text-gray-500">{listing.location.Address}</p>
                         <p className="text-gray-400">{listing.location.city}, {listing.location.state} state</p>
                         <p className="text-gray-400">{new Date(listing.date_listed).toLocaleDateString()}</p>
+                        <p className="text-gray-400"><span className="font-bold">Built in </span> {listing.year_built ?? 'Unknown Year'}</p>
                         <div className="flex flex-row gap-2">
                             <div className="flex flex-row items-center gap-1">
                                 <FaBed size={12} className="text-primary" />

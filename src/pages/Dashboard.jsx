@@ -16,6 +16,7 @@ import EmptyState from '../components/EmptyState';
 function Dashboard() {
 
     const [isChecking, setIsChecking] = useState(true);
+    {/*Import  cleanupCloudinaryImages here */ }
     const { user, logout, createListing, deleteListing, editListing, toggleActive } = useAuth();
     const navigate = useNavigate();
     const [hostListings, setHostListings] = useState([]);
@@ -29,6 +30,7 @@ function Dashboard() {
     const [activeId, setActiveId] = useState(null);
     const url = import.meta.env.VITE_SUPABASE_URL;
     const [uploading, setUploading] = useState(false);
+    const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState({
         title: '',
         type: '',
@@ -54,6 +56,7 @@ function Dashboard() {
         },
         description: '',
         area: '',
+        year_built: '',
     });
 
     const localStates = [
@@ -143,53 +146,25 @@ function Dashboard() {
 
     async function handleCreateListing(event) {
         event.preventDefault();
-        console.log("Submitting formData:", formData);
         setUploading(true);
 
-        const fileInput = document.getElementById('avatar');
-        const files = Array.from(fileInput.files);
-        let avatarUrls = [];
+        const files = formData.images;
+        const uploadPromises = files.map(async (file) => {
+            const data = new FormData();
+            data.append('file', file);
+            data.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
 
-        if (files.length >= 3 && files.length <= 6) {
-            const uploadPromises = files.map(async (file) => {
-                try {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                { method: 'POST', body: data }
+            );
+            const json = await response.json();
+            return json.secure_url;
+        });
 
-                    const response = await fetch(
-                        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-                        {
-                            method: 'POST',
-                            body: formData,
-                        }
-                    );
-
-                    if (!response.ok) throw new Error("Upload failed");
-
-                    const data = await response.json();
-                    return data.secure_url;
-                } catch (error) {
-                    console.error("Single image upload failed:", error);
-                    return null;
-                }
-            });
-
-            const results = await Promise.all(uploadPromises);
-            avatarUrls = results.filter(url => url !== null);
-
-            if (avatarUrls.length === 0) {
-                throw new Error("No images were uploaded successfully.");
-            }
-        }
-
-        setFormData((prevData) => ({
-            ...prevData,
-            images: avatarUrls
-        }));
+        const avatarUrls = await Promise.all(uploadPromises);
 
         try {
-
             await createListing({
                 ...formData,
                 images: avatarUrls,
@@ -199,9 +174,38 @@ function Dashboard() {
             toast.success('Listing created successfully!');
             setUploadModal(false);
             setRefresh((prev) => !prev);
-            setUploading(false);
         } catch (error) {
             toast.error(error.message);
+        } finally {
+            setUploading(false);
+            setCurrentStep(1);
+            setFormData({
+                title: '',
+                type: '',
+                listing_type: '',
+                price: '',
+                location: {
+                    "city": "",
+                    "state": "",
+                    "Address": ""
+                },
+                images: [],
+                beds: '',
+                baths: '',
+                date_listed: new Date().toISOString().replace('T', ' ').slice(0, 19) + '+00',
+                amenities: {
+                    "Gym": false,
+                    "Pool": false,
+                    "WiFi": false,
+                    "Parking": false,
+                    "Security": false,
+                    "Furnished": false,
+                    "Generator": false
+                },
+                description: '',
+                area: '',
+                year_built: '',
+            });
         }
     }
 
@@ -241,12 +245,28 @@ function Dashboard() {
         setEditModal(true);
     }
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
+    const handleChange = (e) => {
+        const { name, files, value } = e.target;
+
+        if (name === 'images') {
+            const fileArray = Array.from(files);
+
+            if (fileArray.length < 3 || fileArray.length > 10) {
+                toast.error("Please select between 3 and 10 images.");
+                e.target.value = null;
+                return;
+            }
+
+            setFormData((prev) => ({
+                ...prev,
+                images: fileArray
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     const handleAmenityChange = (event) => {
@@ -376,112 +396,165 @@ function Dashboard() {
                         {uploadModal &&
                             <div
                                 onClick={() => setUploadModal(false)}
-                                className="fixed inset-0 flex items-start justify-center bg-black/50 z-50 overflow-y-auto"
+                                className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 overflow-y-auto"
                             >
-                                <form onSubmit={handleCreateListing} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white my-12 p-6 rounded-lg" onClick={(e) => e.stopPropagation()}>
-                                    <label>
-                                        <p>Title</p>
-                                        <input type="text" value={formData.title} onChange={handleChange} name="title" id="title" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. New Apartment" />
-                                    </label>
-                                    <label>
-                                        <p>Type</p>
-                                        <select name="type" value={formData.type} id="type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
-                                            <option value="" disabled>Select Property Type</option>
-                                            <option value="house">House</option>
-                                            <option value="apartment">Apartment</option>
-                                            <option value="studio">Studio</option>
-                                            <option value="duplex">Duplex</option>
-                                        </select>
-                                    </label>
-                                    <label>
-                                        <p>Listing Type</p>
-                                        <select name="listing_type" value={formData.listing_type} id="listing_type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
-                                            <option value="" disabled>Select Listing Type</option>
-                                            <option value="rent">Rent</option>
-                                            <option value="sale">Sale</option>
-                                            <option value="shortlet">Short Let</option>
-                                        </select>
-                                    </label>
-                                    <label>
-                                        <p>Price</p>
-                                        <input type="number" value={formData.price} onChange={handleChange} name="price" id="price" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 100000" />
-                                    </label>
-                                    <div className="flex flex-col gap-1">
-                                        <label htmlFor="city" className="text-sm font-medium text-gray-700">City/Town</label>
-                                        <input
-                                            list="localCities"
-                                            id="city"
-                                            name="city"
-                                            value={formData.location.city}
-                                            onChange={handleLocationChange}
-                                            placeholder="e.g. Lagos, Ibadan"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
-                                            required
-                                        />
-                                        <datalist id="localCities">
-                                            {localCities.map((city) => <option key={city} value={city} />)}
-                                        </datalist>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <label htmlFor="state-id" className="text-sm font-medium text-gray-700">State</label>
-                                        <input
-                                            list="localStatesList"
-                                            id="state-id"
-                                            name="state"
-                                            value={formData.location.state}
-                                            onChange={handleLocationChange}
-                                            placeholder="e.g. Lagos, Rivers"
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
-                                            required
-                                        />
-                                        <datalist id="localStatesList">
-                                            {localStates.map((state) => <option key={state} value={state} />)}
-                                        </datalist>
-                                    </div>
-                                    <label>
-                                        <p>Address</p>
-                                        <input type="text" value={formData.location.Address} name="Address" id="address" required onChange={handleLocationChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
-                                    </label>
-                                    <label>
-                                        <p>Images (Minimum of 3, Maximum of 6, No larger than 1mb)</p>
-                                        <input type="file" name="images" multiple id="avatar" accept="image/*" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
-                                    </label>
-                                    <label>
-                                        <p>Beds</p>
-                                        <input type="number" value={formData.beds} onChange={handleChange} name="beds" id="beds" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 2" />
-                                    </label>
-                                    <label>
-                                        <p>Baths</p>
-                                        <input type="number" value={formData.baths} onChange={handleChange} name="baths" id="baths" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 2" />
-                                    </label>
-                                    <label>
-                                        <p>Area (sq ft)</p>
-                                        <input type="number" value={formData.area} onChange={handleChange} name="area" id="area" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 100" />
-                                    </label>
-                                    <div className='flex flex-wrap justify-center gap-2'>
-                                        {['Gym', 'Pool', 'WiFi', 'Parking', 'Security', 'Furnished', 'Generator'].map((amenity) => (
-                                            <div key={amenity} className='flex gap-2 w-fit'>
-                                                <label htmlFor={amenity.toLowerCase()} className="font-medium text-gray-700">
-                                                    {amenity}
-                                                </label>
-                                                <input
-                                                    type="checkbox"
-                                                    name={amenity}
-                                                    value={amenity.toLowerCase()}
-                                                    id={amenity.toLowerCase()}
-                                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-                                                    checked={formData.amenities[amenity] || false}
-                                                    onChange={handleAmenityChange}
-                                                />
+                                <form onSubmit={handleCreateListing} className="overflow-y-auto max-h-[80vh] flex flex-col gap-4 max-w-md w-full border mx-4 border-gray-300 bg-white my-12 p-6 rounded-lg" onClick={(e) => e.stopPropagation()}>
+                                    {currentStep === 1 && (
+                                        <>
+                                            <h3>Basic Info</h3>
+                                            <label>
+                                                <p>Title</p>
+                                                <input type="text" value={formData.title} onChange={handleChange} name="title" id="title" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. New Apartment" />
+                                            </label>
+                                            <label>
+                                                <p>Type</p>
+                                                <select name="type" value={formData.type} id="type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
+                                                    <option value="" disabled>Select Property Type</option>
+                                                    <option value="house">House</option>
+                                                    <option value="apartment">Apartment</option>
+                                                    <option value="studio">Studio</option>
+                                                    <option value="duplex">Duplex</option>
+                                                </select>
+                                            </label>
+                                            <label>
+                                                <p>Listing Type</p>
+                                                <select name="listing_type" value={formData.listing_type} id="listing_type" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm bg-white">
+                                                    <option value="" disabled>Select Listing Type</option>
+                                                    <option value="rent">Rent</option>
+                                                    <option value="sale">Sale</option>
+                                                    <option value="shortlet">Short Let</option>
+                                                </select>
+                                            </label>
+                                            <label>
+                                                <p>Description</p>
+                                                <textarea name="description" value={formData.description} id="description" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. This is a description of the property"></textarea>
+                                            </label>
+                                            <button type="button" onClick={() => setCurrentStep(2)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                        </>
+                                    )}
+                                    {currentStep === 2 && (
+                                        <>
+                                            <h3>Details</h3>
+                                            <label>
+                                                <p>Price</p>
+                                                <input type="number" value={formData.price} onChange={handleChange} name="price" id="price" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 100000" />
+                                            </label>
+                                            <label>
+                                                <p>Beds</p>
+                                                <input type="number" value={formData.beds} onChange={handleChange} name="beds" id="beds" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 2" />
+                                            </label>
+                                            <label>
+                                                <p>Baths</p>
+                                                <input type="number" value={formData.baths} onChange={handleChange} name="baths" id="baths" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 2" />
+                                            </label>
+                                            <label>
+                                                <p>Area (sq ft)</p>
+                                                <input type="number" value={formData.area} onChange={handleChange} name="area" id="area" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 100" />
+                                            </label>
+                                            <label >
+                                                <p>Year Built</p>
+                                                <input type="number" value={formData.year_built} onChange={handleChange} name="year_built" id="year_built" required className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. 2020" />
+                                            </label>
+                                            <div className="flex gap-2 w-full justify-between">
+                                                <button type="button" onClick={() => setCurrentStep(1)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
+                                                <button type="button" onClick={() => setCurrentStep(3)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
                                             </div>
-                                        ))}
-                                    </div>
-                                    <label>
-                                        <p>Description</p>
-                                        <textarea name="description" value={formData.description} id="description" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. This is a description of the property"></textarea>
-                                    </label>
+                                        </>
+                                    )}
+                                    {currentStep === 3 && (
+                                        <>
+                                            <h3>Location</h3>
+                                            <div className="flex flex-col gap-1">
+                                                <label htmlFor="city" className="text-sm font-medium text-gray-700">City/Town</label>
+                                                <input list="localCities" id="city" name="city" value={formData.location.city} onChange={handleLocationChange} placeholder="e.g. Lagos, Ibadan" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" required />
+                                                <datalist id="localCities">
+                                                    {localCities.map((city) => <option key={city} value={city} />)}
+                                                </datalist>
+                                            </div>
+                                            <div className="flex flex-col gap-2">
+                                                <label htmlFor="state-id" className="text-sm font-medium text-gray-700">State</label>
+                                                <input list="localStatesList" id="state-id" name="state" value={formData.location.state} onChange={handleLocationChange} placeholder="e.g. Lagos, Rivers" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" required />
+                                                <datalist id="localStatesList">
+                                                    {localStates.map((state) => <option key={state} value={state} />)}
+                                                </datalist>
+                                            </div>
+                                            <label>
+                                                <p>Address</p>
+                                                <input type="text" value={formData.location.Address} name="Address" id="address" required onChange={handleLocationChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. Lagos, Nigeria" />
+                                            </label>
+                                            <div className="flex gap-2 w-full justify-between">
+                                                <button type="button" onClick={() => setCurrentStep(2)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
+                                                <button type="button" onClick={() => setCurrentStep(4)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                            </div>
 
-                                    <button type="submit" className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">{uploading ? 'Uploading...' : 'Create Listing'}</button>
+                                        </>
+                                    )}
+                                    {currentStep === 4 && (
+                                        <>
+                                            <h3>Amenities</h3>
+                                            <div className='flex flex-wrap justify-center gap-2'>
+                                                {['Gym', 'Pool', 'WiFi', 'Parking', 'Security', 'Furnished', 'Generator'].map((amenity) => (
+                                                    <div key={amenity} className='flex gap-2 w-fit'>
+                                                        <label htmlFor={amenity.toLowerCase()} className="font-medium text-gray-700">{amenity}</label>
+                                                        <input type="checkbox" name={amenity} value={amenity.toLowerCase()} id={amenity.toLowerCase()} className="w-4 h-4 text-blue-600 border-gray-300 rounded" checked={formData.amenities[amenity] || false} onChange={handleAmenityChange} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="flex gap-2 w-full justify-between">
+                                                <button type="button" onClick={() => setCurrentStep(3)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
+                                                <button type="button" onClick={() => setCurrentStep(5)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                            </div>
+
+                                        </>
+                                    )}
+                                    {currentStep === 5 && (
+                                        <>
+                                            <label>
+                                                <p>Images (Minimum of 3, Maximum of 10, No larger than 1mb)</p>
+                                                <input type="file" name="images" multiple id="avatar" accept="image/*" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" />
+                                            </label>
+
+                                            <div className="flex gap-2 w-full justify-between">
+                                                <button type="button" onClick={() => setCurrentStep(3)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
+                                                <button type="button" onClick={() => setCurrentStep(6)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                            </div>
+                                        </>
+                                    )}
+                                    {currentStep === 6 && (
+                                        <>
+                                            <h3 className="text-lg font-semibold">Review Your Listing</h3>
+                                            <p>Please review your listing before submitting.</p>
+                                            <div className="flex flex-col gap-2">
+                                                <p className="text-sm font-medium text-gray-700">Title</p>
+                                                <p className="text-sm text-gray-500">{formData.title}</p>
+                                                <p className="text-sm font-medium text-gray-700">Type</p>
+                                                <p className="text-sm text-gray-500">{formData.type}</p>
+                                                <p className="text-sm font-medium text-gray-700">Listing Type</p>
+                                                <p className="text-sm text-gray-500">{formData.listing_type}</p>
+                                                <p className="text-sm font-medium text-gray-700">Price</p>
+                                                <p className="text-sm text-gray-500">{formData.price}</p>
+                                                <p className="text-sm font-medium text-gray-700">Beds</p>
+                                                <p className="text-sm text-gray-500">{formData.beds}</p>
+                                                <p className="text-sm font-medium text-gray-700">Baths</p>
+                                                <p className="text-sm text-gray-500">{formData.baths}</p>
+                                                <p className="text-sm font-medium text-gray-700">Area (sq ft)</p>
+                                                <p className="text-sm text-gray-500">{formData.area}</p>
+                                                <p className="text-sm font-medium text-gray-700">Description</p>
+                                                <p className="text-sm text-gray-500">{formData.description}</p>
+                                            </div>
+                                            <p>Make sure all the information is correct before submitting.</p>
+                                            <div className="flex gap-2 w-full justify-between">
+                                                <button type="button" onClick={() => setCurrentStep(5)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
+                                                <button
+                                                    type="submit"
+                                                    disabled={!formData.images || formData.images.length < 3 || formData.images.length > 10}
+                                                    className="bg-primary disabled:bg-gray-300 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold"
+                                                >
+                                                    {uploading ? 'Uploading...' : 'Create Listing'}
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
                                 </form>
                             </div>
                         }
@@ -568,6 +641,7 @@ function Dashboard() {
                                                         return `${diffInDays} days ago`;
                                                     })()}
                                                 </p>
+                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
 
                                                 <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
                                                     <div className="flex flex-row items-center gap-1">
@@ -616,6 +690,7 @@ function Dashboard() {
                                                             onSubmit={async (e) => {
                                                                 e.preventDefault();
                                                                 await removeListing(activeId);
+                                                                // await cleanupCloudinaryImages(el.images);
                                                                 navigate('/dashboard');
                                                             }}
                                                             onClick={(e) => e.stopPropagation()}

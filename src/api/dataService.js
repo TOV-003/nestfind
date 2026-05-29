@@ -106,6 +106,18 @@ export const dataService = {
 
         return data.publicUrl;
     },
+    deleteListingImages: async (fileName) => {
+        const path = fileName.includes('/')
+            ? fileName.split('/').pop()
+            : fileName;
+
+        const { error } = await supabase.storage
+            .from('listings')
+            .remove([path]);
+
+        if (error) throw error;
+        return true;
+    },
 
     async uploadUserAvatar(file, originalName) {
         const fileExt = originalName.split('.').pop();

@@ -16,6 +16,9 @@ function Enquiries() {
     const [savedIds, setSavedIds] = useState([]);
     const [isChecking, setIsChecking] = useState(true);
     const [expandedId, setExpandedId] = useState(true);
+    const [showResponded, setShowResponded] = useState(false);
+    const [showUnresponded, setShowUnresponded] = useState(false);
+    const [showAll, setShowAll] = useState(true);
 
     const toggleExpand = (id) => {
         setExpandedId(expandedId === id ? null : id);
@@ -45,7 +48,6 @@ function Enquiries() {
                     if (data) {
                         const ids = data.map(item => item.listing_id);
                         setSavedIds(ids);
-                        console.log("Fetched saved IDs:", ids);
                     } else {
                         console.error("Failed to fetch saved IDs:", error);
                     }
@@ -133,6 +135,24 @@ function Enquiries() {
         }
     }
 
+    function toggleShowAll() {
+        setShowAll(true);
+        setShowResponded(false);
+        setShowUnresponded(false);
+    }
+
+    function toggleShowResponded() {
+        setShowResponded(true);
+        setShowAll(false);
+        setShowUnresponded(false);
+    }
+
+    function toggleShowUnresponded() {
+        setShowUnresponded(true);
+        setShowAll(false);
+        setShowResponded(false);
+    }
+
     // async function handleDeleteEnquiry(message, name, email, date, listing_id) {
     //     try {
     //         await deleteEnquiry(message, name, email, date, listing_id);
@@ -150,79 +170,233 @@ function Enquiries() {
         <Layout>
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
                 <h2 id='saved'>My Enquiries</h2>
+                <div className='flex gap-4 items-center'>
+                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showAll ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'}`} onClick={toggleShowAll}>
+                        All
+                    </button>
+                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showResponded ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'}`} onClick={toggleShowResponded}>
+                        Responded
+                    </button>
+                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showUnresponded ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'}`} onClick={toggleShowUnresponded}>
+                        Unresponded
+                    </button>
+                </div>
                 <div className='grid grid-cols-1 place-items-center md:grid-cols-2 lg:grid-cols-3 gap-4'>
                     {compiledEnquiries.length === 0 ? (
                         <EmptyState title="No enquiries found" message="Please try creating new enquiries." />
                     ) :
-                        compiledEnquiries.map((el) => {
+                        showAll === true && showResponded === false && showUnresponded === false ?
+                            compiledEnquiries.map((el) => {
 
-                            return (
-                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
-                                    <div className='flex flex-col items-center '>
-                                        <Link to={`/listings/${el.listing.id}`}>
-                                            <img
-                                                src={el.listing.images?.[0] || '/placeholder-property.jpg'}
-                                                className="w-32 aspect-square object-cover rounded-xl"
-                                                alt={el.listing.title || "Property Image"}
-                                            />
-                                        </Link>
-                                        <div className="flex flex-col gap-1 items-center px-2 w-full text-center">
-                                            <div className="flex flex-col items-center gap-2 w-full">
-                                                <p className="text-lg font-bold">{el.listing.title}</p>
-                                                <h3 className="text-primary font-bold text-lg whitespace-nowrap">
-                                                    ₦{el.listing.price?.toLocaleString('en-US')}
-                                                    {el.listing.listing_type === 'rent' ? '/yr' : el.listing.listing_type === 'shortlet' ? '/day' : ''}
-                                                </h3>
+                                return (
+                                    <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                        <div className='flex flex-col items-center '>
+                                            <Link to={`/listings/${el.listing.id}`}>
+                                                <img
+                                                    src={el.listing.images?.[0] || '/placeholder-property.jpg'}
+                                                    className="w-32 aspect-square object-cover rounded-xl"
+                                                    alt={el.listing.title || "Property Image"}
+                                                />
+                                            </Link>
+                                            <div className="flex flex-col gap-1 items-center px-2 w-full text-center">
+                                                <div className="flex flex-col items-center gap-2 w-full">
+                                                    <p className="text-lg font-bold">{el.listing.title}</p>
+                                                    <h3 className="text-primary font-bold text-lg whitespace-nowrap">
+                                                        ₦{el.listing.price?.toLocaleString('en-US')}
+                                                        {el.listing.listing_type === 'rent' ? '/yr' : el.listing.listing_type === 'shortlet' ? '/day' : ''}
+                                                    </h3>
+                                                </div>
+                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
                                             </div>
-                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
                                         </div>
-                                    </div>
-                                    <hr className='border-t border-primary w-full' />
-                                    <div className='w-4/5 flex flex-col items-start'>
-                                        <p className={`${expandedId === el.listing_id ? '' : 'line-clamp-1'} cursor-pointer hover:underline`} onClick={() => toggleExpand(el.listing_id)}>
-                                            <span className='font-bold'>Message:</span> {el.message}
-                                        </p>
-                                        <p><span className='font-bold'>Date:</span> {el.date}</p>
-                                        {
-                                            (() => {
-                                                console.log("Evaluating status for enquiry:", el);
-                                                const targetDate = new Date(el.date);
-                                                const now = new Date();
-                                                targetDate.setHours(0, 0, 0, 0);
-                                                now.setHours(0, 0, 0, 0);
+                                        <hr className='border-t border-primary w-full' />
+                                        <div className='w-4/5 flex flex-col items-start'>
+                                            <p className={`${expandedId === el.listing_id ? '' : 'line-clamp-1'} cursor-pointer hover:underline`} onClick={() => toggleExpand(el.listing_id)}>
+                                                <span className='font-bold'>Message:</span> {el.message}
+                                            </p>
+                                            <p><span className='font-bold'>Date:</span> {el.date}</p>
+                                            {
+                                                (() => {
+                                                    const targetDate = new Date(el.date);
+                                                    const now = new Date();
+                                                    targetDate.setHours(0, 0, 0, 0);
+                                                    now.setHours(0, 0, 0, 0);
 
-                                                if (el.responded) {
-                                                    if (now >= targetDate) {
-                                                        return <p className='text-primary font-bold'>Responded</p>;
+                                                    if (el.responded) {
+                                                        if (now >= targetDate) {
+                                                            return <p className='text-primary font-bold'>Responded</p>;
+                                                        } else {
+                                                            return <p className='text-primary font-bold'>Ready for Visit</p>;
+                                                        }
+                                                    } else if (now > targetDate) {
+                                                        return (
+                                                            <>
+                                                                <p className='text-red-600 font-bold'>Expired - Action Required(Change Date)</p>
+                                                                <input
+                                                                    type="date"
+                                                                    className="cursor-pointer border border-gray-300 rounded-lg px-2 py-1 text-sm bg-warning font-bold text-white "
+                                                                    min={new Date().toISOString().split('T')[0]}
+                                                                    onChange={(e) => {
+                                                                        const newDate = e.target.value;
+                                                                        if (newDate) {
+                                                                            handleEditEnquiry(el.listing_id, newDate);
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </>
+                                                        );
                                                     } else {
-                                                        return <p className='text-primary font-bold'>Ready for Visit</p>;
+                                                        return <p className='text-gray-400 font-bold'>Awaiting Review</p>;
                                                     }
-                                                } else if (now > targetDate) {
-                                                    return (
-                                                        <>
-                                                            <p className='text-red-600 font-bold'>Expired - Action Required(Change Date)</p>
-                                                            <input
-                                                                type="date"
-                                                                className="cursor-pointer border border-gray-300 rounded-lg px-2 py-1 text-sm bg-warning font-bold text-white "
-                                                                min={new Date().toISOString().split('T')[0]}
-                                                                onChange={(e) => {
-                                                                    const newDate = e.target.value;
-                                                                    if (newDate) {
-                                                                        handleEditEnquiry(el.listing_id, newDate);
-                                                                    }
-                                                                }}
-                                                            />
-                                                        </>
-                                                    );
-                                                } else {
-                                                    return <p className='text-gray-400 font-bold'>Awaiting Review</p>;
-                                                }
-                                            })()}
+                                                })()}
+                                        </div>
+                                        {/* <button onClick={() => handleDeleteEnquiry(el.message, el.name, el.email, el.date, el.listing_id)} className="bg-error p-2 rounded-md font-bold text-white cursor-pointer">Delete Enquiry</button> */}
                                     </div>
-                                    {/* <button onClick={() => handleDeleteEnquiry(el.message, el.name, el.email, el.date, el.listing_id)} className="bg-error p-2 rounded-md font-bold text-white cursor-pointer">Delete Enquiry</button> */}
-                                </div>
-                            );
-                        })
+                                );
+                            })
+                            :
+                            showResponded === true && showAll === false && showUnresponded === false ?
+                                compiledEnquiries.filter(el => el.responded === true)
+                                    .map((el) => {
+
+                                        return (
+                                            <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                                <div className='flex flex-col items-center '>
+                                                    <Link to={`/listings/${el.listing.id}`}>
+                                                        <img
+                                                            src={el.listing.images?.[0] || '/placeholder-property.jpg'}
+                                                            className="w-32 aspect-square object-cover rounded-xl"
+                                                            alt={el.listing.title || "Property Image"}
+                                                        />
+                                                    </Link>
+                                                    <div className="flex flex-col gap-1 items-center px-2 w-full text-center">
+                                                        <div className="flex flex-col items-center gap-2 w-full">
+                                                            <p className="text-lg font-bold">{el.listing.title}</p>
+                                                            <h3 className="text-primary font-bold text-lg whitespace-nowrap">
+                                                                ₦{el.listing.price?.toLocaleString('en-US')}
+                                                                {el.listing.listing_type === 'rent' ? '/yr' : el.listing.listing_type === 'shortlet' ? '/day' : ''}
+                                                            </h3>
+                                                        </div>
+                                                        <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
+                                                    </div>
+                                                </div>
+                                                <hr className='border-t border-primary w-full' />
+                                                <div className='w-4/5 flex flex-col items-start'>
+                                                    <p className={`${expandedId === el.listing_id ? '' : 'line-clamp-1'} cursor-pointer hover:underline`} onClick={() => toggleExpand(el.listing_id)}>
+                                                        <span className='font-bold'>Message:</span> {el.message}
+                                                    </p>
+                                                    <p><span className='font-bold'>Date:</span> {el.date}</p>
+                                                    {
+                                                        (() => {
+                                                            const targetDate = new Date(el.date);
+                                                            const now = new Date();
+                                                            targetDate.setHours(0, 0, 0, 0);
+                                                            now.setHours(0, 0, 0, 0);
+
+                                                            if (el.responded) {
+                                                                if (now >= targetDate) {
+                                                                    return <p className='text-primary font-bold'>Responded</p>;
+                                                                } else {
+                                                                    return <p className='text-primary font-bold'>Ready for Visit</p>;
+                                                                }
+                                                            } else if (now > targetDate) {
+                                                                return (
+                                                                    <>
+                                                                        <p className='text-red-600 font-bold'>Expired - Action Required(Change Date)</p>
+                                                                        <input
+                                                                            type="date"
+                                                                            className="cursor-pointer border border-gray-300 rounded-lg px-2 py-1 text-sm bg-warning font-bold text-white "
+                                                                            min={new Date().toISOString().split('T')[0]}
+                                                                            onChange={(e) => {
+                                                                                const newDate = e.target.value;
+                                                                                if (newDate) {
+                                                                                    handleEditEnquiry(el.listing_id, newDate);
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                    </>
+                                                                );
+                                                            } else {
+                                                                return <p className='text-gray-400 font-bold'>Awaiting Review</p>;
+                                                            }
+                                                        })()}
+                                                </div>
+                                                {/* <button onClick={() => handleDeleteEnquiry(el.message, el.name, el.email, el.date, el.listing_id)} className="bg-error p-2 rounded-md font-bold text-white cursor-pointer">Delete Enquiry</button> */}
+                                            </div>
+                                        );
+                                    })
+                                :
+                                showUnresponded === true && showAll === false && showResponded === false ?
+                                    compiledEnquiries.filter(el => el.responded === false)
+                                        .map((el) => {
+
+                                            return (
+                                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                                    <div className='flex flex-col items-center '>
+                                                        <Link to={`/listings/${el.listing.id}`}>
+                                                            <img
+                                                                src={el.listing.images?.[0] || '/placeholder-property.jpg'}
+                                                                className="w-32 aspect-square object-cover rounded-xl"
+                                                                alt={el.listing.title || "Property Image"}
+                                                            />
+                                                        </Link>
+                                                        <div className="flex flex-col gap-1 items-center px-2 w-full text-center">
+                                                            <div className="flex flex-col items-center gap-2 w-full">
+                                                                <p className="text-lg font-bold">{el.listing.title}</p>
+                                                                <h3 className="text-primary font-bold text-lg whitespace-nowrap">
+                                                                    ₦{el.listing.price?.toLocaleString('en-US')}
+                                                                    {el.listing.listing_type === 'rent' ? '/yr' : el.listing.listing_type === 'shortlet' ? '/day' : ''}
+                                                                </h3>
+                                                            </div>
+                                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
+                                                        </div>
+                                                    </div>
+                                                    <hr className='border-t border-primary w-full' />
+                                                    <div className='w-4/5 flex flex-col items-start'>
+                                                        <p className={`${expandedId === el.listing_id ? '' : 'line-clamp-1'} cursor-pointer hover:underline`} onClick={() => toggleExpand(el.listing_id)}>
+                                                            <span className='font-bold'>Message:</span> {el.message}
+                                                        </p>
+                                                        <p><span className='font-bold'>Date:</span> {el.date}</p>
+                                                        {
+                                                            (() => {
+                                                                const targetDate = new Date(el.date);
+                                                                const now = new Date();
+                                                                targetDate.setHours(0, 0, 0, 0);
+                                                                now.setHours(0, 0, 0, 0);
+
+                                                                if (el.responded) {
+                                                                    if (now >= targetDate) {
+                                                                        return <p className='text-primary font-bold'>Responded</p>;
+                                                                    } else {
+                                                                        return <p className='text-primary font-bold'>Ready for Visit</p>;
+                                                                    }
+                                                                } else if (now > targetDate) {
+                                                                    return (
+                                                                        <>
+                                                                            <p className='text-red-600 font-bold'>Expired - Action Required(Change Date)</p>
+                                                                            <input
+                                                                                type="date"
+                                                                                className="cursor-pointer border border-gray-300 rounded-lg px-2 py-1 text-sm bg-warning font-bold text-white "
+                                                                                min={new Date().toISOString().split('T')[0]}
+                                                                                onChange={(e) => {
+                                                                                    const newDate = e.target.value;
+                                                                                    if (newDate) {
+                                                                                        handleEditEnquiry(el.listing_id, newDate);
+                                                                                    }
+                                                                                }}
+                                                                            />
+                                                                        </>
+                                                                    );
+                                                                } else {
+                                                                    return <p className='text-gray-400 font-bold'>Awaiting Review</p>;
+                                                                }
+                                                            })()}
+                                                    </div>
+                                                    {/* <button onClick={() => handleDeleteEnquiry(el.message, el.name, el.email, el.date, el.listing_id)} className="bg-error p-2 rounded-md font-bold text-white cursor-pointer">Delete Enquiry</button> */}
+                                                </div>
+                                            );
+                                        })
+                                    : null
                     }
                 </div>
             </main>

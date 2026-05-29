@@ -120,7 +120,7 @@ function Saved() {
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
                 <h2 id='saved'>Saved Listings</h2>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4'>
-                    {   listings.length === 0 ? (
+                    {listings.length === 0 ? (
                         <EmptyState title="No saved listings found" message="Please try saving some listings." />
                     ) :
                         listings.map((el) => {
@@ -176,6 +176,7 @@ function Saved() {
                                             <FaPencilRuler size={12} className="text-primary" />
                                             <p>{el.area} sq ft</p>
                                         </div>
+                                        <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
                                         <div className="flex flex-wrap items-center gap-1 mt-2">
                                             {Object.entries(listingAmenities)
                                                 .filter(([, value]) => value === true)
