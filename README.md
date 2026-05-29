@@ -16,9 +16,10 @@ The application employs a relational database structure designed to maintain int
 
 #### Database Schema Overview
 
-* **`profiles`**: Acts as an extension of the Supabase `auth.users` system, holding localized user data such as contact information, roles, and references to profile media stored in Cloudinary.
+* **`users`**: Acts as an extension of the Supabase `auth.users` system, holding localized user data such as contact information, roles, and references to profile media stored in Cloudinary.
 * **`listings`**: The central entity of the platform. It maintains comprehensive property attributes and employs a soft-delete mechanism (`deleted_at`) to ensure data recovery and facilitate asynchronous cleanup of associated media assets.
 * **`enquiries`**: Establishes a link between users and listings, creating an audit trail for communication requests initiated by tenants.
+* **`saved_listings`**: A user-specific table that stores a list of saved listings, allowing for quick access and management of frequently visited properties.
 
 ### Media Orchestration
 
