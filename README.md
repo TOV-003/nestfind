@@ -1,90 +1,32 @@
 # NestFind - Real Estate Listing Platform
 
-NestFind is a React-based real estate application that allows users to browse, list, and manage property listings. It features a robust authentication system, profile management, and image uploads via Cloudinary.
+NestFind is a centralized real estate application designed to bridge the gap between property hosts and prospective tenants. By leveraging a modern, decoupled architecture, the platform facilitates efficient property discovery, secure user interactions, and robust media management. The application focuses on a seamless user experience through real-time state management and a secure, role-based backend infrastructure.
 
-## 🚀 Features
+## 🧠 Architecture and Core Concepts
 
-* **User Authentication**: Secure Sign Up and Login powered by Supabase Auth.
-* **Role-Based Access**: Support for both 'User' and 'Host' roles.
-* **Profile Management**: Users can update their profiles, including profile pictures and contact information.
-* **Image Uploads**: Integrated with Cloudinary for efficient image hosting and management.
-* **Account Deletion**: Secure account deletion via Supabase Edge Functions.
-* **Responsive Design**: Built with Tailwind CSS for a seamless experience across mobile and desktop.
+The system operates on a client-server paradigm where the frontend acts as the primary interface, while Supabase provides the persistent database layer and authentication services.
 
-## 🛠️ Tech Stack
+### Authentication and Authorization
 
-* **Frontend**: React, React Router, Tailwind CSS
-* **Backend/Database**: Supabase (PostgreSQL, Auth)
-* **Media Storage**: Cloudinary
-* **Notifications**: React Hot Toast
+NestFind utilizes Supabase Auth to manage identity. The system distinguishes between 'User' and 'Host' personas. Role-based access ensures that only authenticated hosts can manage listings, while standard users have access to property browsing and enquiry tools.
 
-## 📋 Database Schema
+### Data Persistence and Management
 
-The following tables are required in your Supabase PostgreSQL database to support the application's functionality.
+The application employs a relational database structure designed to maintain integrity across users, properties, and interactions.
 
-### 1. `profiles`
+#### Database Schema Overview
 
-Stores user-specific data associated with the `auth.users` table.
+* **`profiles`**: Acts as an extension of the Supabase `auth.users` system, holding localized user data such as contact information, roles, and references to profile media stored in Cloudinary.
+* **`listings`**: The central entity of the platform. It maintains comprehensive property attributes and employs a soft-delete mechanism (`deleted_at`) to ensure data recovery and facilitate asynchronous cleanup of associated media assets.
+* **`enquiries`**: Establishes a link between users and listings, creating an audit trail for communication requests initiated by tenants.
 
-| Column | Type | Description |
-| --- | --- | --- |
-| `id` | uuid | Primary Key (references `auth.users.id`) |
-| `full_name` | text | User's full name |
-| `avatar_url` | text | URL to Cloudinary profile image |
-| `role` | text | Role of the user ('User' or 'Host') |
-| `phone` | text | Contact phone number |
-| `updated_at` | timestamp | Last update time |
+### Media Orchestration
 
-### 2. `listings`
+To maintain frontend performance, NestFind delegates media handling to Cloudinary. This integration offloads the heavy lifting of image transformation and delivery to a Content Delivery Network (CDN). The frontend handles initial uploads, while the backend database stores only the resulting image URLs, keeping the database footprint lightweight.
 
-Contains information about properties listed on the platform.
+## 🛠️ Technical Design Decisions
 
-| Column | Type | Description |
-| --- | --- | --- |
-| `id` | uuid | Primary Key |
-| `host_id` | uuid | Foreign key (references `profiles.id`) |
-| `title` | text | Title of the property |
-| `description` | text | Description of the property |
-| `price` | numeric | Price per unit |
-| `images` | text[] | Array of Cloudinary image URLs |
-| `location` | text | Location of the property |
-| `beds` | int | Number of bedrooms |
-| `baths` | int | Number of bathrooms |
-| `sqft` | int | Square footage |
-| `is_active` | boolean | Toggle for listing visibility |
-| `created_at` | timestamp | Time of creation |
-| `deleted_at` | timestamp | Nullable field for soft-delete tracking |
-
-### 3. `enquiries`
-
-Tracks contact requests made by users regarding specific listings.
-
-| Column | Type | Description |
-| --- | --- | --- |
-| `id` | uuid | Primary Key |
-| `listing_id` | uuid | Foreign key (references `listings.id`) |
-| `user_id` | uuid | Foreign key (references `profiles.id`) |
-| `message` | text | The content of the enquiry |
-| `created_at` | timestamp | Time the enquiry was sent |
-
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following:
-
-* Node.js installed
-* A Supabase project created
-* A Cloudinary account for image uploads
-
-## ⚙️ Environment Variables
-
-Create a `.env` file in the root directory and add the following:
-
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-VITE_CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-VITE_CLOUDINARY_API_KEY=your_cloudinary_api_key
-VITE_CLOUDINARY_API_SECRET=your_cloudinary_api_secret
-VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
-
-```
+* **Frontend**: Built with React, utilizing React Router for navigation and Tailwind CSS for utility-first styling. The UI state is governed by a custom `AuthContext` provider, which orchestrates global user state and protected routing.
+* **Database/Backend**: Supabase provides the PostgreSQL backbone. The use of Edge Functions allows for server-side operations (such as secure user deletion) that require higher privilege than standard client-side requests.
+* **Scalability**: By utilizing CDNs for images and offloading authentication to a managed provider, the platform is designed to scale horizontally without the need for managing complex server infrastructure.
+* **Asynchronous Processing**: The platform implements decoupled workflows—such as media cleanup tasks—to keep the user interface responsive. This ensures that potentially long-running operations do not block the user's primary interactions.
