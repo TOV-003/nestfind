@@ -24,6 +24,8 @@ function Listings() {
     const [savedIds, setSavedIds] = useState([]);
     const [mapview, setMapview] = useState(false);
 
+
+
     useEffect(() => {
         if (user?.id) {
             supabase
@@ -488,13 +490,13 @@ function Listings() {
 
                             <button
                                 onClick={() => setMapview(true)}
-                                className={`z-10 w-32 py-2 text-center font-medium transition-colors duration-300 ${mapview ? 'text-white' : 'text-gray-700'}`}
+                                className={`z-10 w-32 cursor-pointer py-2 text-center font-medium transition-colors duration-300 ${mapview ? 'text-white' : 'text-gray-700'}`}
                             >
                                 Map View
                             </button>
                             <button
                                 onClick={() => setMapview(false)}
-                                className={`z-10 w-32 py-2 text-center font-medium transition-colors duration-300 ${!mapview ? 'text-white' : 'text-gray-700'}`}
+                                className={`z-10 w-32 cursor-pointer py-2 text-center font-medium transition-colors duration-300 ${!mapview ? 'text-white' : 'text-gray-700'}`}
                             >
                                 List View
                             </button>
@@ -502,7 +504,7 @@ function Listings() {
                         {
                             mapview ?
                                 <div className="w-full flex items-center justify-center p-4">
-                                    <p>Map View Content</p>
+                                    <h2>Map View</h2>
                                 </div>
                                 :
                                 <div className="flex-col flex items-center gap-8 w-full">
