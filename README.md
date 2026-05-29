@@ -14,7 +14,7 @@ NestFind is a React-based real estate application that allows users to browse, l
 ## 🛠️ Tech Stack
 
 -   **Frontend**: React, React Router, Tailwind CSS
--   **Backend/Database**: Supabase (PostgreSQL, Auth, Edge Functions)
+-   **Backend/Database**: Supabase (PostgreSQL, Auth)
 -   **Media Storage**: Cloudinary
 -   **Notifications**: React Hot Toast
 
