@@ -8,7 +8,7 @@ import EmptyState from '../components/EmptyState';
 import { toast } from 'react-hot-toast';
 
 function Enquiries() {
-    const { user, editEnquiry, deleteEnquiry } = useAuth();
+    const { user, editEnquiry } = useAuth();
     const navigate = useNavigate();
     const [enquiries, setEnquiries] = useState([]);
     const [listings, setListings] = useState([]);
@@ -133,17 +133,17 @@ function Enquiries() {
         }
     }
 
-    async function handleDeleteEnquiry(message, name, email, date, listing_id) {
-        try {
-            await deleteEnquiry(message, name, email, date, listing_id);
-            setCompiledEnquiries(prev => prev.filter(el => el.listing_id !== listing_id));
+    // async function handleDeleteEnquiry(message, name, email, date, listing_id) {
+    //     try {
+    //         await deleteEnquiry(message, name, email, date, listing_id);
+    //         setCompiledEnquiries(prev => prev.filter(el => el.listing_id !== listing_id));
 
-            toast.success("Enquiry Deleted Successfully!");
-        } catch (error) {
-            console.error("Delete failed:", error);
-            toast.error("Failed to delete enquiry.");
-        }
-    }
+    //         toast.success("Enquiry Deleted Successfully!");
+    //     } catch (error) {
+    //         console.error("Delete failed:", error);
+    //         toast.error("Failed to delete enquiry.");
+    //     }
+    // }
 
 
     return (
@@ -192,7 +192,11 @@ function Enquiries() {
                                                 now.setHours(0, 0, 0, 0);
 
                                                 if (el.responded) {
-                                                    return <p className='text-primary font-bold'>Ready for Visit</p>;
+                                                    if (now >= targetDate) {
+                                                        return <p className='text-primary font-bold'>Responded</p>;
+                                                    } else {
+                                                        return <p className='text-primary font-bold'>Ready for Visit</p>;
+                                                    }
                                                 } else if (now > targetDate) {
                                                     return (
                                                         <>
@@ -215,7 +219,7 @@ function Enquiries() {
                                                 }
                                             })()}
                                     </div>
-                                    <button onClick={() => handleDeleteEnquiry(el.message, el.name, el.email, el.date, el.listing_id)} className="bg-error p-2 rounded-md font-bold text-white cursor-pointer">Delete Enquiry</button>
+                                    {/* <button onClick={() => handleDeleteEnquiry(el.message, el.name, el.email, el.date, el.listing_id)} className="bg-error p-2 rounded-md font-bold text-white cursor-pointer">Delete Enquiry</button> */}
                                 </div>
                             );
                         })
