@@ -10,7 +10,7 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/useAuth";
 import { supabase } from '../api/supabaseClient';
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 
 function Listings() {
     const [listings, setListings] = useState([]);
@@ -22,7 +22,7 @@ function Listings() {
     const [sort, setSort] = useState('default');
     const { user } = useAuth();
     const [savedIds, setSavedIds] = useState([]);
-    const [mapview, setMapview] = useState(false);
+    const [mapview] = useState(false);
 
 
 
@@ -476,7 +476,7 @@ function Listings() {
                         </form>
                     </div>
                     <div className="flex flex-col items-center gap-4">
-                        <div className="relative flex gap-8 p-1 bg-gray-100 rounded-lg w-fit">
+                        {/* <div className="relative flex gap-8 p-1 bg-gray-100 rounded-lg w-fit">
                             <motion.div
                                 className="absolute top-1 bottom-1 bg-primary rounded-lg"
                                 style={{ width: '128px' }} // Matches button w-20
@@ -500,7 +500,7 @@ function Listings() {
                             >
                                 List View
                             </button>
-                        </div>
+                        </div> */}
                         {
                             mapview ?
                                 <div className="w-full flex items-center justify-center p-4">
