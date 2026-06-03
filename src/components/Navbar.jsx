@@ -14,8 +14,8 @@ function Navbar() {
     const [showOptions, setShowOptions] = useState(false);
     const { user } = useAuth();
     return (
-        <header className="sticky top-0 z-10 bg-white">
-            <nav className="flex items-center justify-between shadow-sm py-4 px-4">
+        <header className="sticky top-0 z-1">
+            <nav className="flex items-center justify-between shadow-sm py-4 px-4 bg-white/50  backdrop-filter backdrop-blur-md">
                 <Link to="/" className="flex items-center justify-between gap-2">
                     <img src="/favicon.svg" alt="logo" className="w-8 h-8" />
                     <h1 className="text-primary hidden md:block">Nestfind</h1>
@@ -55,7 +55,7 @@ function Navbar() {
                         <>
                             <div className="flex items-center gap-4">
                                 <div className="actions flex justify-between items-center gap-4 md:gap-8">
-                                    {links.map((el, index) => (<NavLink to={el.path} key={index} className={({ isActive }) => isActive ? "text-primary" : "text-gray-600"}>{el.title}</NavLink>))}
+                                    {links.map((el, index) => (<NavLink to={el.path} key={index} className={({ isActive }) => isActive ? "text-primary" : " text-gray-600"}>{el.title}</NavLink>))}
                                 </div>
                             </div>
                             {

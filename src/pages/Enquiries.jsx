@@ -171,13 +171,13 @@ function Enquiries() {
             <main className='flex flex-col gap-2 my-12 items-center px-4'>
                 <h2 id='saved'>My Enquiries</h2>
                 <div className='flex gap-4 items-center'>
-                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showAll ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'}`} onClick={toggleShowAll}>
+                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showAll ? 'bg-primary text-white' : 'bg-white/50 text-gray-700'}`} onClick={toggleShowAll}>
                         All
                     </button>
-                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showResponded ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'}`} onClick={toggleShowResponded}>
+                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showResponded ? 'bg-primary text-white' : 'bg-white/50 text-gray-700'}`} onClick={toggleShowResponded}>
                         Responded
                     </button>
-                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showUnresponded ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700'}`} onClick={toggleShowUnresponded}>
+                    <button className={`px-4 cursor-pointer py-2 rounded-lg ${showUnresponded ? 'bg-primary text-white' : 'bg-white/50 text-gray-700'}`} onClick={toggleShowUnresponded}>
                         Unresponded
                     </button>
                 </div>
@@ -189,7 +189,7 @@ function Enquiries() {
                             compiledEnquiries.map((el) => {
 
                                 return (
-                                    <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                    <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-white/70 bg-white/50 p-2 w-4/5 md:w-full h-full items-center gap-2 shadow-lg">
                                         <div className='flex flex-col items-center '>
                                             <Link to={`/listings/${el.listing.id}`}>
                                                 <img
@@ -206,7 +206,7 @@ function Enquiries() {
                                                         {el.listing.listing_type === 'rent' ? '/yr' : el.listing.listing_type === 'shortlet' ? '/day' : ''}
                                                     </h3>
                                                 </div>
-                                                <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
+                                                <p className="text-gray-700 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
                                             </div>
                                         </div>
                                         <hr className='border-t border-primary w-full' />
@@ -260,7 +260,7 @@ function Enquiries() {
                                     .map((el) => {
 
                                         return (
-                                            <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                            <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-white/70 bg-white/50 p-2 w-4/5 md:w-full h-full items-center gap-2 shadow-lg">
                                                 <div className='flex flex-col items-center '>
                                                     <Link to={`/listings/${el.listing.id}`}>
                                                         <img
@@ -277,7 +277,7 @@ function Enquiries() {
                                                                 {el.listing.listing_type === 'rent' ? '/yr' : el.listing.listing_type === 'shortlet' ? '/day' : ''}
                                                             </h3>
                                                         </div>
-                                                        <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
+                                                        <p className="text-gray-700 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
                                                     </div>
                                                 </div>
                                                 <hr className='border-t border-primary w-full' />
@@ -331,7 +331,7 @@ function Enquiries() {
                                         .map((el) => {
 
                                             return (
-                                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-gray-300 p-2 w-4/5 md:w-full h-full items-center gap-2">
+                                                <div key={el.user_id + "." + el.listing_id} className="flex flex-col relative rounded-lg border border-white/70 bg-white/50 p-2 w-4/5 md:w-full h-full items-center gap-2 shadow-lg">
                                                     <div className='flex flex-col items-center '>
                                                         <Link to={`/listings/${el.listing.id}`}>
                                                             <img
@@ -348,7 +348,7 @@ function Enquiries() {
                                                                     {el.listing.listing_type === 'rent' ? '/yr' : el.listing.listing_type === 'shortlet' ? '/day' : ''}
                                                                 </h3>
                                                             </div>
-                                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
+                                                            <p className="text-gray-700 text-xs mt-2"><span className="font-bold">Host:</span> {el.listing.host_name ?? 'Unknown Host'}</p>
                                                         </div>
                                                     </div>
                                                     <hr className='border-t border-primary w-full' />

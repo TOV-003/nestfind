@@ -89,10 +89,10 @@ function Register() {
     return (
         <Layout>
             <main className="my-12 md:w-3/4 flex flex-col items-center mx-auto gap-8 px-2">
-                <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0 w-full">
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
-                        <h1 className="text-xl font-semibold">Create Your Profile</h1>
-                        <h3 className="text-sm">Sign up to get instant verification and start tracking your real estate listings</h3>
+                <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0 w-full txt-green-900">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white/50 p-6 rounded-lg shadow-lg">
+                        <h1 className="text-xl font-semibold text-green-900">Create Your Profile</h1>
+                        <h3 className="text-sm text-green-800">Sign up to get instant verification and start tracking your real estate listings</h3>
 
                         <div>
                             <label htmlFor="avatar" className="text-sm font-medium text-gray-700">Profile Picture</label>
@@ -110,7 +110,7 @@ function Register() {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:bg-gray-100"
                             />
                         </div>
 
@@ -125,7 +125,7 @@ function Register() {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:bg-gray-100"
                                 autoComplete='email'
                             />
                         </div>
@@ -141,7 +141,7 @@ function Register() {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:bg-gray-100"
                             />
                         </div>
 
@@ -156,7 +156,7 @@ function Register() {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:bg-gray-100"
                             />
                         </div>
 
@@ -171,7 +171,7 @@ function Register() {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:bg-gray-100"
                             />
                         </div>
 
@@ -183,7 +183,7 @@ function Register() {
                                 value={formData.role}
                                 onChange={handleChange}
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm bg-white disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm bg-white disabled:bg-gray-100"
                             >
                                 <option value="user">User</option>
                                 <option value="host">Host</option>
@@ -193,7 +193,7 @@ function Register() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-green-500 text-sm transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                         >
                             {loading ? 'Creating Account...' : 'Sign Up'}
                         </button>

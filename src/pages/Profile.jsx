@@ -209,19 +209,19 @@ export default function Profile() {
     return (
         <Layout>
             <main className=' my-12 flex flex-col  gap-2 items-center  md:items-start justify-center md:flex-row px-4'>
-                <div className='my-12 flex flex-col items-center gap-4 flex-1 text-center'>
+                <div className='my-10 flex flex-col items-center gap-4 flex-1 text-center text-green-900 bg-white/30 border border-white/40 shadow-lg p-4 rounded-lg'>
                     <img src={profile?.avatar} alt="avatar" className="rounded-full w-32 h-32" />
                     <h1>{profile?.name}</h1>
                     <h2 className='text-lg text-gray-400 font-normal'>{profile?.role === "host" && profile?.role}</h2>
                     <div className='flex flex-wrap gap-2 md:w-3/4 justify-center'>
                         <h1 className='w-full text-lg'>My Activity</h1>
-                        <Link to="/Enquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Enquiries</button></Link>
-                        <Link to="/Saved"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Saved Listings</button></Link>
-                        <button className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>Log Out</button>
-                        <button className="bg-blue-500 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={handleEditProfile}>
+                        <Link to="/Enquiries"><button className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">To Enquiries</button></Link>
+                        <Link to="/Saved"><button className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">To Saved Listings</button></Link>
+                        <button className="backdrop-blur-md bg-white/20 hover:bg-white/35 border border-gray-300/50 cursor-pointer rounded-lg px-4 py-2 text-gray-700 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] transition duration-200" onClick={logOut}>Log Out</button>
+                        <button className="backdrop-blur-md bg-blue-500/20 hover:bg-blue-500/35 border border-blue-400/50 cursor-pointer rounded-lg px-4 py-2 text-blue-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200" onClick={handleEditProfile}>
                             Edit Profile
                         </button>
-                        <button className="bg-warning cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggle}>Delete My Account</button>
+                        <button className="backdrop-blur-md bg-amber-500/20 hover:bg-amber-500/35 border border-amber-400/50 cursor-pointer rounded-lg px-4 py-2 text-amber-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200" onClick={toggle}>Delete My Account</button>
                     </div>
 
                     {modal ? (
@@ -248,7 +248,7 @@ export default function Profile() {
                                 </label>
                                 <button
                                     type="submit"
-                                    className="bg-error cursor-pointer rounded-lg px-4 py-2 text-white font-semibold"
+                                    className="backdrop-blur-md bg-red-500/20 hover:bg-red-500/35 border border-red-400/50 cursor-pointer rounded-lg px-4 py-2 text-red-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200"
                                 >
                                     Delete Account
                                 </button>
@@ -268,7 +268,7 @@ export default function Profile() {
                                     const listingAmenities = el.amenities || {};
 
                                     return (
-                                        <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
+                                        <div key={el.id} className="relative border border-white/70 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 bg-white/50 shadow-lg">
                                             <Link to={`/listings/${el.id}`} className="w-full">
                                                 <img
                                                     src={el.images?.[0] || '/placeholder-property.jpg'}
@@ -338,7 +338,7 @@ export default function Profile() {
                             }
                         </div>
                         <Link to="/Saved">
-                            <button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">View All Saved Listings</button>
+                            <button className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">View All Saved Listings</button>
                         </Link>
                     </div>
                     <div className='flex flex-col gap-2 items-center'>
@@ -350,7 +350,7 @@ export default function Profile() {
                                     const listingAmenities = el.amenities || {};
 
                                     return (
-                                        <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
+                                        <div key={el.id} className="relative border border-white/70 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 bg-white/50 shadow-lg">
                                             <Link to={`/listings/${el.id}`} className="w-full">
                                                 <img
                                                     src={el.images?.[0] || '/placeholder-property.jpg'}
@@ -420,7 +420,7 @@ export default function Profile() {
                             }
                         </div>
                         <Link to="/Enquiries">
-                            <button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">View All Enquiried Listings</button>
+                            <button className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">View All Enquiried Listings</button>
                         </Link>
                     </div>
                 </div>

@@ -81,7 +81,7 @@ function UserEnquiries() {
     }
     return (
         <Layout>
-            <main className='flex flex-col gap-4 my-12 items-center px-4 w-full max-w-4xl mx-auto'>
+            <main className='flex flex-col gap-4 my-12 items-center px-4 w-full max-w-4xl mx-auto text-green-900'>
                 <h2 className='text-2xl font-bold self-start'>Enquiries Received</h2>
 
                 <div className='w-full border border-gray-200 rounded-lg overflow-hidden'>
@@ -92,7 +92,7 @@ function UserEnquiries() {
                             compiledEnquiries.map((enq) => (
                                 <div key={`${enq.user_id}+${enq.listing?.id}`} className="border-b border-gray-100 last:border-b-0">
                                     <div
-                                        className="p-4 flex flex-col md:flex-row md:items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors"
+                                        className="p-4 flex flex-col items-center md:flex-row md:items-center justify-between cursor-pointer bg-white/50 hover:bg-gray-50 transition-colors shadow-lg"
                                         onClick={() => toggleExpand(enq.listing_id)}
                                     >
                                         <div className="flex items-center gap-4 flex-1">

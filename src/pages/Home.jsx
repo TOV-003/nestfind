@@ -9,10 +9,9 @@ import { FaHeart } from "react-icons/fa";
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "../context/useAuth";
 import { supabase } from '../api/supabaseClient';
+import Hero from "/IMG2.jpg";
 
 function Home() {
-    const heroIMGs = ["/IMG1.jpg", "/IMG2.jpg", "/IMG3.jpg"];
-    const [index, setIndex] = useState(0);
     const [listings, setListings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [pageLoading, setPageLoading] = useState(true);
@@ -33,12 +32,6 @@ function Home() {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setIndex((prev) => (prev + 1) % 3);
-        }, 10000);
-        return () => clearInterval(timer);
-    }, []);
 
     const [formData, setFormData] = useState({
         city: '',
@@ -187,9 +180,9 @@ function Home() {
 
     return (
         <Layout>
-            <main className="my-12 md:w-3/4 flex flex-col items-center mx-auto gap-8">
-                <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0 lg:items-stretch">
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
+            <main className="my-6 md:w-3/4 flex flex-col items-center mx-auto gap-8">
+                <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0 lg:items-stretch ">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-white/50 bg-white/20 backdrop-blur-lg p-6 rounded-lg">
                         <h1 className="text-xl font-semibold">Find Your Next Home With Next Find</h1>
                         <h3 className="text-sm">Search verified listings, compare neighbourhoods, and save favourites</h3>
 
@@ -202,7 +195,7 @@ function Home() {
                                 value={formData.city}
                                 onChange={handleChange}
                                 placeholder="e.g. Lagos, Ibadan"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/30 backdrop-blur-lg"
                             />
                             <datalist id="cities">
                                 {localCities.map((city) => <option key={city} value={city} />)}
@@ -219,7 +212,7 @@ function Home() {
                                 value={formData.state}
                                 onChange={handleChange}
                                 placeholder="e.g. Lagos, Rivers"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/30 backdrop-blur-lg"
                             />
                             <datalist id="states">
                                 {localStates.map((state) => <option key={state} value={state} />)}
@@ -233,7 +226,7 @@ function Home() {
                                 name="type"
                                 value={formData.type}
                                 onChange={handleChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/30 backdrop-blur-lg"
                             >
                                 <option value="house">House</option>
                                 <option value="apartment">Apartment</option>
@@ -253,7 +246,7 @@ function Home() {
                                     onChange={handleChange}
                                     placeholder="Max Price"
                                     min="0"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/30 backdrop-blur-lg"
                                 />
                             </div>
 
@@ -264,7 +257,7 @@ function Home() {
                                     name="listing_type"
                                     value={formData.listing_type}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm  bg-white/30 backdrop-blur-lg"
                                 >
                                     <option value="rent">Rent</option>
                                     <option value="sale">Sale</option>
@@ -284,7 +277,7 @@ function Home() {
                                     onChange={handleChange}
                                     min="0"
                                     placeholder="0"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/30 backdrop-blur-lg"
                                 />
                             </div>
                             <div className="flex flex-col gap-1 w-1/2">
@@ -298,14 +291,14 @@ function Home() {
                                     min="0"
                                     step="0.5"
                                     placeholder="0"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/30 backdrop-blur-lg"
                                 />
                             </div>
                         </div>
 
                         <button type="submit" className="mt-2 w-full bg-primary cursor-pointer text-white font-medium py-2 px-4 rounded-md text-sm transition-colors">Search Properties</button>
                     </form>
-                    <img key={index} src={heroIMGs[index]} className="sm:w-96 lg:w-1/2 object-cover rounded-lg animate-fade-in" alt="Interior Asset" />
+                    <img src={Hero} className="absolute z-[-1] top-0 w-full h-full object-cover animate-fade-in" alt="Interior Asset" />
                 </div>
 
                 <div className="flex flex-col items-center gap-2 w-full">
@@ -328,7 +321,7 @@ function Home() {
                                 const listingAmenities = el.amenities || {};
 
                                 return (
-                                    <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
+                                    <div key={el.id} className="relative border border-white/30 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col shadow-lg items-center gap-4 bg-white/20 backdrop-blur-lg">
                                         <Link to={`/listings/${el.id}`} className="w-full">
                                             <img
                                                 src={el.images?.[0] || '/placeholder-property.jpg'}
@@ -344,7 +337,7 @@ function Home() {
                                                     {el.listing_type === 'rent' ? '/yr' : el.listing_type === 'shortlet' ? '/day' : ''}
                                                 </h3>
                                             </div>
-                                            <p className="text-gray-400 text-sm">
+                                            <p className="text-gray-600 text-sm">
                                                 {listingLocation.city}, {listingLocation.state} state. Listed {(() => {
                                                     if (!el.date_listed) return 'N/A';
                                                     const inputDate = new Date(el.date_listed);
@@ -357,7 +350,7 @@ function Home() {
                                                     return `${diffInDays} days ago`;
                                                 })()}
                                             </p>
-                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
+                                            <p className="text-gray-600 text-xs mt-2"><span className="font-bold">Built in </span> {el.year_built ?? 'Unknown Year'}</p>
                                             <div className="flex flex-row gap-4 mt-2 text-sm text-gray-600">
                                                 <div className="flex flex-row items-center gap-1">
                                                     <FaHome size={14} className="text-primary" />
@@ -387,7 +380,7 @@ function Home() {
                                                     ))
                                                 }
                                             </div>
-                                            <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
+                                            <p className="text-gray-600 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
                                         </div>
                                         <button onClick={() => handleToggle(el.id)} className="border border-gray-300 p-2 rounded-md bottom-2 right-2 absolute bg-white cursor-pointer hover:bg-gray-50">
                                             <FaHeart size={16} className={savedIds.includes(el.id) ? "text-primary" : "text-gray-400"} />

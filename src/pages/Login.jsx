@@ -70,7 +70,7 @@ function Login() {
         <Layout>
             <main className="my-36 md:w-3/4 flex flex-col items-center mx-auto gap-8 px-2">
                 <div className="flex lg:flex-row flex-col items-center lg:justify-center gap-4 mx-4 lg:mx-0 w-full">
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white p-6 rounded-lg">
+                    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full border border-gray-300 bg-white/50 p-6 rounded-lg shadow-lg">
                         <h1 className="text-xl font-semibold">Login</h1>
 
                         <div className="flex flex-col gap-1">
@@ -84,7 +84,7 @@ function Login() {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:bg-gray-100"
                                 autoComplete='email'
                             />
                         </div>
@@ -100,7 +100,7 @@ function Login() {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm disabled:bg-gray-100"
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 text-sm disabled:bg-gray-100"
                             />
                         </div>
                         <button

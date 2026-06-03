@@ -2,7 +2,7 @@ export const Chart = ({ data }) => {
     const maxVal = Math.max(...data.map(d => d.amount), 1);
 
     return (
-        <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8 h-80 w-full overflow-hidden">
+        <div className="bg-white/50 shadow-lg p-6 rounded-lg border border-gray-200 mb-8 h-80 w-full overflow-hidden">
             <h3 className="text-lg font-bold mb-6">Enquiries per Listing</h3>
             <div className="flex flex-col gap-3 w-full h-60 overflow-y-auto pr-2">
                 {data.map((item, index) => (

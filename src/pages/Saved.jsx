@@ -117,7 +117,7 @@ function Saved() {
 
     return (
         <Layout>
-            <main className='flex flex-col gap-2 my-12 items-center px-4'>
+            <main className='flex flex-col gap-2 my-12 items-center px-4 text-green-900'>
                 <h2 id='saved'>Saved Listings</h2>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 place-items-center gap-4'>
                     {listings.length === 0 ? (
@@ -128,7 +128,7 @@ function Saved() {
                             const listingAmenities = el.amenities || {};
 
                             return (
-                                <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4">
+                                <div key={el.id} className="relative border border-white/70 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 bg-white/50 backdrop-blur-lg shadow-lg">
                                     <Link to={`/listings/${el.id}`} className="w-full">
                                         <img
                                             src={el.images?.[0] || '/placeholder-property.jpg'}

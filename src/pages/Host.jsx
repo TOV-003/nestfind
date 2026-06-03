@@ -76,18 +76,18 @@ export default function Host() {
         <Layout>
             <main className='flex flex-col gap-4 items-center my-12 px-4'>
                 <div className='flex  flex-col items-center  gap-4 '>
-                    <div className='flex flex-col items-center gap-4'>
-                        <img src={profile?.avatar} alt="avatar" className="rounded-full w-32 h-32" />
+                    <div className='flex flex-col items-center gap-4 text-gray-700'>
+                        <img src={profile?.avatar} alt="avatar" className="rounded-full w-32 h-32 shadow-lg" />
                         <h1>{profile?.name}</h1>
-                        <h2 className='text-lg text-gray-400 font-normal'>{profile?.role === "host" && profile?.role.toUpperCase()}</h2>
-                        <a href="mailto:email@example.com"><h2 className='text-lg text-gray-400 font-normal'>{profile?.email}</h2></a>
+                        <h2 className='text-lg text-gray-700 font-normal'>{profile?.role === "host" && profile?.role.toUpperCase()}</h2>
+                        <a href="mailto:email@example.com"><h2 className='text-lg text-gray-700 font-normal'>{profile?.email}</h2></a>
                     </div>
                     <div className='flex  gap-4 justify-center'>
-                        <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Total Listings: {hostListings.length}</p>
-                        <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Total Enquiries: {totalEnquiries}</p>
+                        <p className='px-2 py-1 border border-gray-600 text-gray-700 rounded-lg'>Total Listings: {hostListings.length}</p>
+                        <p className='px-2 py-1 border border-gray-600 text-gray-700 rounded-lg'>Total Enquiries: {totalEnquiries}</p>
                     </div>
                 </div>
-                <h2 className='text-xl text-gray-400 font-normal'>{profile?.name}'s Listings</h2>
+                <h2 className='text-xl text-gray-700 font-normal'>{profile?.name}'s Listings</h2>
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4'>
                     {hostListings.length === 0 ? (
                         <EmptyState title="No listings found" message="Please try searching for a different host." />
@@ -97,7 +97,7 @@ export default function Host() {
                             const listingAmenities = el.amenities || {};
 
                             return (
-                                <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 justify-between">
+                                <div key={el.id} className="relative border border-white/70 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 justify-between bg-white/50 backdrop-blur-lg shadow-lg">
                                     <Link to={`/listings/${el.id}`} className="w-full">
                                         <img
                                             src={el.images?.[0] || '/placeholder-property.jpg'}
@@ -157,7 +157,6 @@ export default function Host() {
                                                 ))
                                             }
                                         </div>
-                                        <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Host:</span> {el.host_name ?? 'Unknown Host'}</p>
                                         <p className="text-gray-400 text-xs mt-2"><span className="font-bold">Enquiries:</span> {el.enquiryCount ?? 0}</p>
                                     </div>
                                 </div>

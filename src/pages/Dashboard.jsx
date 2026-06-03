@@ -377,22 +377,40 @@ function Dashboard() {
         });
     };
 
+    async function handleEditProfile() {
+
+    }
+
 
 
     return (
         <Layout>
             <main className=' my-12 flex flex-col  gap-2 items-center  md:items-start justify-center md:flex-row px-4'>
-                <div className='my-12 flex flex-col items-center gap-4 flex-1 text-center'>
+                <div className='my-20 flex flex-col items-center gap-4 flex-1 text-center text-green-900 bg-white/30 border-white/40 border shadow-lg p-4 rounded-lg'>
                     <img src={profile?.avatar} alt="avatar" className="rounded-full w-32 h-32" />
                     <h1>{profile?.name}</h1>
                     <h2 className='text-lg text-gray-400 font-normal'>{profile?.role === "host" && profile?.role}</h2>
                     <div className='flex flex-wrap gap-2 md:w-3/4 justify-center'>
                         <h1 className='w-full text-lg'>My Activity</h1>
-                        <Link to="/Enquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">My Enquiries</button></Link>
-                        <Link to="/Saved"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To Saved Listings</button></Link>
+                        <Link to="/Enquiries">
+                            <button className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                My Enquiries
+                            </button>
+                        </Link>
+                        <Link to="/Saved">
+                            <button className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                To Saved Listings
+                            </button>
+                        </Link>
                         <h1 className='w-full text-lg'>Manage Listings</h1>
-                        <Link to="/UserEnquiries"><button className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">To User Enquiries</button></Link>
-                        <button className="bg-blue-800 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggleUpload}>Create Listing</button>
+                        <Link to="/UserEnquiries">
+                            <button className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                To User Enquiries
+                            </button>
+                        </Link>
+                        <button className="backdrop-blur-md bg-blue-500/20 hover:bg-blue-500/35 border border-blue-400/50 cursor-pointer rounded-lg px-4 py-2 text-blue-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200" onClick={toggleUpload}>
+                            Create Listing
+                        </button>
                         {uploadModal &&
                             <div
                                 onClick={() => setUploadModal(false)}
@@ -430,7 +448,9 @@ function Dashboard() {
                                                 <textarea name="description" value={formData.description} id="description" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. This is a description of the property"></textarea>
                                             </label>
                                             <p>Step {currentStep} of 6</p>
-                                            <button type="button" onClick={() => setCurrentStep(2)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                            <button type="button" onClick={() => setCurrentStep(2)} className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                                Next
+                                            </button>
                                         </>
                                     )}
                                     {currentStep === 2 && (
@@ -458,8 +478,12 @@ function Dashboard() {
                                             </label>
                                             <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
-                                                <button type="button" onClick={() => setCurrentStep(1)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
-                                                <button type="button" onClick={() => setCurrentStep(3)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                                <button type="button" onClick={() => setCurrentStep(1)} className="backdrop-blur-md bg-white/20 hover:bg-white/35 border border-gray-300/50 cursor-pointer rounded-lg px-4 py-2 text-gray-700 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] transition duration-200">
+                                                    Back
+                                                </button>
+                                                <button type="button" onClick={() => setCurrentStep(3)} className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                                    Next
+                                                </button>
                                             </div>
                                         </>
                                     )}
@@ -486,8 +510,12 @@ function Dashboard() {
                                             </label>
                                             <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
-                                                <button type="button" onClick={() => setCurrentStep(2)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
-                                                <button type="button" onClick={() => setCurrentStep(4)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                                <button type="button" onClick={() => setCurrentStep(2)} className="backdrop-blur-md bg-white/20 hover:bg-white/35 border border-gray-300/50 cursor-pointer rounded-lg px-4 py-2 text-gray-700 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] transition duration-200">
+                                                    Back
+                                                </button>
+                                                <button type="button" onClick={() => setCurrentStep(4)} className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                                    Next
+                                                </button>
                                             </div>
 
                                         </>
@@ -505,8 +533,12 @@ function Dashboard() {
                                             </div>
                                             <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
-                                                <button type="button" onClick={() => setCurrentStep(3)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
-                                                <button type="button" onClick={() => setCurrentStep(5)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                                <button type="button" onClick={() => setCurrentStep(3)} className="backdrop-blur-md bg-white/20 hover:bg-white/35 border border-gray-300/50 cursor-pointer rounded-lg px-4 py-2 text-gray-700 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] transition duration-200">
+                                                    Back
+                                                </button>
+                                                <button type="button" onClick={() => setCurrentStep(5)} className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                                    Next
+                                                </button>
                                             </div>
 
                                         </>
@@ -519,8 +551,12 @@ function Dashboard() {
                                             </label>
                                             <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
-                                                <button type="button" onClick={() => setCurrentStep(3)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
-                                                <button type="button" onClick={() => setCurrentStep(6)} className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Next</button>
+                                                <button type="button" onClick={() => setCurrentStep(3)} className="backdrop-blur-md bg-white/20 hover:bg-white/35 border border-gray-300/50 cursor-pointer rounded-lg px-4 py-2 text-gray-700 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] transition duration-200">
+                                                    Back
+                                                </button>
+                                                <button type="button" onClick={() => setCurrentStep(6)} className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                                    Next
+                                                </button>
                                             </div>
                                         </>
                                     )}
@@ -550,11 +586,13 @@ function Dashboard() {
                                             <br />
                                             <p>Step {currentStep} of 6</p>
                                             <div className="flex gap-2 w-full justify-between">
-                                                <button type="button" onClick={() => setCurrentStep(5)} className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">Back</button>
+                                                <button type="button" onClick={() => setCurrentStep(5)} className="backdrop-blur-md bg-white/20 hover:bg-white/35 border border-gray-300/50 cursor-pointer rounded-lg px-4 py-2 text-gray-700 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] transition duration-200">
+                                                    Back
+                                                </button>
                                                 <button
                                                     type="submit"
                                                     disabled={!formData.images || formData.images.length < 3 || formData.images.length > 10}
-                                                    className="bg-primary disabled:bg-gray-300 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold"
+                                                    className="backdrop-blur-md bg-blue-500/20 hover:bg-blue-500/35 border border-blue-400/50 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer rounded-lg px-4 py-2 text-blue-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200"
                                                 >
                                                     {uploading ? 'Uploading...' : 'Create Listing'}
                                                 </button>
@@ -564,8 +602,15 @@ function Dashboard() {
                                 </form>
                             </div>
                         }
-                        <button className="bg-gray-400 cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={logOut}>Log Out</button>
-                        <button className="bg-warning cursor-pointer rounded-lg px-4 py-2 text-white font-semibold" onClick={toggle}>Delete My Account</button>
+                        <button className="backdrop-blur-md bg-white/20 hover:bg-white/35 border border-gray-300/50 cursor-pointer rounded-lg px-4 py-2 text-gray-700 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.5)] transition duration-200" onClick={logOut}>
+                            Log Out
+                        </button>
+                        <button className="backdrop-blur-md bg-blue-500/20 hover:bg-blue-500/35 border border-blue-400/50 cursor-pointer rounded-lg px-4 py-2 text-blue-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200" onClick={handleEditProfile}>
+                            Edit Profile
+                        </button>
+                        <button className="backdrop-blur-md bg-amber-500/20 hover:bg-amber-500/35 border border-amber-400/50 cursor-pointer rounded-lg px-4 py-2 text-amber-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200" onClick={toggle}>
+                            Delete My Account
+                        </button>
                     </div>
                     {modal ? (
                         <div
@@ -591,7 +636,7 @@ function Dashboard() {
                                 </label>
                                 <button
                                     type="submit"
-                                    className="bg-error cursor-pointer rounded-lg px-4 py-2 text-white font-semibold"
+                                    className="backdrop-blur-md bg-red-500/20 hover:bg-red-500/35 border border-red-400/50 cursor-pointer rounded-lg px-4 py-2 text-red-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200"
                                 >
                                     Delete Account
                                 </button>
@@ -600,13 +645,13 @@ function Dashboard() {
                     ) : null}
                 </div>
                 <div className='flex flex-col gap-4 items-center flex-2'>
-                    <div className='flex flex-col gap-2 items-center justify-center'>
+                    <div className='flex flex-col gap-2 items-center justify-center text-green-900'>
                         <h2 id='saved'>My Listings</h2>
                         <div className='flex items-center gap-4 flex-wrap md:justify-start justify-center'>
-                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Total Listings: {hostListings.length}</p>
-                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Active Listings: {hostListings.filter(listing => listing.active).length}</p>
-                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Inactive Listings: {hostListings.filter(listing => !listing.active).length}</p>
-                            <p className='px-2 py-1 border border-gray-400 text-gray-400 rounded-lg'>Total Enquiries: {hostListings.reduce((total, listing) => total + (listing.enquiryCount || 0), 0)}</p>
+                            <p className='px-2 py-1 border border-green-900 text-green-900 rounded-lg'>Total Listings: {hostListings.length}</p>
+                            <p className='px-2 py-1 border border-green-900 text-green-900 rounded-lg'>Active Listings: {hostListings.filter(listing => listing.active).length}</p>
+                            <p className='px-2 py-1 border border-green-900 text-green-900 rounded-lg'>Inactive Listings: {hostListings.filter(listing => !listing.active).length}</p>
+                            <p className='px-2 py-1 border border-green-900 text-green-900 rounded-lg'>Total Enquiries: {hostListings.reduce((total, listing) => total + (listing.enquiryCount || 0), 0)}</p>
                         </div>
                         <div className='grid grid-cols-1 lg:grid-cols-2 place-items-center gap-4'>
                             {console.log("Host Listings IDs:", hostListings)}
@@ -618,7 +663,7 @@ function Dashboard() {
                                     const listingAmenities = el.amenities || {};
 
                                     return (
-                                        <div key={el.id} className="relative border border-gray-300 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 justify-between">
+                                        <div key={el.id} className="relative border border-white/70 rounded-lg p-2 w-4/5 md:w-full h-full flex flex-col items-center gap-4 justify-between bg-white/50 shadow-lg">
                                             <Link to={`/listings/${el.id}`} className="w-full">
                                                 <img
                                                     src={el.images?.[0] || '/placeholder-property.jpg'}
@@ -686,10 +731,12 @@ function Dashboard() {
                                                     toggleDelete();
                                                     setActiveId(el.id)
                                                 }
-                                                } className='bg-error px-4 py-2 font-bold text-white rounded-lg cursor-pointer'>Delete Listing</button>
+                                                } className='backdrop-blur-md bg-red-500/20 hover:bg-red-500/35 border border-red-400/50 px-4 py-2 font-bold text-red-900 rounded-lg cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200'>
+                                                    Delete Listing
+                                                </button>
                                                 {deleteModal &&
                                                     <div
-                                                        onClick={() => setModal(false)}
+                                                        onClick={() => setDeleteModal(false) && console.log(modal)}
                                                         className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
                                                     >
                                                         <form
@@ -708,19 +755,23 @@ function Dashboard() {
                                                             </label>
                                                             <button
                                                                 type="submit"
-                                                                className="bg-error cursor-pointer rounded-lg px-4 py-2 text-white font-semibold"
+                                                                className="backdrop-blur-md bg-red-500/20 hover:bg-red-500/35 border border-red-400/50 cursor-pointer rounded-lg px-4 py-2 text-red-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200"
                                                             >
                                                                 Delete Listing
                                                             </button>
                                                         </form>
                                                     </div>
                                                 }
-                                                <button onClick={() => toggleActiveListing(el.id, el.active)} className={`${el.active ? "bg-warning" : "bg-green-800"} px-4 py-2 font-bold text-white rounded-lg cursor-pointer`}>{el.active ? 'Deactivate' : 'Activate'} Listing</button>
+                                                <button onClick={() => toggleActiveListing(el.id, el.active)} className={`${el.active ? "backdrop-blur-md bg-amber-500/20 hover:bg-amber-500/35 border border-amber-400/50 text-amber-900" : "backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 text-emerald-900"} px-4 py-2 font-bold rounded-lg cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200`}>
+                                                    {el.active ? 'Deactivate' : 'Activate'} Listing
+                                                </button>
                                                 <button onClick={() => {
                                                     toggleEdit();
                                                     setActiveId(el.id)
                                                 }
-                                                } className='bg-primary px-4 py-2 font-bold text-white rounded-lg cursor-pointer'>Edit Listing</button>
+                                                } className='backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 px-4 py-2 font-bold text-emerald-900 rounded-lg cursor-pointer shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200'>
+                                                    Edit Listing
+                                                </button>
                                                 {
 
 
@@ -793,7 +844,9 @@ function Dashboard() {
                                                                 <textarea name="description" value={formData.description} id="description" required onChange={handleChange} className="w-full rounded-lg border border-gray-300 p-2 text-sm" placeholder="e.g. This is a description of the property"></textarea>
                                                             </label>
 
-                                                            <button type="submit" className="bg-primary cursor-pointer rounded-lg px-4 py-2 text-white font-semibold">{uploading ? 'Uploading...' : 'Update Listing'}</button>
+                                                            <button type="submit" className="backdrop-blur-md bg-emerald-500/20 hover:bg-emerald-500/35 border border-emerald-400/50 cursor-pointer rounded-lg px-4 py-2 text-emerald-900 font-semibold shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)] transition duration-200">
+                                                                {uploading ? 'Uploading...' : 'Update Listing'}
+                                                            </button>
 
                                                         </form>
                                                     </div>

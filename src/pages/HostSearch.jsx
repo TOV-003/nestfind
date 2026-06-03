@@ -84,13 +84,13 @@ function HostSearch() {
     return (
         <Layout>
             <main className="flex flex-col items-center p-4 my-12 mx-auto gap-4">
-                <input type="text" placeholder="Search hosts..." className="border border-gray-400 rounded-xl px-4 py-2 text-lg w-3/4" onChange={(e) => setQuery(e.target.value)} />
+                <input type="text" placeholder="Search hosts..." className="border border-white/60 text-gray-600 rounded-xl px-4 py-2 text-lg w-3/4 bg-white/30" onChange={(e) => setQuery(e.target.value)} />
                 <div className="grid md:grid-cols-3 gap-4 place-items-center">
                     {!hosts || hosts.length === 0 ? (
                         [1, 2, 3].map((n) => <HostSkeleton key={n} />)
                     ) : (
                         filteredHosts.map((el) => (
-                            <div key={el.id} className="flex flex-col gap-2 items-center border border-gray-300 px-4 py-2 rounded-lg w-full">
+                            <div key={el.id} className="flex flex-col gap-2 items-center border border-white/70 px-4 py-2 rounded-lg w-full bg-white/50 backdrop-blur-lg shadow-lg">
                                 <h2>Host</h2>
                                 <Link to={`/Host/${el?.id}`}>
                                     <img src={el?.avatar} alt="Host" className="w-64 rounded-full aspect-square" />

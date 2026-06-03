@@ -26,8 +26,8 @@ function ImageCarousel({ images }) {
     };
 
     return (
-        <div className="w-full flex flex-col gap-4 items-center overflow-clip">
-            <div className="w-[90vw] sm:w-[80vw] md:w-[75vw] lg:w-[70vw] aspect-video flex flex-col items-center rounded-2xl overflow-hidden border border-gray-200 relative group">
+        <div className="w-full flex flex-col gap-4 items-center overflow-clip bg-white/50 rounded-2xl border border-white/70 shadow-lg py-6">
+            <div className="w-[90vw] sm:w-[80vw] md:w-[75vw] lg:w-[70vw] aspect-video flex flex-col items-center rounded-2xl overflow-hidden border border-white/70 bg-white/50 relative group">
                 <img
                     src={displayImages[activeIndex]}
                     alt={`Property View ${activeIndex + 1}`}
@@ -37,14 +37,14 @@ function ImageCarousel({ images }) {
                 <button
                     type="button"
                     onClick={handlePrev}
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-primary text-white px-2 sm:px-4 py-1 sm:py-1.5 rounded-full border border-gray-200 transition-all cursor-pointer opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold text-xl sm:text-2xl select-none"
+                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-primary/30 sh text-white px-2 sm:px-4 py-1 sm:py-1.5 rounded-full border border-gray-200 transition-all cursor-pointer opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold text-xl sm:text-2xl select-none"
                 >
                     &lt;
                 </button>
                 <button
                     type="button"
                     onClick={handleNext}
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-primary text-white px-2 sm:px-4 py-1 sm:py-1.5 rounded-full border border-gray-200 transition-all cursor-pointer opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold text-xl sm:text-2xl select-none"
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-primary/30 shadow-xl text-white px-2 sm:px-4 py-1 sm:py-1.5 rounded-full border border-gray-200 transition-all cursor-pointer opacity-0 group-hover:opacity-100 flex items-center justify-center font-bold text-xl sm:text-2xl select-none"
                 >
                     &gt;
                 </button>

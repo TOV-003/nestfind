@@ -372,9 +372,9 @@ function Listings() {
             <main className="flex flex-col items-center gap-4 my-12 mx-auto px-4 w-full">
                 <div className="flex flex-col xl:flex-row xl:justify-center items-center xl:items-start gap-6 w-full">
 
-                    <div className="flex flex-col h-full items-start gap-2 w-full md:w-[60vw] xl:w-75 xl:shrink-0 px-2">
+                    <div className="flex flex-col h-full items-start gap-2 w-full md:w-[60vw] xl:w-75 xl:shrink-0 px-2 bg-white/50 backdrop-blur-lg py-6 rounded-lg border border-white/70 shadow-lg">
                         <h3 className="text-xl font-bold">Filters</h3>
-                        <p className="text-sm text-gray-400">Refine your search to find the perfect home.</p>
+                        <p className="text-sm text-gray-700">Refine your search to find the perfect home.</p>
 
                         {activeFilters && Object.entries(activeFilters).some(([, val]) => val !== null && val !== '') && (
                             <div className="flex flex-wrap items-center gap-2 my-2 p-3 bg-gray-50 rounded-lg border border-gray-200 w-full">
@@ -409,7 +409,7 @@ function Listings() {
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
                             <div className="flex flex-col gap-1">
                                 <label htmlFor="city" className="text-sm font-medium text-gray-700">City/Town</label>
-                                <input list="cities" id="city" name="city" value={formData.city} onChange={handleChange} placeholder="e.g. Lagos, Ibadan" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
+                                <input list="cities" id="city" name="city" value={formData.city} onChange={handleChange} placeholder="e.g. Lagos, Ibadan" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/70 text-gray-800" />
                                 <datalist id="cities">
                                     {localCities.map((city) => <option key={city} value={city} />)}
                                 </datalist>
@@ -417,7 +417,7 @@ function Listings() {
 
                             <div className="flex flex-col gap-1">
                                 <label htmlFor="state" className="text-sm font-medium text-gray-700">State</label>
-                                <input list="states" id="state" type="text" name="state" value={formData.state} onChange={handleChange} placeholder="e.g. Lagos, Rivers" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
+                                <input list="states" id="state" type="text" name="state" value={formData.state} onChange={handleChange} placeholder="e.g. Lagos, Rivers" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/50" />
                                 <datalist id="states">
                                     {localStates.map((state) => <option key={state} value={state} />)}
                                 </datalist>
@@ -425,7 +425,7 @@ function Listings() {
 
                             <div className="flex flex-col gap-1">
                                 <label htmlFor="type" className="text-sm font-medium text-gray-700">Property Type</label>
-                                <select id="type" name="type" value={formData.type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white">
+                                <select id="type" name="type" value={formData.type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/50">
                                     <option value="house">House</option>
                                     <option value="apartment">Apartment</option>
                                     <option value="condo">Studio</option>
@@ -437,12 +437,12 @@ function Listings() {
                             <div className="flex gap-2">
                                 <div className="flex gap-1 flex-col w-1/2">
                                     <label htmlFor="maxPrice" className="text-sm font-medium text-gray-700">Max Price</label>
-                                    <input type="number" id="maxPrice" name="maxPrice" value={formData.maxPrice} onChange={handleChange} placeholder="Max Price" min="0" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
+                                    <input type="number" id="maxPrice" name="maxPrice" value={formData.maxPrice} onChange={handleChange} placeholder="Max Price" min="0" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/50" />
                                 </div>
 
                                 <div className="flex gap-1 flex-col w-1/2">
                                     <label htmlFor="listing_type" className="text-sm font-medium text-gray-700">Listing Type</label>
-                                    <select id="listing_type" name="listing_type" value={formData.listing_type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white">
+                                    <select id="listing_type" name="listing_type" value={formData.listing_type} onChange={handleChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/50">
                                         <option value="rent">Rent</option>
                                         <option value="sale">Sale</option>
                                         <option value="shortlet">Short Let</option>
@@ -453,11 +453,11 @@ function Listings() {
                             <div className="flex gap-2">
                                 <div className="flex flex-col gap-1 w-1/2">
                                     <label htmlFor="beds" className="text-sm font-medium text-gray-700">Beds</label>
-                                    <input id="beds" type="number" name="beds" value={formData.beds} onChange={handleChange} min="1" placeholder="1" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
+                                    <input id="beds" type="number" name="beds" value={formData.beds} onChange={handleChange} min="1" placeholder="1" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/50" />
                                 </div>
                                 <div className="flex flex-col gap-1 w-1/2">
                                     <label htmlFor="baths" className="text-sm font-medium text-gray-700">Baths</label>
-                                    <input id="baths" type="number" name="baths" value={formData.baths} onChange={handleChange} min="1" placeholder="1" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm" />
+                                    <input id="baths" type="number" name="baths" value={formData.baths} onChange={handleChange} min="1" placeholder="1" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm bg-white/50" />
                                 </div>
                             </div>
 
@@ -509,10 +509,10 @@ function Listings() {
                                 :
                                 <div className="flex-col flex items-center gap-8 w-full">
                                     <div className="flex flex-col items-center md:flex-row md:justify-between gap-4 w-full px-4">
-                                        <p>Showing 1 to {page * 9 > listings.length ? listings.length : page * 9} of {listings.length} listings</p>
+                                        <p className="text-sm text-green-950">Showing 1 to {page * 9 > listings.length ? listings.length : page * 9} of {listings.length} listings</p>
                                         <div className="flex flex-row justify-between items-center gap-4">
                                             <p>Sort</p>
-                                            <select name="sort" id="sort" onChange={handleSort} className="border border-gray-500 text-gray-500 px-4 py-2 rounded-lg bg-white">
+                                            <select name="sort" id="sort" onChange={handleSort} className="border border-white/70 text-gray-700 px-4 py-2 rounded-lg bg-white/50">
                                                 <option value="default">Default</option>
                                                 <option value="price">Price: Low to High</option>
                                                 <option value="price-desc">Price: High to Low</option>
@@ -522,7 +522,7 @@ function Listings() {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center w-full">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 place-items-center w-full ">
                                         {(() => {
                                             let sortedListings = [...listings];
 
@@ -541,7 +541,7 @@ function Listings() {
                                                 const listingAmenities = el.amenities;
 
                                                 return (
-                                                    <div key={el.id} className="relative border border-gray-300 rounded-xl p-2 w-full h-full flex flex-col items-center gap-4">
+                                                    <div key={el.id} className="relative border border-gray-300 rounded-xl p-2 w-full h-full flex flex-col items-center gap-4 bg-white/50 backdrop-blur-lg shadow-lg">
                                                         <Link to={`/listings/${el.id}`} className="w-full">
                                                             <img
                                                                 src={Array.isArray(el.images) ? el.images[0] : el.images}
