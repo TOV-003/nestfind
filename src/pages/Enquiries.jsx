@@ -231,7 +231,7 @@ function Enquiries() {
                                                     } else if (now > targetDate) {
                                                         return (
                                                             <>
-                                                                <p className='text-red-600 font-bold'>Expired - Action Required(Change Date)</p>
+                                                                <p className='text-red-500 font-bold'>Expired - Action Required(Change Date)</p>
                                                                 <input
                                                                     type="date"
                                                                     className="cursor-pointer border border-gray-300 rounded-lg px-2 py-1 text-sm bg-warning font-bold text-white "
