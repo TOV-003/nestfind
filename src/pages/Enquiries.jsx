@@ -236,7 +236,7 @@ function Enquiries() {
                                                                     type="date"
                                                                     className="cursor-pointer border border-gray-300 rounded-lg px-2 py-1 text-sm bg-warning font-bold text-white "
                                                                     min={new Date().toISOString().split('T')[0]}
-                                                                    onChange={(e) => {
+                                                                    onBlur={(e) => {
                                                                         const newDate = e.target.value;
                                                                         if (newDate) {
                                                                             handleEditEnquiry(el.listing_id, newDate);
